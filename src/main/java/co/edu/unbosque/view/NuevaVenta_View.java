@@ -1,4 +1,4 @@
-package prueba_usuarios;
+package co.edu.unbosque.view;
 
 import com.toedter.calendar.JDateChooser;
 import javax.swing.*;

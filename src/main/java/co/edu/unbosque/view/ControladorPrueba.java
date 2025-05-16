@@ -1,4 +1,4 @@
-package prueba_usuarios;
+package co.edu.unbosque.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
