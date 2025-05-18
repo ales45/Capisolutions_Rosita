@@ -2,12 +2,12 @@ package co.edu.unbosque.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.regex.Pattern;
 
 public class RegistroProve_Frame extends JFrame {
 	private JTextField txtNombre, txtCedula, txtTelefono, txtCorreo, txtDireccion;
 	private JComboBox<String> comboTipoProveedor;
+	private JButton btnLimpiar, btnRegistrar, btnRegresar;
 
 	public RegistroProve_Frame() {
 		setTitle("Registrar Proveedor");
@@ -77,9 +77,9 @@ public class RegistroProve_Frame extends JFrame {
 		JPanel botones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		botones.setBackground(Color.WHITE);
 
-		JButton btnLimpiar = new JButton("Limpiar formulario");
-		JButton btnRegistrar = new JButton("Registrar Proveedor");
-		JButton btnRegresar = new JButton("Regresar");
+		btnLimpiar = new JButton("Limpiar formulario");
+		btnRegistrar = new JButton("Registrar Proveedor");
+		btnRegresar = new JButton("Regresar");
 
 		btnRegistrar.setBackground(new Color(0, 128, 0));
 		btnRegistrar.setForeground(Color.WHITE);
@@ -151,5 +151,29 @@ public class RegistroProve_Frame extends JFrame {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	
+	// Getters y setters para los botones
+
+	public JButton getBtnLimpiar() {
+		return btnLimpiar;
+	}
+
+	public void setBtnLimpiar(JButton btnLimpiar) {
+		this.btnLimpiar = btnLimpiar;
+	}
+
+	public JButton getBtnRegistrar() {
+		return btnRegistrar;
+	}
+
+	public void setBtnRegistrar(JButton btnRegistrar) {
+		this.btnRegistrar = btnRegistrar;
+	}
+
+	public JButton getBtnRegresar() {
+		return btnRegresar;
+	}
+
+	public void setBtnRegresar(JButton btnRegresar) {
+		this.btnRegresar = btnRegresar;
+	}
 }

@@ -7,6 +7,8 @@ import java.awt.*;
 public class EditarProve_Frame extends JFrame {
 	private JTextField txtNombre, txtCedula, txtTelefono, txtDireccion;
 	private JComboBox<String> comboTipoProveedor;
+	private JButton btnGuardar;
+	private JButton btnRegresar;
 
 	public EditarProve_Frame() {
 		setTitle("Editar Proveedor");
@@ -46,14 +48,11 @@ public class EditarProve_Frame extends JFrame {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
 		txtNombre = new JTextField(20);
-
 		txtCedula = new JTextField(20);
 		soloNumeros(txtCedula);
-
 		txtTelefono = new JTextField(20);
 		soloNumeros(txtTelefono);
-
-		txtDireccion = new JTextField(25); // más ancho
+		txtDireccion = new JTextField(25);
 
 		comboTipoProveedor = new JComboBox<>(
 				new String[] { "Seleccione", "Persona Natural", "Empresa", "Distribuidor" });
@@ -84,8 +83,8 @@ public class EditarProve_Frame extends JFrame {
 		JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		botones.setBackground(Color.WHITE);
 
-		JButton btnGuardar = new JButton("Guardar");
-		JButton btnRegresar = new JButton("Regresar");
+		btnGuardar = new JButton("Guardar");
+		btnRegresar = new JButton("Regresar");
 
 		btnGuardar.setBackground(new Color(0, 128, 0));
 		btnGuardar.setForeground(Color.WHITE);
@@ -139,9 +138,8 @@ public class EditarProve_Frame extends JFrame {
 
 		JOptionPane.showMessageDialog(this, "Cambios guardados correctamente.", "Éxito",
 				JOptionPane.INFORMATION_MESSAGE);
-	}	
+	}
 
-	// Método para restringir solo números
 	private void soloNumeros(JTextField campo) {
 		((AbstractDocument) campo.getDocument()).setDocumentFilter(new DocumentFilter() {
 			@Override
@@ -162,4 +160,21 @@ public class EditarProve_Frame extends JFrame {
 		});
 	}
 
+	// Getters y Setters de los botones
+
+	public JButton getBtnGuardar() {
+		return btnGuardar;
+	}
+
+	public void setBtnGuardar(JButton btnGuardar) {
+		this.btnGuardar = btnGuardar;
+	}
+
+	public JButton getBtnRegresar() {
+		return btnRegresar;
+	}
+
+	public void setBtnRegresar(JButton btnRegresar) {
+		this.btnRegresar = btnRegresar;
+	}
 }

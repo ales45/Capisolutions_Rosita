@@ -6,6 +6,7 @@ import java.awt.event.*;
 
 public class EliminarProducto_Frame extends JFrame {
 	private JTextField txtId, txtNombre, txtDescripcion, txtPrecio, txtIVA;
+	private JButton btnEliminar, btnRegresar; // Declarar botones como variables de instancia
 
 	public EliminarProducto_Frame() {
 		setTitle("Eliminar Producto");
@@ -14,25 +15,20 @@ public class EliminarProducto_Frame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 
-		// ... dentro del constructor EliminarProducto_Frame()
-
-		// Logo en la esquina superior izquierda
 		JPanel panelLogo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panelLogo.setBackground(new Color(252, 243, 174)); // mismo color de fondo
+		panelLogo.setBackground(new Color(252, 243, 174));
 
 		ImageIcon icono = new ImageIcon("src/logo.png");
-		Image imagen = icono.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // ajusta tamaño si es necesario
+		Image imagen = icono.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 		JLabel lblLogo = new JLabel(new ImageIcon(imagen));
 		panelLogo.add(lblLogo);
 
 		add(panelLogo, BorderLayout.NORTH);
 
-		// Fondo
 		JPanel fondo = new JPanel(new GridBagLayout());
-		fondo.setBackground(new Color(252, 243, 174)); // amarillo claro
+		fondo.setBackground(new Color(252, 243, 174));
 		add(fondo, BorderLayout.CENTER);
 
-		// Recuadro central
 		JPanel recuadro = new JPanel(new GridBagLayout());
 		recuadro.setBackground(Color.WHITE);
 		recuadro.setPreferredSize(new Dimension(500, 470));
@@ -43,7 +39,6 @@ public class EliminarProducto_Frame extends JFrame {
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		// Título
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 2;
@@ -52,7 +47,6 @@ public class EliminarProducto_Frame extends JFrame {
 		lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
 		recuadro.add(lblTitulo, gbc);
 
-		// Campos
 		txtId = new JTextField(20);
 		txtNombre = new JTextField(20);
 		txtDescripcion = new JTextField(20);
@@ -68,7 +62,6 @@ public class EliminarProducto_Frame extends JFrame {
 		fila = agregarCampo(recuadro, "Nombre:", txtNombre, fila, gbc);
 		fila = agregarCampo(recuadro, "Descripción:", txtDescripcion, fila, gbc);
 
-		// Precio
 		gbc.gridy = fila++;
 		gbc.gridx = 0;
 		gbc.gridwidth = 1;
@@ -76,7 +69,6 @@ public class EliminarProducto_Frame extends JFrame {
 		gbc.gridx = 1;
 		recuadro.add(txtPrecio, gbc);
 
-		// IVA
 		gbc.gridy = fila++;
 		gbc.gridx = 0;
 		recuadro.add(new JLabel("IVA:"), gbc);
@@ -89,7 +81,6 @@ public class EliminarProducto_Frame extends JFrame {
 		gbc.gridx = 1;
 		recuadro.add(ivaPanel, gbc);
 
-		// Botones: Eliminar y Regresar
 		gbc.gridy = fila++;
 		gbc.gridx = 0;
 		gbc.gridwidth = 2;
@@ -98,12 +89,12 @@ public class EliminarProducto_Frame extends JFrame {
 		JPanel botonesPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
 		botonesPanel.setBackground(Color.WHITE);
 
-		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setBackground(new Color(244, 67, 54));
 		btnEliminar.setForeground(Color.WHITE);
 		btnEliminar.setFocusPainted(false);
 
-		JButton btnRegresar = new JButton("Regresar");
+		btnRegresar = new JButton("Regresar");
 		btnRegresar.setBackground(new Color(240, 230, 140));
 		btnRegresar.setFocusPainted(false);
 
@@ -111,9 +102,8 @@ public class EliminarProducto_Frame extends JFrame {
 		botonesPanel.add(btnEliminar);
 		recuadro.add(botonesPanel, gbc);
 
-		fondo.add(recuadro); // Añadir recuadro al centro
+		fondo.add(recuadro);
 
-		// Eventos
 		btnEliminar.addActionListener(e -> eliminarProducto());
 		btnRegresar.addActionListener(e -> JOptionPane.showMessageDialog(this, "Regresando..."));
 	}
@@ -205,5 +195,11 @@ public class EliminarProducto_Frame extends JFrame {
 		});
 	}
 
-	
+	public JButton getBtnEliminar() {
+		return btnEliminar;
+	}
+
+	public JButton getBtnRegresar() {
+		return btnRegresar;
+	}
 }

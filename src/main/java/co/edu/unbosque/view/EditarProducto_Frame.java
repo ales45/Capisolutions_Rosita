@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 public class EditarProducto_Frame extends JFrame {
 	private JTextField txtId, txtNombre, txtDescripcion, txtPrecio, txtIVA;
 	private JComboBox<String> comboCategoria;
+	private JButton btnGuardar, btnRegresar;
 
 	public EditarProducto_Frame() {
 		setTitle("Editar Producto");
@@ -48,14 +49,13 @@ public class EditarProducto_Frame extends JFrame {
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		txtId = new JTextField(20); // Ahora editable
+		txtId = new JTextField(20);
 		txtNombre = new JTextField(20);
 		comboCategoria = new JComboBox<>(new String[] { "Seleccione", "Bebidas", "Comida", "Aseo", "Otro" });
 		txtDescripcion = new JTextField(20);
 		txtPrecio = new JTextField(20);
 		txtIVA = new JTextField(20);
 
-		// Solo permitir números y punto en Precio e IVA
 		agregarFiltroNumerico(txtPrecio);
 		agregarFiltroNumerico(txtIVA);
 
@@ -73,11 +73,11 @@ public class EditarProducto_Frame extends JFrame {
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.setBackground(Color.WHITE);
 
-		JButton btnGuardar = new JButton("Guardar");
+		btnGuardar = new JButton("Guardar");
 		btnGuardar.setBackground(new Color(33, 150, 243));
 		btnGuardar.setForeground(Color.WHITE);
 
-		JButton btnRegresar = new JButton("Regresar");
+		btnRegresar = new JButton("Regresar");
 		btnRegresar.setBackground(new Color(240, 230, 140));
 		btnRegresar.setForeground(Color.DARK_GRAY);
 		btnRegresar.setFocusPainted(false);
@@ -146,14 +146,18 @@ public class EditarProducto_Frame extends JFrame {
 				if (!Character.isDigit(c) && c != '.') {
 					e.consume();
 				}
-
-				// Solo permitir un punto decimal
 				if (c == '.' && text.contains(".")) {
 					e.consume();
 				}
 			}
 		});
+	}
 
+	public JButton getBtnGuardar() {
+		return btnGuardar;
+	}
 
-}
+	public JButton getBtnRegresar() {
+		return btnRegresar;
+	}
 }

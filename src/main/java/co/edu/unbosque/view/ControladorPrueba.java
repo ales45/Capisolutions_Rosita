@@ -18,7 +18,18 @@ public class ControladorPrueba implements ActionListener {
 	private NuevoCliente_Frame nuevoCliente;
 	private EliminarCliente_Frame eliminarCliente;
 	private VerCliente_Frame verCliente;
-	private MProveedores_View mproveedoresView;
+	private MProveedores_Frame mproveedoresView;
+	private RegistroProve_Frame registroProve;
+	private EditarProve_Frame editarProve;
+	private RegistroPedido_Frame registroPedidoView;
+	private Devoluciones_Frame devolucionesProve;
+	private VerProve_Frame verProve;
+	private VerPedidos_Frame verPedidos;
+	private NuevoProducto_Frame nuevoProducto;
+	private EditarProducto_Frame editarProducto;
+	private EliminarProducto_Frame eliminarProducto;
+	private VerProducto_Frame verProducto;
+	private MProductos_Frame mproductos;
 
 	public ControladorPrueba(User_View userView, MVentas_View mventasView, MClientes_View mclientesView,
 			MReportes_Frame mreportesFrame, NuevaVenta_View nuevaVentaView, EliminarVenta_Frame eliminarFrame,
@@ -32,13 +43,24 @@ public class ControladorPrueba implements ActionListener {
 		this.historialV = historialV;
 		this.devolucion = devolucion;
 
-		// Instanciar las vistas de clientes
 		this.editarCliente = new EditarCliente_Frame();
 		this.nuevoCliente = new NuevoCliente_Frame();
 		this.eliminarCliente = new EliminarCliente_Frame();
 		this.verCliente = new VerCliente_Frame();
 		this.adminView = new Admin_View();
-		this.mproveedoresView = new MProveedores_View();
+		this.mproveedoresView = new MProveedores_Frame();
+		this.registroProve = new RegistroProve_Frame();
+		this.editarProve = new EditarProve_Frame();
+		this.registroPedidoView = new RegistroPedido_Frame();
+		this.devolucionesProve = new Devoluciones_Frame();
+		this.verProve = new VerProve_Frame();
+		this.verPedidos = new VerPedidos_Frame();
+		this.nuevoProducto = new NuevoProducto_Frame();
+		this.editarProducto = new EditarProducto_Frame();
+		this.eliminarProducto = new EliminarProducto_Frame();
+		this.verProducto = new VerProducto_Frame();
+		this.mproductos = new MProductos_Frame();
+
 		addListeners();
 	}
 
@@ -128,6 +150,43 @@ public class ControladorPrueba implements ActionListener {
 		mclientesView.getBtnEliminarCliente_View().addActionListener(this);
 		mclientesView.getBtnEliminarCliente_View().setActionCommand("abrirEliminarCliente");
 
+		// botones d eproveedores
+		mproveedoresView.getBtnNuevaProve().addActionListener(this);
+		mproveedoresView.getBtnNuevaProve().setActionCommand("abrirRegistroProve");
+
+		mproveedoresView.getBtnEditarProve().addActionListener(this);
+		mproveedoresView.getBtnEditarProve().setActionCommand("abrirEditarProve");
+
+		mproveedoresView.getBtnVerProve().addActionListener(this);
+		mproveedoresView.getBtnVerProve().setActionCommand("abrirVerProve");
+
+		mproveedoresView.getBtnDevolucionProve().addActionListener(this);
+		mproveedoresView.getBtnDevolucionProve().setActionCommand("abrirDevolucionProve");
+
+		mproveedoresView.getBtnVerPedidos_View().addActionListener(this);
+		mproveedoresView.getBtnVerPedidos_View().setActionCommand("abrirVerPedidos");
+
+		registroProve.getBtnRegresar().addActionListener(this);
+		registroProve.getBtnRegresar().setActionCommand("regresarRegistroProve");
+
+		editarProve.getBtnRegresar().addActionListener(this);
+		editarProve.getBtnRegresar().setActionCommand("regresarEditarProve");
+
+		verProve.getBtnRegresar().addActionListener(this);
+		verProve.getBtnRegresar().setActionCommand("regresarVerProve");
+
+		devolucionesProve.getBtnRegresar().addActionListener(this);
+		devolucionesProve.getBtnRegresar().setActionCommand("regresarDevolucionProve");
+
+		verPedidos.getBtnRegresar().addActionListener(this);
+		verPedidos.getBtnRegresar().setActionCommand("regresarVerPedidos");
+
+		mproveedoresView.getBtnRegistrarPedido().addActionListener(this);
+		mproveedoresView.getBtnRegistrarPedido().setActionCommand("abrirRegistroPedido");
+
+		registroPedidoView.getBtnRegresar().addActionListener(this);
+		registroPedidoView.getBtnRegresar().setActionCommand("regresarRegistroPedido");
+
 		// Botones regresar de sub-vistas de clientes
 		nuevoCliente.getBtnRegresar().addActionListener(this);
 		nuevoCliente.getBtnRegresar().setActionCommand("regresarNuevoCliente");
@@ -140,6 +199,34 @@ public class ControladorPrueba implements ActionListener {
 
 		verCliente.getBtnRegresar().addActionListener(this);
 		verCliente.getBtnRegresar().setActionCommand("regresarVerCliente");
+
+		mproductos.getBtnNuevoProducto().addActionListener(this);
+		mproductos.getBtnNuevoProducto().setActionCommand("abrirNuevoProducto");
+
+		mproductos.getBtnEditarProducto().addActionListener(this);
+		mproductos.getBtnEditarProducto().setActionCommand("abrirEditarProducto");
+
+		mproductos.getBtnEliminarProducto().addActionListener(this);
+		mproductos.getBtnEliminarProducto().setActionCommand("abrirEliminarProducto");
+
+		mproductos.getBtnVerProductos().addActionListener(this);
+		mproductos.getBtnVerProductos().setActionCommand("abrirVerProducto");
+
+		mproductos.getBtnRegresar().addActionListener(this);
+		mproductos.getBtnRegresar().setActionCommand("regresarDeProductos");
+
+		nuevoProducto.getBtnRegresar().addActionListener(this);
+		nuevoProducto.getBtnRegresar().setActionCommand("NuevoProducto");
+
+		editarProducto.getBtnRegresar().addActionListener(this);
+		editarProducto.getBtnRegresar().setActionCommand("regresarEditarProducto");
+
+		eliminarProducto.getBtnRegresar().addActionListener(this);
+		eliminarProducto.getBtnRegresar().setActionCommand("regresarEliminarProducto");
+
+		verProducto.getBtnRegresar().addActionListener(this);
+		verProducto.getBtnRegresar().setActionCommand("regresarVerProducto");
+
 	}
 
 	@Override
@@ -283,11 +370,6 @@ public class ControladorPrueba implements ActionListener {
 			mreportesFrame.setVisible(false);
 			adminView.setVisible(true);
 			break;
-//		case "adminProductos":
-//			adminView.setVisible(false);
-//			JOptionPane.showMessageDialog(null, "Módulo de productos aún no implementado");
-//			break;
-
 		case "adminProveedores":
 			adminView.setVisible(false);
 			mproveedoresView.setVisible(true);
@@ -298,6 +380,115 @@ public class ControladorPrueba implements ActionListener {
 			adminView.setVisible(true);
 			break;
 
+		case "abrirRegistroProve":
+			mproveedoresView.setVisible(false);
+			registroProve.setVisible(true);
+			break;
+
+		case "regresarRegistroProve":
+			registroProve.setVisible(false);
+			mproveedoresView.setVisible(true);
+			break;
+
+		case "abrirEditarProve":
+			mproveedoresView.setVisible(false);
+			editarProve.setVisible(true);
+			break;
+
+		case "regresarEditarProve":
+			editarProve.setVisible(false);
+			mproveedoresView.setVisible(true);
+			break;
+
+		case "abrirVerProve":
+			mproveedoresView.setVisible(false);
+			verProve.setVisible(true);
+			break;
+
+		case "regresarVerProve":
+			verProve.setVisible(false);
+			mproveedoresView.setVisible(true);
+			break;
+
+		case "abrirDevolucionProve":
+			mproveedoresView.setVisible(false);
+			devolucionesProve.setVisible(true);
+			break;
+
+		case "regresarDevolucionProve":
+			devolucionesProve.setVisible(false);
+			mproveedoresView.setVisible(true);
+			break;
+
+		case "abrirVerPedidos":
+			mproveedoresView.setVisible(false);
+			verPedidos.setVisible(true);
+			break;
+
+		case "regresarVerPedidos":
+			verPedidos.setVisible(false);
+			mproveedoresView.setVisible(true);
+			break;
+
+		case "abrirRegistroPedido":
+			mproveedoresView.setVisible(false);
+			registroPedidoView.setVisible(true);
+			break;
+
+		case "regresarRegistroPedido":
+			registroPedidoView.setVisible(false);
+			mproveedoresView.setVisible(true);
+			break;
+
+		case "adminProductos":
+			adminView.setVisible(false);
+			mproductos.setVisible(true);
+			break;
+
+		case "regresarDeProductos":
+			mproductos.setVisible(false);
+			adminView.setVisible(true);
+			break;
+
+		case "abrirNuevoProducto":
+			mproductos.setVisible(false);
+			nuevoProducto.setVisible(true);
+			break;
+
+		case "NuevoProducto":
+			nuevoProducto.setVisible(false);
+			mproductos.setVisible(true);
+			break;
+
+		case "abrirEditarProducto":
+			mproductos.setVisible(false);
+			editarProducto.setVisible(true);
+			break;
+
+		case "regresarEditarProducto":
+			editarProducto.setVisible(false);
+			mproductos.setVisible(true);
+			break;
+
+		case "abrirEliminarProducto":
+			mproductos.setVisible(false);
+			eliminarProducto.setVisible(true);
+			break;
+
+		case "regresarEliminarProducto":
+			eliminarProducto.setVisible(false);
+			mproductos.setVisible(true);
+			break;
+
+		case "abrirVerProducto":
+			mproductos.setVisible(false);
+			verProducto.setVisible(true);
+			break;
+
+		case "regresarVerProducto":
+			verProducto.setVisible(false);
+			mproductos.setVisible(true);
+			break;
 		default:
 			throw new IllegalArgumentException("Comando no reconocido: " + e.getActionCommand());
 		}

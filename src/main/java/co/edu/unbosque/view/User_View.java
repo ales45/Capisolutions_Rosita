@@ -1,4 +1,4 @@
-package co.edu.unbosque.view;
+package prueba_usuarios;
 
 import javax.swing.*;
 import java.awt.*;

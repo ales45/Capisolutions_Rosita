@@ -16,6 +16,7 @@ public class mainprueba {
 			ControladorPrueba controlador = new ControladorPrueba(userView, mventasView, mclientesView, mreportesFrame,
 					nuevaVentaView, eliminar, historialv, dev);
 			controlador.iniciar();
+
 		});
 	}
 }

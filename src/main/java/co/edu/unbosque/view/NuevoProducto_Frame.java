@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 public class NuevoProducto_Frame extends JFrame {
 	private JTextField txtNombre, txtDescripcion, txtPrecio, txtIVA;
 	private JComboBox<String> comboCategoria;
+	private JButton btnGuardar, btnRegresar;
 
 	public NuevoProducto_Frame() {
 		setTitle("Registrar Producto");
@@ -86,11 +87,11 @@ public class NuevoProducto_Frame extends JFrame {
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.setBackground(Color.WHITE);
 
-		JButton btnGuardar = new JButton("Guardar");
+		btnGuardar = new JButton("Guardar");
 		btnGuardar.setBackground(new Color(33, 150, 243));
 		btnGuardar.setForeground(Color.WHITE);
 
-		JButton btnRegresar = new JButton("Regresar");
+		btnRegresar = new JButton("Regresar");
 		btnRegresar.setBackground(new Color(240, 230, 140));
 		btnRegresar.setForeground(Color.DARK_GRAY);
 		btnRegresar.setFocusPainted(false);
@@ -148,5 +149,11 @@ public class NuevoProducto_Frame extends JFrame {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	
+	public JButton getBtnGuardar() {
+		return btnGuardar;
+	}
+
+	public JButton getBtnRegresar() {
+		return btnRegresar;
+	}
 }

@@ -138,7 +138,6 @@ public class RegistroPedido_Frame extends JFrame {
 		// Añadir formulario al centro
 		panelCentro.add(panelFormulario);
 
-		setVisible(true);
 	}
 
 	// Getters y métodos auxiliares
