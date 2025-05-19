@@ -10,4 +10,14 @@
         <maven.compiler.release>24</maven.compiler.release>
         <exec.mainClass>com.mycompany.capi_solutions_papeleria_rocita.Capi_solutions_papeleria_rocita.src.main.java.co.edu.unbosque.controller</exec.mainClass>
     </properties>
+    <dependencies>
+     <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>2.2.224</version>  </dependency>
+    <dependency>
+	    <groupId>com.toedter</groupId>
+	    <artifactId>jcalendar</artifactId>
+	    <version>1.4</version></dependency>
+    </dependencies>
 </project>
