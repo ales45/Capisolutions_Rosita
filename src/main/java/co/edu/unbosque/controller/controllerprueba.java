@@ -1,272 +1,546 @@
 package co.edu.unbosque.controller;
 
-import co.edu.unbosque.model.Facada_Model;
-import co.edu.unbosque.view.*; // Importa todas tus clases de vista del paquete view
-
-import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import co.edu.unbosque.view.Admin_View;
+import co.edu.unbosque.view.Devoluciones_Frame;
+import co.edu.unbosque.view.EditarCliente_Frame;
+import co.edu.unbosque.view.EditarProducto_Frame;
+import co.edu.unbosque.view.EditarProve_Frame;
+import co.edu.unbosque.view.EliminarCliente_Frame;
+import co.edu.unbosque.view.EliminarProducto_Frame;
+import co.edu.unbosque.view.EliminarVenta_Frame;
+import co.edu.unbosque.view.Facada_Vista_login;
+import co.edu.unbosque.view.HistorialVentasUI;
+import co.edu.unbosque.view.MClientes_View;
+import co.edu.unbosque.view.MProductos_Frame;
+import co.edu.unbosque.view.MProveedores_Frame;
+import co.edu.unbosque.view.MReportes_Frame;
+import co.edu.unbosque.view.MVentas_View;
+import co.edu.unbosque.view.NuevaVenta_View;
+import co.edu.unbosque.view.NuevoCliente_Frame;
+import co.edu.unbosque.view.NuevoProducto_Frame;
+import co.edu.unbosque.view.RegistroPedido_Frame;
+import co.edu.unbosque.view.RegistroProve_Frame;
+import co.edu.unbosque.view.User_View;
+import co.edu.unbosque.view.VerCliente_Frame;
+import co.edu.unbosque.view.VerPedidos_Frame;
+import co.edu.unbosque.view.VerProducto_Frame;
+import co.edu.unbosque.view.VerProve_Frame;
+
 public class controllerprueba implements ActionListener {
-    private Facada_Model modelo;
-    private Facada_Vista_View vistaFacade;
 
-    private String tipoUsuarioLogueado = ""; // Para simular roles: "admin", "user"
+	private Facada_Vista_login loginView;
+	private Admin_View adminView;
+	private User_View userView;
+	private MVentas_View mventasView;
+	private MClientes_View mclientesView;
+	private MProductos_Frame mproductosFrame;
+	private MProveedores_Frame mproveedoresFrame;
+	private MReportes_Frame mreportesFrame;
+	private NuevaVenta_View nuevaVentaView;
+	private EliminarVenta_Frame eliminarVentaFrame;
+	private HistorialVentasUI historialVentasUI;
+	private Devoluciones_Frame devolucionVentasFrame;
+	private NuevoCliente_Frame nuevoClienteFrame;
+	private EditarCliente_Frame editarClienteFrame;
+	private EliminarCliente_Frame eliminarClienteFrame;
+	private VerCliente_Frame verClienteFrame;
+	private NuevoProducto_Frame nuevoProductoFrame;
+	private EditarProducto_Frame editarProductoFrame;
+	private EliminarProducto_Frame eliminarProductoFrame;
+	private VerProducto_Frame verProductoFrame;
+	private RegistroProve_Frame registroProveFrame;
+	private EditarProve_Frame editarProveFrame;
+	private VerProve_Frame verProveFrame;
+	private RegistroPedido_Frame registroPedidoFrame;
+	private VerPedidos_Frame verPedidosFrame;
+	private Devoluciones_Frame devolucionProveedoresFrame;
 
-    public controllerprueba() {
-        this.modelo = new Facada_Model(); // Se instancia, pero no se usará para lógica de BD en este paso
-        this.vistaFacade = new Facada_Vista_View();
+	private String tipoUsuarioLogueado = "";
 
-        SwingUtilities.invokeLater(() -> {
-            vistaFacade.mostrarLoginView(); // Empezamos con la vista de login
-            asignarTodosLosActionListeners();
-        });
-    }
+	public controllerprueba(Facada_Vista_login loginView, Admin_View adminView, User_View userView,
+			MVentas_View mventasView, MClientes_View mclientesView, MProductos_Frame mproductosFrame,
+			MProveedores_Frame mproveedoresFrame, MReportes_Frame mreportesFrame, NuevaVenta_View nuevaVentaView,
+			EliminarVenta_Frame eliminarVentaFrame, HistorialVentasUI historialVentasUI,
+			Devoluciones_Frame devolucionVentasFrame, NuevoCliente_Frame nuevoClienteFrame,
+			EditarCliente_Frame editarClienteFrame, EliminarCliente_Frame eliminarClienteFrame,
+			VerCliente_Frame verClienteFrame, NuevoProducto_Frame nuevoProductoFrame,
+			EditarProducto_Frame editarProductoFrame, EliminarProducto_Frame eliminarProductoFrame,
+			VerProducto_Frame verProductoFrame, RegistroProve_Frame registroProveFrame,
+			EditarProve_Frame editarProveFrame, VerProve_Frame verProveFrame, RegistroPedido_Frame registroPedidoFrame,
+			VerPedidos_Frame verPedidosFrame, Devoluciones_Frame devolucionProveedoresFrame) {
+		this.loginView = loginView;
+		this.adminView = adminView;
+		this.userView = userView;
+		this.mventasView = mventasView;
+		this.mclientesView = mclientesView;
+		this.mproductosFrame = mproductosFrame;
+		this.mproveedoresFrame = mproveedoresFrame;
+		this.mreportesFrame = mreportesFrame;
+		this.nuevaVentaView = nuevaVentaView;
+		this.eliminarVentaFrame = eliminarVentaFrame;
+		this.historialVentasUI = historialVentasUI;
+		this.devolucionVentasFrame = devolucionVentasFrame;
+		this.nuevoClienteFrame = nuevoClienteFrame;
+		this.editarClienteFrame = editarClienteFrame;
+		this.eliminarClienteFrame = eliminarClienteFrame;
+		this.verClienteFrame = verClienteFrame;
+		this.nuevoProductoFrame = nuevoProductoFrame;
+		this.editarProductoFrame = editarProductoFrame;
+		this.eliminarProductoFrame = eliminarProductoFrame;
+		this.verProductoFrame = verProductoFrame;
+		this.registroProveFrame = registroProveFrame;
+		this.editarProveFrame = editarProveFrame;
+		this.verProveFrame = verProveFrame;
+		this.registroPedidoFrame = registroPedidoFrame;
+		this.verPedidosFrame = verPedidosFrame;
+		this.devolucionProveedoresFrame = devolucionProveedoresFrame;
 
-    private void asignarTodosLosActionListeners() {
-        // LOGIN
-        Facada_Vista_login loginView = vistaFacade.getLoginView();
-        if (loginView != null && loginView.getBtnInicio() != null) {
-            loginView.getBtnInicio().setActionCommand("LOGIN_INICIAR_SESION"); // Coincide con tu lógica anterior
-            loginView.getBtnInicio().addActionListener(this);
-        }
+		addListeners();
+	}
 
-        // ADMIN VIEW
-        Admin_View adminView = vistaFacade.getAdminView();
-        if (adminView != null) {
-            adminView.getBtnventas().setActionCommand("adminVentas"); adminView.getBtnventas().addActionListener(this);
-            adminView.getBtnclientes().setActionCommand("adminClientes"); adminView.getBtnclientes().addActionListener(this);
-            adminView.getBtnproducto().setActionCommand("adminProductos"); adminView.getBtnproducto().addActionListener(this);
-            adminView.getBtnproveedor().setActionCommand("adminProveedores"); adminView.getBtnproveedor().addActionListener(this);
-            adminView.getBtnReportes().setActionCommand("adminReportes"); adminView.getBtnReportes().addActionListener(this);
-            adminView.getBtnCerrarSesion().setActionCommand("cerrarSesion"); adminView.getBtnCerrarSesion().addActionListener(this);
-        }
+	public void iniciar() {
+		loginView.setVisible(true);
+	}
 
-        // USER VIEW (Asegúrate que User_View tenga los getters y esté en co.edu.unbosque.view)
-        User_View userView = vistaFacade.getUserView();
-        if (userView != null) {
-            userView.getBtnventas().setActionCommand("abrirVentas"); userView.getBtnventas().addActionListener(this);
-            userView.getBtnclientes().setActionCommand("abrirClientes"); userView.getBtnclientes().addActionListener(this);
-            userView.getBtnReportes().setActionCommand("abrirReportes"); userView.getBtnReportes().addActionListener(this);
-            userView.getBtnCerrarSesion().setActionCommand("cerrarSesion"); userView.getBtnCerrarSesion().addActionListener(this);
-        }
-        
-        // MÓDULOS PRINCIPALES Y SUS BOTONES "REGRESAR" Y BOTONES INTERNOS
-        setupListenersModuloVentas(vistaFacade.getMVentasView());
-        setupListenersModuloClientes(vistaFacade.getMClientesView());
-        setupListenersModuloProductos(vistaFacade.getMProductosFrame());
-        setupListenersModuloProveedores(vistaFacade.getMProveedoresFrame()); // o MProveedores_View
-        setupListenersModuloReportes(vistaFacade.getMReportesFrame());
-        
-        // SUB-VISTAS (principalmente botones "Regresar" y cualquier otro que no sea de guardado de datos)
-        setupListenersSubVistasClientes();
-        setupListenersSubVistasProductos();
-        setupListenersSubVistasVentas();
-        setupListenersSubVistasProveedores();
-    }
-    
-    private void setupListenersModuloVentas(MVentas_View view) {
-        if (view != null) {
-            view.getBtnRegresar().setActionCommand("regresarVentas"); view.getBtnRegresar().addActionListener(this);
-            view.getBtnNuevaVenta().setActionCommand("abrirNuevaVenta"); view.getBtnNuevaVenta().addActionListener(this);
-            view.getBtnHistorial().setActionCommand("abrirHistorialVenta"); view.getBtnHistorial().addActionListener(this);
-            view.getBtnCorregir().setActionCommand("devolucion"); view.getBtnCorregir().addActionListener(this); // Devoluciones de Venta
-            view.getBtnEliminar().setActionCommand("abrirEliminarVenta"); view.getBtnEliminar().addActionListener(this);
-        }
-    }
+	private void addListeners() {
+		// LOGIN
+		if (loginView != null && loginView.getBtnInicio() != null) {
+			loginView.getBtnInicio().setActionCommand("LOGIN_INICIAR_SESION");
+			loginView.getBtnInicio().addActionListener(this);
+		}
 
-    private void setupListenersModuloClientes(MClientes_View view) {
-        if (view != null) {
-            view.getBtnRegresar().setActionCommand("regresarClientes"); view.getBtnRegresar().addActionListener(this);
-            view.getBtnNuevoCliente_View().setActionCommand("abrirNuevoCliente"); view.getBtnNuevoCliente_View().addActionListener(this);
-            view.getBtnEditarCliente_View().setActionCommand("abrirEditarCliente"); view.getBtnEditarCliente_View().addActionListener(this);
-            view.getBtnVerCliente_View().setActionCommand("abrirVerClientes"); view.getBtnVerCliente_View().addActionListener(this);
-            view.getBtnEliminarCliente_View().setActionCommand("abrirEliminarCliente"); view.getBtnEliminarCliente_View().addActionListener(this);
-        }
-    }
-    
-    private void setupListenersModuloProductos(MProductos_Frame view) {
-        if (view != null) {
-            view.getBtnRegresar().setActionCommand("regresarDeProductos"); view.getBtnRegresar().addActionListener(this);
-            view.getBtnNuevoProducto().setActionCommand("abrirNuevoProducto"); view.getBtnNuevoProducto().addActionListener(this);
-            view.getBtnEditarProducto().setActionCommand("abrirEditarProducto"); view.getBtnEditarProducto().addActionListener(this);
-            view.getBtnVerProductos().setActionCommand("abrirVerProducto"); view.getBtnVerProductos().addActionListener(this);
-            view.getBtnEliminarProducto().setActionCommand("abrirEliminarProducto"); view.getBtnEliminarProducto().addActionListener(this);
-        }
-    }
+		// ADMIN VIEW
+		if (adminView != null) {
+			adminView.getBtnventas().setActionCommand("adminVentas");
+			adminView.getBtnventas().addActionListener(this);
+			adminView.getBtnclientes().setActionCommand("adminClientes");
+			adminView.getBtnclientes().addActionListener(this);
+			adminView.getBtnproducto().setActionCommand("adminProductos");
+			adminView.getBtnproducto().addActionListener(this);
+			adminView.getBtnproveedor().setActionCommand("adminProveedores");
+			adminView.getBtnproveedor().addActionListener(this);
+			adminView.getBtnReportes().setActionCommand("adminReportes");
+			adminView.getBtnReportes().addActionListener(this);
+			adminView.getBtnCerrarSesion().setActionCommand("cerrarSesion");
+			adminView.getBtnCerrarSesion().addActionListener(this);
+		}
 
-    private void setupListenersModuloProveedores(MProveedores_Frame view) { // o MProveedores_View
-        if (view != null) {
-            view.getBtnRegresar().setActionCommand("regresarDeProveedores"); view.getBtnRegresar().addActionListener(this);
-            view.getBtnNuevaProve().setActionCommand("abrirRegistroProve"); view.getBtnNuevaProve().addActionListener(this);
-            view.getBtnEditarProve().setActionCommand("abrirEditarProve"); view.getBtnEditarProve().addActionListener(this);
-            view.getBtnVerProve().setActionCommand("abrirVerProve"); view.getBtnVerProve().addActionListener(this);
-            view.getBtnRegistrarPedido().setActionCommand("abrirRegistroPedido"); view.getBtnRegistrarPedido().addActionListener(this);
-            view.getBtnDevolucionProve().setActionCommand("abrirDevolucionProve"); view.getBtnDevolucionProve().addActionListener(this); // Devolución a Proveedor
-            view.getBtnVerPedidos_View().setActionCommand("abrirVerPedidos"); view.getBtnVerPedidos_View().addActionListener(this);
-        }
-    }
-    
-    private void setupListenersModuloReportes(MReportes_Frame view) {
-        if (view != null) {
-            view.getBtnRegresar().setActionCommand("regresarReportes"); view.getBtnRegresar().addActionListener(this);
-            // Los botones de "Generar PDF" se conectarán cuando implementemos esa lógica
-        }
-    }
+		// USER VIEW
+		if (userView != null) {
+			userView.getBtnventas().setActionCommand("abrirVentas");
+			userView.getBtnventas().addActionListener(this);
+			userView.getBtnclientes().setActionCommand("abrirClientes");
+			userView.getBtnclientes().addActionListener(this);
+			userView.getBtnReportes().setActionCommand("abrirReportes");
+			userView.getBtnReportes().addActionListener(this);
+			userView.getBtnCerrarSesion().setActionCommand("cerrarSesion");
+			userView.getBtnCerrarSesion().addActionListener(this);
+		}
 
-    private void setupListenersSubVistasClientes() {
-        NuevoCliente_Frame ncf = vistaFacade.getNuevoClienteFrame();
-        if (ncf != null) { ncf.getBtnRegresar().setActionCommand("regresarNuevoCliente"); ncf.getBtnRegresar().addActionListener(this); }
-        EditarCliente_Frame ecf = vistaFacade.getEditarClienteFrame();
-        if (ecf != null) { ecf.getBtnRegresar().setActionCommand("regresarEditarCliente"); ecf.getBtnRegresar().addActionListener(this); }
-        EliminarCliente_Frame elcf = vistaFacade.getEliminarClienteFrame();
-        if (elcf != null) { elcf.getBtnRegresar().setActionCommand("regresarEliminarCliente"); elcf.getBtnRegresar().addActionListener(this); }
-        VerCliente_Frame vcf = vistaFacade.getVerClienteFrame();
-        if (vcf != null) { vcf.getBtnRegresar().setActionCommand("regresarVerCliente"); vcf.getBtnRegresar().addActionListener(this); }
-    }
-    
-    private void setupListenersSubVistasProductos() {
-        NuevoProducto_Frame npf = vistaFacade.getNuevoProductoFrame();
-        if(npf != null) { npf.getBtnRegresar().setActionCommand("NuevoProducto"); npf.getBtnRegresar().addActionListener(this); } // Tu ActionCommand es "NuevoProducto"
-        EditarProducto_Frame epf = vistaFacade.getEditarProductoFrame();
-        if(epf != null) { epf.getBtnRegresar().setActionCommand("regresarEditarProducto"); epf.getBtnRegresar().addActionListener(this); }
-        EliminarProducto_Frame elpf = vistaFacade.getEliminarProductoFrame();
-        if(elpf != null) { elpf.getBtnRegresar().setActionCommand("regresarEliminarProducto"); elpf.getBtnRegresar().addActionListener(this); }
-        VerProducto_Frame vpf = vistaFacade.getVerProductoFrame();
-        if(vpf != null) { vpf.getBtnRegresar().setActionCommand("regresarVerProducto"); vpf.getBtnRegresar().addActionListener(this); }
-    }
+		// MÓDULO VENTAS
+		if (mventasView != null) {
+			mventasView.getBtnRegresar().setActionCommand("regresarVentas");
+			mventasView.getBtnRegresar().addActionListener(this);
+			mventasView.getBtnNuevaVenta().setActionCommand("abrirNuevaVenta");
+			mventasView.getBtnNuevaVenta().addActionListener(this);
+			mventasView.getBtnHistorial().setActionCommand("abrirHistorialVenta");
+			mventasView.getBtnHistorial().addActionListener(this);
+			mventasView.getBtnCorregir().setActionCommand("devolucion");
+			mventasView.getBtnCorregir().addActionListener(this);
+			mventasView.getBtnEliminar().setActionCommand("abrirEliminarVenta");
+			mventasView.getBtnEliminar().addActionListener(this);
+		}
 
-    private void setupListenersSubVistasVentas() {
-        NuevaVenta_View nvv = vistaFacade.getNuevaVentaView();
-        if(nvv != null) { nvv.getBtnRegresar().setActionCommand("regresarNuevaVenta"); nvv.getBtnRegresar().addActionListener(this); }
-        EliminarVenta_Frame evf = vistaFacade.getEliminarVentaFrame();
-        if(evf != null) { evf.getBtnRegresar().setActionCommand("regresarEliminarV"); evf.getBtnRegresar().addActionListener(this); }
-        HistorialVentasUI hvui = vistaFacade.getHistorialVentasUI();
-        if(hvui != null) { hvui.getBtnRegresar().setActionCommand("regresarHistorial"); hvui.getBtnRegresar().addActionListener(this); }
-        Devoluciones_Frame dfVentas = vistaFacade.getDevolucionVentasFrame();
-        if(dfVentas != null) { dfVentas.getBtnRegresar().setActionCommand("regresarDevolucion"); dfVentas.getBtnRegresar().addActionListener(this); }
-    }
+		// MÓDULO CLIENTES
+		if (mclientesView != null) {
+			mclientesView.getBtnRegresar().setActionCommand("regresarClientes");
+			mclientesView.getBtnRegresar().addActionListener(this);
+			mclientesView.getBtnNuevoCliente_View().setActionCommand("abrirNuevoCliente");
+			mclientesView.getBtnNuevoCliente_View().addActionListener(this);
+			mclientesView.getBtnEditarCliente_View().setActionCommand("abrirEditarCliente");
+			mclientesView.getBtnEditarCliente_View().addActionListener(this);
+			mclientesView.getBtnVerCliente_View().setActionCommand("abrirVerClientes");
+			mclientesView.getBtnVerCliente_View().addActionListener(this);
+			mclientesView.getBtnEliminarCliente_View().setActionCommand("abrirEliminarCliente");
+			mclientesView.getBtnEliminarCliente_View().addActionListener(this);
+		}
 
-    private void setupListenersSubVistasProveedores() {
-        RegistroProve_Frame rpf = vistaFacade.getRegistroProveFrame();
-        if (rpf != null) { rpf.getBtnRegresar().setActionCommand("regresarRegistroProve"); rpf.getBtnRegresar().addActionListener(this); }
-        EditarProve_Frame epf = vistaFacade.getEditarProveFrame();
-        if (epf != null) { epf.getBtnRegresar().setActionCommand("regresarEditarProve"); epf.getBtnRegresar().addActionListener(this); }
-        VerProve_Frame vpf = vistaFacade.getVerProveFrame();
-        if (vpf != null) { vpf.getBtnRegresar().setActionCommand("regresarVerProve"); vpf.getBtnRegresar().addActionListener(this); }
-        RegistroPedido_Frame rpedf = vistaFacade.getRegistroPedidoFrame();
-        if (rpedf != null) { rpedf.getBtnRegresar().setActionCommand("regresarRegistroPedido"); rpedf.getBtnRegresar().addActionListener(this); }
-        VerPedidos_Frame vpedf = vistaFacade.getVerPedidosFrame();
-        if (vpedf != null) { vpedf.getBtnRegresar().setActionCommand("regresarVerPedidos"); vpedf.getBtnRegresar().addActionListener(this); }
-        Devoluciones_Frame dfProve = vistaFacade.getDevolucionProveedoresFrame();
-        if (dfProve != null) { dfProve.getBtnRegresar().setActionCommand("regresarDevolucionProve"); dfProve.getBtnRegresar().addActionListener(this); }
-    }
+		// MÓDULO PRODUCTOS
+		if (mproductosFrame != null) {
+			mproductosFrame.getBtnRegresar().setActionCommand("regresarDeProductos");
+			mproductosFrame.getBtnRegresar().addActionListener(this);
+			mproductosFrame.getBtnNuevoProducto().setActionCommand("abrirNuevoProducto");
+			mproductosFrame.getBtnNuevoProducto().addActionListener(this);
+			mproductosFrame.getBtnEditarProducto().setActionCommand("abrirEditarProducto");
+			mproductosFrame.getBtnEditarProducto().addActionListener(this);
+			mproductosFrame.getBtnVerProductos().setActionCommand("abrirVerProducto");
+			mproductosFrame.getBtnVerProductos().addActionListener(this);
+			mproductosFrame.getBtnEliminarProducto().setActionCommand("abrirEliminarProducto");
+			mproductosFrame.getBtnEliminarProducto().addActionListener(this);
+		}
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String command = e.getActionCommand();
-        // System.out.println("Controller: Comando Recibido -> " + command); // Descomenta para depurar
+		// MÓDULO PROVEEDORES
+		if (mproveedoresFrame != null) {
+			mproveedoresFrame.getBtnRegresar().setActionCommand("regresarDeProveedores");
+			mproveedoresFrame.getBtnRegresar().addActionListener(this);
+			mproveedoresFrame.getBtnNuevaProve().setActionCommand("abrirRegistroProve");
+			mproveedoresFrame.getBtnNuevaProve().addActionListener(this);
+			mproveedoresFrame.getBtnEditarProve().setActionCommand("abrirEditarProve");
+			mproveedoresFrame.getBtnEditarProve().addActionListener(this);
+			mproveedoresFrame.getBtnVerProve().setActionCommand("abrirVerProve");
+			mproveedoresFrame.getBtnVerProve().addActionListener(this);
+			mproveedoresFrame.getBtnRegistrarPedido().setActionCommand("abrirRegistroPedido");
+			mproveedoresFrame.getBtnRegistrarPedido().addActionListener(this);
+			mproveedoresFrame.getBtnDevolucionProve().setActionCommand("abrirDevolucionProve");
+			mproveedoresFrame.getBtnDevolucionProve().addActionListener(this);
+			mproveedoresFrame.getBtnVerPedidos_View().setActionCommand("abrirVerPedidos");
+			mproveedoresFrame.getBtnVerPedidos_View().addActionListener(this);
+		}
 
-        // Lógica de navegación basada en tu ControladorPrueba
-        // Simularemos login y luego mostraremos AdminView
-        switch (command) {
-            case "LOGIN_INICIAR_SESION":
-                String user = vistaFacade.getLoginView().getTxtUsuario().getText();
-                // Aquí iría la validación real con el modelo. Por ahora, simulamos:
-                if ("admin".equalsIgnoreCase(user) || "Admin".equalsIgnoreCase(user)) {
-                    tipoUsuarioLogueado = "admin";
-                    vistaFacade.cerrarVentanaEspecifica(vistaFacade.getLoginView());
-                    vistaFacade.mostrarAdminView();
-                } else if ("user".equalsIgnoreCase(user) || "User".equalsIgnoreCase(user)) {
-                     tipoUsuarioLogueado = "user";
-                     vistaFacade.cerrarVentanaEspecifica(vistaFacade.getLoginView());
-                     vistaFacade.mostrarUserView(); // Asumiendo que tienes este método en Facada_Vista_View
-                } else {
-                    vistaFacade.getLoginView().mostrarMensajeError("Usuario de prueba no reconocido (use 'admin' o 'user')");
-                }
-                break;
+		// MÓDULO REPORTES
+		if (mreportesFrame != null) {
+			mreportesFrame.getBtnRegresar().setActionCommand("regresarReportes");
+			mreportesFrame.getBtnRegresar().addActionListener(this);
+		}
 
-            case "cerrarSesion":
-                tipoUsuarioLogueado = "";
-                vistaFacade.cerrarVistaPrincipalActual(); // Cierra Admin o User View
-                vistaFacade.mostrarLoginView();
-                break;
+		// SUB-VISTAS CLIENTES
+		if (nuevoClienteFrame != null) {
+			nuevoClienteFrame.getBtnRegresar().setActionCommand("regresarNuevoCliente");
+			nuevoClienteFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (editarClienteFrame != null) {
+			editarClienteFrame.getBtnRegresar().setActionCommand("regresarEditarCliente");
+			editarClienteFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (eliminarClienteFrame != null) {
+			eliminarClienteFrame.getBtnRegresar().setActionCommand("regresarEliminarCliente");
+			eliminarClienteFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (verClienteFrame != null) {
+			verClienteFrame.getBtnRegresar().setActionCommand("regresarVerCliente");
+			verClienteFrame.getBtnRegresar().addActionListener(this);
+		}
 
-            // --- NAVEGACIÓN DESDE Admin_View ---
-            case "adminVentas": vistaFacade.mostrarModuloVentas(); break;
-            case "adminClientes": vistaFacade.mostrarModuloClientes(); break;
-            case "adminProductos": vistaFacade.mostrarModuloProductos(); break;
-            case "adminProveedores": vistaFacade.mostrarModuloProveedores(); break;
-            case "adminReportes": vistaFacade.mostrarModuloReportes(); break;
+		// SUB-VISTAS PRODUCTOS
+		if (nuevoProductoFrame != null) {
+			nuevoProductoFrame.getBtnRegresar().setActionCommand("NuevoProducto");
+			nuevoProductoFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (editarProductoFrame != null) {
+			editarProductoFrame.getBtnRegresar().setActionCommand("regresarEditarProducto");
+			editarProductoFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (eliminarProductoFrame != null) {
+			eliminarProductoFrame.getBtnRegresar().setActionCommand("regresarEliminarProducto");
+			nuevoProductoFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (verProductoFrame != null) {
+			verProductoFrame.getBtnRegresar().setActionCommand("regresarVerProducto");
+			verProductoFrame.getBtnRegresar().addActionListener(this);
+		}
 
-            // --- NAVEGACIÓN DESDE User_View ---
-            case "abrirVentas": vistaFacade.mostrarModuloVentas(); break; // User_View -> Módulo Ventas
-            case "abrirClientes": vistaFacade.mostrarModuloClientes(); break; // User_View -> Módulo Clientes
-            case "abrirReportes": vistaFacade.mostrarModuloReportes(); break; // User_View -> Módulo Reportes
-            
-            // --- BOTONES "REGRESAR" DE LOS MÓDULOS PRINCIPALES ---
-            case "regresarVentas":
-            case "regresarClientes":
-            case "regresarReportes":
-            case "regresarDeProveedores":
-            case "regresarDeProductos":
-                vistaFacade.cerrarVistaPrincipalActual(); // Cierra el módulo actual
-                if ("admin".equals(tipoUsuarioLogueado)) {
-                    vistaFacade.mostrarAdminView();
-                } else if ("user".equals(tipoUsuarioLogueado)) {
-                    vistaFacade.mostrarUserView();
-                } else {
-                    vistaFacade.mostrarLoginView(); // Fallback si no hay rol
-                }
-                break;
+		// SUB-VISTAS VENTAS
+		if (nuevaVentaView != null) {
+			nuevaVentaView.getBtnRegresar().setActionCommand("regresarNuevaVenta");
+			nuevaVentaView.getBtnRegresar().addActionListener(this);
+		}
+		if (eliminarVentaFrame != null) {
+			eliminarVentaFrame.getBtnRegresar().setActionCommand("regresarEliminarV");
+			eliminarVentaFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (historialVentasUI != null) {
+			historialVentasUI.getBtnRegresar().setActionCommand("regresarHistorial");
+			historialVentasUI.getBtnRegresar().addActionListener(this);
+		}
+		if (devolucionVentasFrame != null) {
+			devolucionVentasFrame.getBtnRegresar().setActionCommand("regresarDevolucion");
+			devolucionVentasFrame.getBtnRegresar().addActionListener(this);
+		}
 
-            // --- NAVEGACIÓN DENTRO DEL MÓDULO DE VENTAS ---
-            case "abrirNuevaVenta": vistaFacade.mostrarNuevaVentaView(); break;
-            case "regresarNuevaVenta": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getNuevaVentaView()); break;
-            case "abrirEliminarVenta": vistaFacade.mostrarEliminarVentaFrame(); break;
-            case "regresarEliminarV": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getEliminarVentaFrame()); break;
-            case "abrirHistorialVenta": vistaFacade.mostrarHistorialVentasUI(); break;
-            case "regresarHistorial": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getHistorialVentasUI()); break;
-            case "devolucion": vistaFacade.mostrarDevolucionVentasFrame(); break; // Devolución de Venta
-            case "regresarDevolucion": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getDevolucionVentasFrame()); break;
+		// SUB-VISTAS PROVEEDORES
+		if (registroProveFrame != null) {
+			registroProveFrame.getBtnRegresar().setActionCommand("regresarRegistroProve");
+			registroProveFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (editarProveFrame != null) {
+			editarProveFrame.getBtnRegresar().setActionCommand("regresarEditarProve");
+			editarProveFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (verProveFrame != null) {
+			verProveFrame.getBtnRegresar().setActionCommand("regresarVerProve");
+			verProveFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (registroPedidoFrame != null) {
+			registroPedidoFrame.getBtnRegresar().setActionCommand("regresarRegistroPedido");
+			registroPedidoFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (verPedidosFrame != null) {
+			verPedidosFrame.getBtnRegresar().setActionCommand("regresarVerPedidos");
+			verPedidosFrame.getBtnRegresar().addActionListener(this);
+		}
+		if (devolucionProveedoresFrame != null) {
+			devolucionProveedoresFrame.getBtnRegresar().setActionCommand("regresarDevolucionProve");
+			devolucionProveedoresFrame.getBtnRegresar().addActionListener(this);
+		}
+	}
 
-            // --- NAVEGACIÓN DENTRO DEL MÓDULO DE CLIENTES ---
-            case "abrirNuevoCliente": vistaFacade.mostrarNuevoClienteFrame(); break;
-            case "regresarNuevoCliente": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getNuevoClienteFrame()); break;
-            case "abrirEditarCliente": vistaFacade.mostrarEditarClienteFrame(); break;
-            case "regresarEditarCliente": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getEditarClienteFrame()); break;
-            case "abrirEliminarCliente": vistaFacade.mostrarEliminarClienteFrame(); break;
-            case "regresarEliminarCliente": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getEliminarClienteFrame()); break;
-            case "abrirVerClientes": vistaFacade.mostrarVerClienteFrame(); break;
-            case "regresarVerCliente": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getVerClienteFrame()); break;
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String command = e.getActionCommand();
 
-            // --- NAVEGACIÓN DENTRO DEL MÓDULO DE PRODUCTOS ---
-            case "abrirNuevoProducto": vistaFacade.mostrarNuevoProductoFrame(); break;
-            case "NuevoProducto": //Regresar desde NuevoProducto_Frame
-                vistaFacade.cerrarVentanaEspecifica(vistaFacade.getNuevoProductoFrame()); break;
-            case "abrirEditarProducto": vistaFacade.mostrarEditarProductoFrame(); break;
-            case "regresarEditarProducto": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getEditarProductoFrame()); break;
-            case "abrirEliminarProducto": vistaFacade.mostrarEliminarProductoFrame(); break;
-            case "regresarEliminarProducto": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getEliminarProductoFrame()); break;
-            case "abrirVerProducto": vistaFacade.mostrarVerProductoFrame(); break;
-            case "regresarVerProducto": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getVerProductoFrame()); break;
+		switch (command) {
+		case "LOGIN_INICIAR_SESION":
+			String user = loginView.getTxtUsuario().getText();
+			if ("admin".equalsIgnoreCase(user)) {
+				tipoUsuarioLogueado = "admin";
+				loginView.setVisible(false);
+				adminView.setVisible(true);
+			} else if ("user".equalsIgnoreCase(user)) {
+				tipoUsuarioLogueado = "user";
+				loginView.setVisible(false);
+				userView.setVisible(true);
+			} else {
+				loginView.mostrarMensajeError("Usuario de prueba no reconocido (use 'admin' o 'user')");
+			}
+			break;
 
-            // --- NAVEGACIÓN DENTRO DEL MÓDULO DE PROVEEDORES ---
-            case "abrirRegistroProve": vistaFacade.mostrarRegistroProveFrame(); break;
-            case "regresarRegistroProve": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getRegistroProveFrame()); break;
-            case "abrirEditarProve": vistaFacade.mostrarEditarProveFrame(); break;
-            case "regresarEditarProve": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getEditarProveFrame()); break;
-            case "abrirVerProve": vistaFacade.mostrarVerProveFrame(); break;
-            case "regresarVerProve": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getVerProveFrame()); break;
-            case "abrirDevolucionProve": vistaFacade.mostrarDevolucionProveedoresFrame(); break;
-            case "regresarDevolucionProve": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getDevolucionProveedoresFrame()); break;
-            case "abrirVerPedidos": vistaFacade.mostrarVerPedidosFrame(); break;
-            case "regresarVerPedidos": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getVerPedidosFrame()); break;
-            case "abrirRegistroPedido": vistaFacade.mostrarRegistroPedidoFrame(); break;
-            case "regresarRegistroPedido": vistaFacade.cerrarVentanaEspecifica(vistaFacade.getRegistroPedidoFrame()); break;
+		case "cerrarSesion":
+			tipoUsuarioLogueado = "";
+			if ("admin".equals(tipoUsuarioLogueado)) {
+				adminView.setVisible(false);
+			} else if ("user".equals(tipoUsuarioLogueado)) {
+				userView.setVisible(false);
+			}
+			loginView.setVisible(true);
+			break;
 
-            default:
-                System.out.println("Controller: Comando no reconocido o sin acción de navegación definida -> " + command);
-        }
-    }
+		// NAVEGACIÓN DESDE Admin_View
+		case "adminVentas":
+			adminView.setVisible(false);
+			mventasView.setVisible(true);
+			break;
+		case "adminClientes":
+			adminView.setVisible(false);
+			mclientesView.setVisible(true);
+			break;
+		case "adminProductos":
+			adminView.setVisible(false);
+			mproductosFrame.setVisible(true);
+			break;
+		case "adminProveedores":
+			adminView.setVisible(false);
+			mproveedoresFrame.setVisible(true);
+			break;
+		case "adminReportes":
+			adminView.setVisible(false);
+			mreportesFrame.setVisible(true);
+			break;
+
+		// NAVEGACIÓN DESDE User_View
+		case "abrirVentas":
+			userView.setVisible(false);
+			mventasView.setVisible(true);
+			break;
+		case "abrirClientes":
+			userView.setVisible(false);
+			mclientesView.setVisible(true);
+			break;
+		case "abrirReportes":
+			userView.setVisible(false);
+			mreportesFrame.setVisible(true);
+			break;
+
+		// BOTONES "REGRESAR" DE MÓDULOS PRINCIPALES
+		case "regresarVentas":
+			mventasView.setVisible(false);
+			if ("admin".equals(tipoUsuarioLogueado)) {
+				adminView.setVisible(true);
+			} else {
+				userView.setVisible(true);
+			}
+			break;
+		case "regresarClientes":
+			mclientesView.setVisible(false);
+			if ("admin".equals(tipoUsuarioLogueado)) {
+				adminView.setVisible(true);
+			} else {
+				userView.setVisible(true);
+			}
+			break;
+		case "regresarReportes":
+			mreportesFrame.setVisible(false);
+			if ("admin".equals(tipoUsuarioLogueado)) {
+				adminView.setVisible(true);
+			} else {
+				userView.setVisible(true);
+			}
+			break;
+		case "regresarDeProveedores":
+			mproveedoresFrame.setVisible(false);
+			adminView.setVisible(true);
+			break;
+		case "regresarDeProductos":
+			mproductosFrame.setVisible(false);
+			adminView.setVisible(true);
+			break;
+
+		// NAVEGACIÓN DENTRO DEL MÓDULO DE VENTAS
+		case "abrirNuevaVenta":
+			mventasView.setVisible(false);
+			nuevaVentaView.setVisible(true);
+			break;
+		case "regresarNuevaVenta":
+			nuevaVentaView.setVisible(false);
+			mventasView.setVisible(true);
+			break;
+		case "abrirEliminarVenta":
+			mventasView.setVisible(false);
+			eliminarVentaFrame.setVisible(true);
+			break;
+		case "regresarEliminarV":
+			eliminarVentaFrame.setVisible(false);
+			mventasView.setVisible(true);
+			break;
+		case "abrirHistorialVenta":
+			mventasView.setVisible(false);
+			historialVentasUI.setVisible(true);
+			break;
+		case "regresarHistorial":
+			historialVentasUI.setVisible(false);
+			mventasView.setVisible(true);
+			break;
+		case "devolucion":
+			mventasView.setVisible(false);
+			devolucionVentasFrame.setVisible(true);
+			break;
+		case "regresarDevolucion":
+			devolucionVentasFrame.setVisible(false);
+			mventasView.setVisible(true);
+			break;
+
+		// NAVEGACIÓN DENTRO DEL MÓDULO DE CLIENTES
+		case "abrirNuevoCliente":
+			mclientesView.setVisible(false);
+			nuevoClienteFrame.setVisible(true);
+			break;
+		case "regresarNuevoCliente":
+			nuevoClienteFrame.setVisible(false);
+			mclientesView.setVisible(true);
+			break;
+		case "abrirEditarCliente":
+			mclientesView.setVisible(false);
+			editarClienteFrame.setVisible(true);
+			break;
+		case "regresarEditarCliente":
+			editarClienteFrame.setVisible(false);
+			mclientesView.setVisible(true);
+			break;
+		case "abrirEliminarCliente":
+			mclientesView.setVisible(false);
+			eliminarClienteFrame.setVisible(true);
+			break;
+		case "regresarEliminarCliente":
+			eliminarClienteFrame.setVisible(false);
+			mclientesView.setVisible(true);
+			break;
+		case "abrirVerClientes":
+			mclientesView.setVisible(false);
+			verClienteFrame.setVisible(true);
+			break;
+		case "regresarVerCliente":
+			verClienteFrame.setVisible(false);
+			mclientesView.setVisible(true);
+			break;
+
+		// NAVEGACIÓN DENTRO DEL MÓDULO DE PRODUCTOS
+		case "abrirNuevoProducto":
+			mproductosFrame.setVisible(false);
+			nuevoProductoFrame.setVisible(true);
+			break;
+		case "NuevoProducto":
+			nuevoProductoFrame.setVisible(false);
+			mproductosFrame.setVisible(true);
+			break;
+		case "abrirEditarProducto":
+			mproductosFrame.setVisible(false);
+			editarProductoFrame.setVisible(true);
+			break;
+		case "regresarEditarProducto":
+			editarProductoFrame.setVisible(false);
+			mproductosFrame.setVisible(true);
+			break;
+		case "abrirEliminarProducto":
+			mproductosFrame.setVisible(false);
+			eliminarProductoFrame.setVisible(true);
+			break;
+		case "regresarEliminarProducto":
+			eliminarProductoFrame.setVisible(false);
+			mproductosFrame.setVisible(true);
+			break;
+		case "abrirVerProducto":
+			mproductosFrame.setVisible(false);
+			verProductoFrame.setVisible(true);
+			break;
+		case "regresarVerProducto":
+			verProductoFrame.setVisible(false);
+			mproductosFrame.setVisible(true);
+			break;
+
+		// NAVEGACIÓN DENTRO DEL MÓDULO DE PROVEEDORES
+		case "abrirRegistroProve":
+			mproveedoresFrame.setVisible(false);
+			registroProveFrame.setVisible(true);
+			break;
+		case "regresarRegistroProve":
+			registroProveFrame.setVisible(false);
+			mproveedoresFrame.setVisible(true);
+			break;
+		case "abrirEditarProve":
+			mproveedoresFrame.setVisible(false);
+			editarProveFrame.setVisible(true);
+			break;
+		case "regresarEditarProve":
+			editarProveFrame.setVisible(false);
+			mproveedoresFrame.setVisible(true);
+			break;
+		case "abrirVerProve":
+			mproveedoresFrame.setVisible(false);
+			verProveFrame.setVisible(true);
+			break;
+		case "regresarVerProve":
+			verProveFrame.setVisible(false);
+			mproveedoresFrame.setVisible(true);
+			break;
+		case "abrirDevolucionProve":
+			mproveedoresFrame.setVisible(false);
+			devolucionProveedoresFrame.setVisible(true);
+			break;
+		case "regresarDevolucionProve":
+			devolucionProveedoresFrame.setVisible(false);
+			mproveedoresFrame.setVisible(true);
+			break;
+		case "abrirVerPedidos":
+			mproveedoresFrame.setVisible(false);
+			verPedidosFrame.setVisible(true);
+			break;
+		case "regresarVerPedidos":
+			verPedidosFrame.setVisible(false);
+			mproveedoresFrame.setVisible(true);
+			break;
+		case "abrirRegistroPedido":
+			mproveedoresFrame.setVisible(false);
+			registroPedidoFrame.setVisible(true);
+			break;
+		case "regresarRegistroPedido":
+			registroPedidoFrame.setVisible(false);
+			mproveedoresFrame.setVisible(true);
+			break;
+
+		default:
+			throw new IllegalArgumentException("Comando no reconocido: " + command);
+		}
+	}
 }
