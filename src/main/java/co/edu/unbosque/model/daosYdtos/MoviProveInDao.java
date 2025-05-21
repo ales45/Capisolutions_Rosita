@@ -22,17 +22,17 @@ public class MoviProveInDao {
      */
     public void crearMoviProveIn(MoviProveInDto movimiento) throws SQLException {
         // DDL movimientosProveedoresINC: idMovimientoProveedorINC (PK, AI), idProducto, idInventario, tipoMovimiento, cantidad, fecha, motivo
-        String sql = "INSERT INTO movimientosProveedoresINC (idProducto, idInventario, tipoMovimiento, cantidad, fecha, motivo) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO movimientosProveedoresINC (idInventario, tipoMovimiento, cantidad, fecha, motivo,idProducto) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
-            pstmt.setInt(1, movimiento.getIdProducto());
-            pstmt.setInt(2, movimiento.getIdInventario());
-            pstmt.setString(3, movimiento.getTipoMovimiento());
-            pstmt.setInt(4, movimiento.getCantidad());
-            pstmt.setDate(5, movimiento.getFecha());
-            pstmt.setString(6, movimiento.getMotivo());
+            pstmt.setInt(1, movimiento.getIdInventario());
+            pstmt.setString(2, movimiento.getTipoMovimiento());
+            pstmt.setInt(3, movimiento.getCantidad());
+            pstmt.setDate(4, movimiento.getFecha());
+            pstmt.setString(5, movimiento.getMotivo());
+            pstmt.setInt(6, movimiento.getIdProducto());
             
             int affectedRows = pstmt.executeUpdate();
 

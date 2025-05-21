@@ -78,13 +78,8 @@ public class VerPedidos_Frame extends JFrame {
 		contenedor.add(filtros);
 
 		// Tabla
-		String[] columnas = { "N° de Pedido", "Fecha", "Nombre del Proveedor", "Producto", "Cantidad", "Estado" };
-		Object[][] datos = { { "2001", "18/04/2025 11:30", "Proveedora Central", "Resma A4", 50, "Entregado" },
-				{ "2000", "17/04/2025 09:20", "Papeles del Sur", "Bolígrafo azul", 100, "En camino" },
-				{ "1999", "15/04/2025 14:50", "OfiSuministros", "Carpetas plásticas", 75, "En camino" },
-				{ "1998", "13/04/2025 10:10", "Distribuidora Norte", "Tinta impresora", 20, "Entregado" } };
-
-		DefaultTableModel modelo = new DefaultTableModel(datos, columnas) {
+		String[] columnas = { "ID", "Producto", "Tipo Movimiento", "Cantidad", "Fecha", "Motivo", "ID Inventario" };
+		DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
@@ -96,8 +91,6 @@ public class VerPedidos_Frame extends JFrame {
 		tbPedidos.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 15));
 		tbPedidos.getTableHeader().setBackground(new Color(222, 235, 247));
 		tbPedidos.setGridColor(Color.LIGHT_GRAY);
-
-		tbPedidos.getColumn("Estado").setCellRenderer(new EstadoRenderer());
 
 		spPedidos = new JScrollPane(tbPedidos);
 		spPedidos.setBorder(new EmptyBorder(10, 10, 10, 10));

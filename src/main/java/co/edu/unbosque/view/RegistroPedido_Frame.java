@@ -10,9 +10,10 @@ public class RegistroPedido_Frame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private JLabel lbTitulo, lbLogo, lbProvedor, lbFecha, lbProducto, lbCantidad;
-	private JTextField txtProvedor, txtCantidad;
-	private JComboBox<String> txtProducto;
+	private JLabel lbTitulo, lbLogo, lbProvedor, lbFecha, lbProducto, lbCantidad, lbMotivo, lbTipoMovimiento;
+	private JComboBox<String> txtProvedor, txtProducto;
+	private JTextField txtCantidad, txtTipoMovimiento;
+	private JTextArea txtMotivo;
 	private JButton btnGuardar, btnRegresar;
 	private JDateChooser dateChooser;
 
@@ -59,7 +60,7 @@ public class RegistroPedido_Frame extends JFrame {
 		// Panel blanco tipo tarjeta
 		JPanel panelFormulario = new JPanel();
 		panelFormulario.setBackground(Color.WHITE);
-		panelFormulario.setPreferredSize(new Dimension(500, 500));
+		panelFormulario.setPreferredSize(new Dimension(500, 600)); // Aumentado el tamaño para los nuevos campos
 		panelFormulario.setBorder(
 				BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 1, true),
 						BorderFactory.createEmptyBorder(30, 40, 30, 40)));
@@ -80,9 +81,10 @@ public class RegistroPedido_Frame extends JFrame {
 		// Proveedor
 		lbProvedor = new JLabel("Proveedor:");
 		lbProvedor.setFont(labelFont);
-		txtProvedor = new JTextField();
+		txtProvedor = new JComboBox<>();
 		txtProvedor.setMaximumSize(fieldDim);
 		txtProvedor.setFont(fieldFont);
+		txtProvedor.addItem("Seleccione un proveedor");
 
 		panelFormulario.add(lbProvedor);
 		panelFormulario.add(txtProvedor);
@@ -100,12 +102,24 @@ public class RegistroPedido_Frame extends JFrame {
 		panelFormulario.add(dateChooser);
 		panelFormulario.add(Box.createRigidArea(new Dimension(0, 20)));
 
+		// Tipo de Movimiento
+		lbTipoMovimiento = new JLabel("Tipo de Movimiento:");
+		lbTipoMovimiento.setFont(labelFont);
+		txtTipoMovimiento = new JTextField();
+		txtTipoMovimiento.setMaximumSize(fieldDim);
+		txtTipoMovimiento.setFont(fieldFont);
+
+		panelFormulario.add(lbTipoMovimiento);
+		panelFormulario.add(txtTipoMovimiento);
+		panelFormulario.add(Box.createRigidArea(new Dimension(0, 20)));
+
 		// Producto
 		lbProducto = new JLabel("Producto:");
 		lbProducto.setFont(labelFont);
-		txtProducto = new JComboBox<>(new String[] { "Lápiz", "Cuaderno", "Borrador", "Tijeras" });
+		txtProducto = new JComboBox<>();
 		txtProducto.setMaximumSize(fieldDim);
 		txtProducto.setFont(fieldFont);
+		txtProducto.addItem("Seleccione un producto");
 
 		panelFormulario.add(lbProducto);
 		panelFormulario.add(txtProducto);
@@ -120,6 +134,20 @@ public class RegistroPedido_Frame extends JFrame {
 
 		panelFormulario.add(lbCantidad);
 		panelFormulario.add(txtCantidad);
+		panelFormulario.add(Box.createRigidArea(new Dimension(0, 20)));
+
+		// Motivo
+		lbMotivo = new JLabel("Motivo del Pedido:");
+		lbMotivo.setFont(labelFont);
+		txtMotivo = new JTextArea();
+		txtMotivo.setFont(fieldFont);
+		txtMotivo.setLineWrap(true);
+		txtMotivo.setWrapStyleWord(true);
+		JScrollPane scrollMotivo = new JScrollPane(txtMotivo);
+		scrollMotivo.setMaximumSize(new Dimension(300, 100));
+
+		panelFormulario.add(lbMotivo);
+		panelFormulario.add(scrollMotivo);
 		panelFormulario.add(Box.createRigidArea(new Dimension(0, 30)));
 
 		// Botón registrar
@@ -137,11 +165,10 @@ public class RegistroPedido_Frame extends JFrame {
 
 		// Añadir formulario al centro
 		panelCentro.add(panelFormulario);
-
 	}
 
 	// Getters y métodos auxiliares
-	public JTextField getTxtProvedor() {
+	public JComboBox<String> getTxtProvedor() {
 		return txtProvedor;
 	}
 
@@ -175,4 +202,136 @@ public class RegistroPedido_Frame extends JFrame {
 		return dateChooser.getDate();
 	}
 
+	public String getFechaFormatoCorto() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date fecha = dateChooser.getDate();
+		return (fecha != null) ? sdf.format(fecha) : "";
+	}
+
+	public String getFechaFormatoLargo() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new java.util.Locale("es", "ES"));
+		Date fecha = dateChooser.getDate();
+		return (fecha != null) ? sdf.format(fecha) : "";
+	}
+
+	public boolean hayFechaSeleccionada() {
+		return dateChooser.getDate() != null;
+	}
+
+	public void setFecha(Date fecha) {
+		dateChooser.setDate(fecha);
+	}
+
+	public void setFechaActual() {
+		dateChooser.setDate(new Date());
+	}
+
+	public JTextField getTxtTipoMovimiento() {
+		return txtTipoMovimiento;
+	}
+
+	public JTextArea getTxtMotivo() {
+		return txtMotivo;
+	}
+
+	public JLabel getLbTitulo() {
+		return lbTitulo;
+	}
+
+	public void setLbTitulo(JLabel lbTitulo) {
+		this.lbTitulo = lbTitulo;
+	}
+
+	public JLabel getLbLogo() {
+		return lbLogo;
+	}
+
+	public void setLbLogo(JLabel lbLogo) {
+		this.lbLogo = lbLogo;
+	}
+
+	public JLabel getLbProvedor() {
+		return lbProvedor;
+	}
+
+	public void setLbProvedor(JLabel lbProvedor) {
+		this.lbProvedor = lbProvedor;
+	}
+
+	public JLabel getLbFecha() {
+		return lbFecha;
+	}
+
+	public void setLbFecha(JLabel lbFecha) {
+		this.lbFecha = lbFecha;
+	}
+
+	public JLabel getLbProducto() {
+		return lbProducto;
+	}
+
+	public void setLbProducto(JLabel lbProducto) {
+		this.lbProducto = lbProducto;
+	}
+
+	public JLabel getLbCantidad() {
+		return lbCantidad;
+	}
+
+	public void setLbCantidad(JLabel lbCantidad) {
+		this.lbCantidad = lbCantidad;
+	}
+
+	public JLabel getLbMotivo() {
+		return lbMotivo;
+	}
+
+	public void setLbMotivo(JLabel lbMotivo) {
+		this.lbMotivo = lbMotivo;
+	}
+
+	public JLabel getLbTipoMovimiento() {
+		return lbTipoMovimiento;
+	}
+
+	public void setLbTipoMovimiento(JLabel lbTipoMovimiento) {
+		this.lbTipoMovimiento = lbTipoMovimiento;
+	}
+
+	public void setTxtProvedor(JComboBox<String> txtProvedor) {
+		this.txtProvedor = txtProvedor;
+	}
+
+	public void setTxtProducto(JComboBox<String> txtProducto) {
+		this.txtProducto = txtProducto;
+	}
+
+	public void setTxtCantidad(JTextField txtCantidad) {
+		this.txtCantidad = txtCantidad;
+	}
+
+	public void setTxtTipoMovimiento(JTextField txtTipoMovimiento) {
+		this.txtTipoMovimiento = txtTipoMovimiento;
+	}
+
+	public void setTxtMotivo(JTextArea txtMotivo) {
+		this.txtMotivo = txtMotivo;
+	}
+
+	public void setBtnGuardar(JButton btnGuardar) {
+		this.btnGuardar = btnGuardar;
+	}
+
+	public void setBtnRegresar(JButton btnRegresar) {
+		this.btnRegresar = btnRegresar;
+	}
+
+	public JDateChooser getDateChooser() {
+		return dateChooser;
+	}
+
+	public void setDateChooser(JDateChooser dateChooser) {
+		this.dateChooser = dateChooser;
+	}
+	
 }

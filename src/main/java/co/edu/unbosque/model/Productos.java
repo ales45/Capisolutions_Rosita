@@ -90,6 +90,25 @@ public class Productos {
             return Optional.empty(); // Retorna vacío si ocurre un error SQL
         }
     }
+    public Optional<ProductoDto> obtenerProductoPorId1(int id) { // Mantiene el nombre 'obtenerProductoPorId' pero busca por 'nombre'
+    // 1. Validacion basica de la entrada
+
+    // 2. Llama al metodo del DAO que busca por nombre.
+    //    El DAO ya maneja su propia SQLException y devuelve Optional.empty() en caso de error o no encontrado.
+    try {
+        Optional<ProductoDto> productopt = productoDao.obtenerProductoPorId(id);
+        // 3. Opcional: Puedes añadir un log si el producto no se encuentra (el DAO ya lo haria en caso de error de BD)
+        // if (!productopt.isPresent()) {
+        //     System.out.println("Servicio: No se encontró producto con nombre '" + nombre + "'.");
+        // }
+        // 4. Devuelve el resultado del DAO
+        return productopt;
+    } catch (SQLException e) {
+        System.err.println("Error en ProductosService al buscar producto por nombre: " + e.getMessage());
+        e.printStackTrace();
+        return Optional.empty(); // Retorna vacío si ocurre un error SQL
+    }
+}
     
     /**
      * Obtiene una lista de todos los productos.

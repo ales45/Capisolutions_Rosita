@@ -28,12 +28,9 @@ public class MoviProveIn {
      * @param motivo Motivo del movimiento.
      * @return El MoviProveInDto creado, o null si hubo un error.
      */
-    public MoviProveInDto crear_movi_prove_in(int idProducto, int idInventario, String tipoMovimiento, int cantidad, java.util.Date fecha, String motivo) {
+    public MoviProveInDto crear_movi_prove_in( int idInventario, String tipoMovimiento, int cantidad, java.util.Date fecha, String motivo, int idProducto) {
         // --- LÓGICA DE NEGOCIO (VALIDACIONES) ---
-        if (idProducto <= 0 || idInventario <= 0) {
-            System.err.println("Error de validación: IDs de producto o inventario no válidos.");
-            return null;
-        }
+ 
         if (cantidad <= 0) {
             System.err.println("Error de validación: La cantidad debe ser positiva.");
             return null;
@@ -45,12 +42,13 @@ public class MoviProveIn {
         // --- FIN LÓGICA DE NEGOCIO ---
 
         MoviProveInDto nuevoMovimiento = new MoviProveInDto();
-        nuevoMovimiento.setIdProducto(idProducto);
+
         nuevoMovimiento.setIdInventario(idInventario);
         nuevoMovimiento.setTipoMovimiento(tipoMovimiento);
         nuevoMovimiento.setCantidad(cantidad);
         nuevoMovimiento.setFecha(new Date(fecha.getTime())); // Convertir java.util.Date a java.sql.Date
         nuevoMovimiento.setMotivo(motivo);
+        nuevoMovimiento.setIdProducto(idProducto);
 
         try {
             moviProveInDao.crearMoviProveIn(nuevoMovimiento);

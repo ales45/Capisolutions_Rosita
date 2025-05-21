@@ -56,7 +56,7 @@ public class ProductoDao {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setInt(1, idProducto);
+            pstmt.setInt(1, idProducto); 
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {

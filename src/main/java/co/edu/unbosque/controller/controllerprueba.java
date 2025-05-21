@@ -2,9 +2,14 @@ package co.edu.unbosque.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
@@ -40,6 +45,7 @@ import co.edu.unbosque.view.VerProducto_Frame;
 import co.edu.unbosque.view.VerProve_Frame;
 import co.edu.unbosque.model.Facada_Model;
 import co.edu.unbosque.model.daosYdtos.ClientesDto;
+import co.edu.unbosque.model.daosYdtos.MoviProveInDto;
 import co.edu.unbosque.model.daosYdtos.ProductoDto;
 import co.edu.unbosque.model.daosYdtos.ProveedorDto;
 
@@ -123,6 +129,7 @@ public class controllerprueba implements ActionListener {
 		if (model == null) {
 			model = new Facada_Model();
 			model.getTipoP().crear_tipo_p("casa");
+			model.getInventario().crearInventario(0, 12, "tipoUsuarioLogueado", 4, null);
 
 		}
 		loginView.setVisible(true);
@@ -339,10 +346,23 @@ public class controllerprueba implements ActionListener {
 		if (registroPedidoFrame != null) {
 			registroPedidoFrame.getBtnRegresar().setActionCommand("regresarRegistroPedido");
 			registroPedidoFrame.getBtnRegresar().addActionListener(this);
+			registroPedidoFrame.getBtnGuardar().setActionCommand("ConfirmarPedido");
+			registroPedidoFrame.getBtnGuardar().addActionListener(this);
 		}
 		if (verPedidosFrame != null) {
 			verPedidosFrame.getBtnRegresar().setActionCommand("regresarVerPedidos");
 			verPedidosFrame.getBtnRegresar().addActionListener(this);
+			
+			// Agregar listeners para búsqueda y filtros en VerPedidos_Frame
+			verPedidosFrame.getTxtBuscar().getDocument().addDocumentListener(new DocumentListener() {
+				public void changedUpdate(DocumentEvent e) { filtrarPedidos(); }
+				public void removeUpdate(DocumentEvent e) { filtrarPedidos(); }
+				public void insertUpdate(DocumentEvent e) { filtrarPedidos(); }
+			});
+			
+			verPedidosFrame.getCboxMetodoPago().addActionListener(e -> filtrarPedidos()); // cboxMetodoPago es para Producto
+			verPedidosFrame.getCboxEstado().addActionListener(e -> filtrarPedidos()); // cboxEstado es para Proveedor
+			verPedidosFrame.getCboxFecha().addActionListener(e -> filtrarPedidos()); // cboxFecha es para Fecha
 		}
 		if (devolucionProveedoresFrame != null) {
 			devolucionProveedoresFrame.getBtnRegresar().setActionCommand("regresarDevolucionProve");
@@ -619,6 +639,96 @@ public class controllerprueba implements ActionListener {
 			}
 		}
 		break;
+
+		//Pedidos
+		case "ConfirmarPedido":
+			try {
+				// Validar que todos los campos estén llenos
+				if (registroPedidoFrame.getTxtTipoMovimiento().getText().isEmpty() ||
+					registroPedidoFrame.getTxtCantidad().getText().isEmpty() ||
+					!registroPedidoFrame.hayFechaSeleccionada() ||
+					registroPedidoFrame.getTxtMotivo().getText().isEmpty() ||
+					registroPedidoFrame.getTxtProvedor().getSelectedIndex() == 0 ||
+					registroPedidoFrame.getTxtProducto().getSelectedIndex() == 0) {
+					
+					JOptionPane.showMessageDialog(registroPedidoFrame,
+						"Por favor, complete todos los campos del formulario.",
+						"Campos incompletos",
+						JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				// Obtener los valores del formulario
+				String tipoMovimiento = registroPedidoFrame.getTxtTipoMovimiento().getText();
+				int cantidad = Integer.parseInt(registroPedidoFrame.getTxtCantidad().getText());
+				Date fecha = registroPedidoFrame.getFechaDate();
+				String motivo = registroPedidoFrame.getTxtMotivo().getText();
+				
+				// Obtener el ID del producto seleccionado
+				String productoSeleccionado = registroPedidoFrame.getTxtProducto().getSelectedItem().toString();
+				int idProducto = 0;
+				
+				// Extraer el ID del producto del texto seleccionado (formato: "Nombre - $Precio")
+				List<ProductoDto> productos = model.getProductos().obtenerTodosLosProductos();
+				for (ProductoDto producto : productos) {
+					if (productoSeleccionado.startsWith(producto.getNombre())) {
+						idProducto = producto.getIdProducto();
+						break;
+					}
+				}
+
+				if (idProducto == 0) {
+					JOptionPane.showMessageDialog(registroPedidoFrame,
+						"Error al obtener el ID del producto seleccionado.",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				// Obtener el ID del inventario asociado al producto
+				int idInventario = 1; // Por ahora lo dejamos fijo, pero deberías obtenerlo según tu lógica
+
+				// Crear el movimiento
+				MoviProveInDto movimiento = model.getMoviProveIn().crear_movi_prove_in(
+					idInventario,
+					tipoMovimiento,
+					cantidad,
+					fecha,
+					motivo,
+					idProducto
+				);
+
+				if (movimiento != null) {
+					JOptionPane.showMessageDialog(registroPedidoFrame,
+						"Movimiento registrado exitosamente.",
+						"Éxito",
+						JOptionPane.INFORMATION_MESSAGE);
+					
+					// Limpiar el formulario
+					registroPedidoFrame.getTxtTipoMovimiento().setText("");
+					registroPedidoFrame.getTxtCantidad().setText("");
+					registroPedidoFrame.getTxtMotivo().setText("");
+					registroPedidoFrame.getTxtProvedor().setSelectedIndex(0);
+					registroPedidoFrame.getTxtProducto().setSelectedIndex(0);
+					registroPedidoFrame.setFechaActual();
+				} else {
+					JOptionPane.showMessageDialog(registroPedidoFrame,
+						"Error al registrar el movimiento.",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(registroPedidoFrame,
+					"La cantidad debe ser un número válido.",
+					"Error de formato",
+					JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(registroPedidoFrame,
+					"Error al procesar el movimiento: " + ex.getMessage(),
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
+			}
+			break;
 
 		// BOTONES "REGRESAR" DE MÓDULOS PRINCIPALES
 		case "regresarVentas":
@@ -986,6 +1096,95 @@ public class controllerprueba implements ActionListener {
 		case "abrirVerPedidos":
 			mproveedoresFrame.setVisible(false);
 			verPedidosFrame.setVisible(true);
+
+			// Limpiar la tabla antes de cargar nuevos datos
+			DefaultTableModel modeloTablaPedidos = (DefaultTableModel) verPedidosFrame.getTbPedidos().getModel();
+			modeloTablaPedidos.setRowCount(0);
+
+			// Obtener la lista de todos los movimientos de proveedores
+			List<MoviProveInDto> listaMovimientos = model.getMoviProveIn().obtener_todos_los_movi_prove_in();
+
+			// Listas para llenar los ComboBox de filtro
+			Set<String> productosUnicos = new java.util.HashSet<>();
+			Set<String> proveedoresUnicos = new java.util.HashSet<>();
+			Set<String> fechasUnicas = new java.util.HashSet<>();
+
+			if (listaMovimientos != null && !listaMovimientos.isEmpty()) {
+				for (MoviProveInDto movimiento : listaMovimientos) {
+					// Obtener el nombre del producto
+					String nombreProducto = "N/A";
+					Optional<ProductoDto> productoEnPedidoOpt = model.getProductos().obtenerProductoPorId1(movimiento.getIdProducto()); // Usar el ID (int)
+					if (productoEnPedidoOpt.isPresent()) {
+						nombreProducto = productoEnPedidoOpt.get().getNombre();
+						productosUnicos.add(nombreProducto); // Agregar producto al set de unicos
+					} else {
+                         System.err.println("Advertencia: No se encontró el producto con ID " + movimiento.getIdProducto() + " para el movimiento " + movimiento.getIdMovimientoProveedorINC());
+                         nombreProducto = "Producto Desconocido (ID: " + movimiento.getIdProducto() + ")";
+                    }
+
+					// Obtener el nombre del proveedor (Necesitas un método para obtener Proveedor por ID de Movimiento o Proveedor)
+					// Asumiendo que puedes obtener el ProveedorDto usando el idInventario o algún otro campo del movimiento
+					// String nombreProveedor = "N/A"; // Variable duplicada, comentada o eliminada
+					// TODO: Implementar lógica para obtener el proveedor y añadir su nombre a proveedoresUnicos
+                    // Ejemplo (requiere método en model.getProveedores() que busque por idInventario o similar):
+                    // Optional<ProveedorDto> proveedorOpt = model.getProveedores().obtenerProveedorPorInventarioId(movimiento.getIdInventario());
+                    // if(proveedorOpt.isPresent()) { 
+                    //     nombreProveedor = proveedorOpt.get().getNombre();
+                    //     proveedoresUnicos.add(nombreProveedor);
+                    // }
+
+					// Formatear y agregar fecha al set de unicos
+					if (movimiento.getFecha() != null) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						fechasUnicas.add(sdf.format(movimiento.getFecha()));
+					}
+
+					// Crear la fila con los datos del movimiento
+					Object[] fila = new Object[7];
+					fila[0] = movimiento.getIdMovimientoProveedorINC();
+					fila[1] = nombreProducto;
+					fila[2] = movimiento.getTipoMovimiento();
+					fila[3] = movimiento.getCantidad();
+					fila[4] = movimiento.getFecha(); // Puedes formatear la fecha aquí si lo prefieres
+					fila[5] = movimiento.getMotivo();
+					fila[6] = movimiento.getIdInventario(); // O nombreProveedor si lo obtienes
+
+					modeloTablaPedidos.addRow(fila);
+				}
+			}
+
+            // Llenar los ComboBoxes de filtro
+            verPedidosFrame.getCboxMetodoPago().removeAllItems(); // ComboBox para Producto
+            verPedidosFrame.getCboxMetodoPago().addItem("Producto:");
+            List<String> productosOrdenados = new ArrayList<>(productosUnicos);
+            Collections.sort(productosOrdenados);
+            for (String producto : productosOrdenados) {
+                verPedidosFrame.getCboxMetodoPago().addItem(producto);
+            }
+
+            verPedidosFrame.getCboxEstado().removeAllItems(); // ComboBox para Proveedor
+            verPedidosFrame.getCboxEstado().addItem("Proveedor:");
+             // TODO: Llenar ComboBox de Proveedor una vez que se pueda obtener el nombre del proveedor por movimiento
+            // List<String> proveedoresOrdenados = new ArrayList<>(proveedoresUnicos);
+            // Collections.sort(proveedoresOrdenados);
+            // for (String proveedor : proveedoresOrdenados) {
+            //     verPedidosFrame.getCboxEstado().addItem(proveedor);
+            // }
+
+            verPedidosFrame.getCboxFecha().removeAllItems(); // ComboBox para Fecha
+            verPedidosFrame.getCboxFecha().addItem("Fecha:");
+            List<String> fechasOrdenadas = new ArrayList<>(fechasUnicas);
+            Collections.sort(fechasOrdenadas);
+            for (String fecha : fechasOrdenadas) {
+                verPedidosFrame.getCboxFecha().addItem(fecha);
+            }
+
+			 if (listaMovimientos == null || listaMovimientos.isEmpty()) {
+				JOptionPane.showMessageDialog(verPedidosFrame, 
+					"No hay movimientos de proveedores registrados en el sistema.", 
+					"Información", 
+					JOptionPane.INFORMATION_MESSAGE);
+			}
 			break;
 		case "regresarVerPedidos":
 			verPedidosFrame.setVisible(false);
@@ -994,6 +1193,28 @@ public class controllerprueba implements ActionListener {
 		case "abrirRegistroPedido":
 			mproveedoresFrame.setVisible(false);
 			registroPedidoFrame.setVisible(true);
+
+			// Limpiar y cargar el combobox de proveedores
+			registroPedidoFrame.getTxtProvedor().removeAllItems();
+			registroPedidoFrame.getTxtProvedor().addItem("Seleccione un proveedor");
+			
+			List<ProveedorDto> listaProveedoresPedido = model.getProveedores().obtenerTodosLosProveedores();
+			if (listaProveedoresPedido != null) {
+				for (ProveedorDto proveedor : listaProveedoresPedido) {
+					registroPedidoFrame.getTxtProvedor().addItem(proveedor.getNombre() + " - " + proveedor.getCedula());
+				}
+			}
+
+			// Limpiar y cargar el combobox de productos
+			registroPedidoFrame.getTxtProducto().removeAllItems();
+			registroPedidoFrame.getTxtProducto().addItem("Seleccione un producto");
+			
+			List<ProductoDto> listaProductosPedido = model.getProductos().obtenerTodosLosProductos();
+			if (listaProductosPedido != null) {
+				for (ProductoDto producto : listaProductosPedido) {
+					registroPedidoFrame.getTxtProducto().addItem(producto.getNombre() + " - $" + producto.getPrecio());
+				}
+			}
 			break;
 		case "regresarRegistroPedido":
 			registroPedidoFrame.setVisible(false);
@@ -1031,6 +1252,52 @@ public class controllerprueba implements ActionListener {
 			sorter.setRowFilter(combinedFilter);
 		} else {
 			sorter.setRowFilter(null);
+		}
+	}
+
+	private void filtrarPedidos() {
+		if (verPedidosFrame == null) return;
+
+		DefaultTableModel modeloTabla = (DefaultTableModel) verPedidosFrame.getTbPedidos().getModel();
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloTabla);
+		verPedidosFrame.getTbPedidos().setRowSorter(sorter);
+
+		List<RowFilter<Object, Object>> filters = new ArrayList<>();
+
+		// Filtro de texto de búsqueda (en todas las columnas)
+		String textoBusqueda = verPedidosFrame.getTxtBuscar().getText().trim().toLowerCase();
+		if (!textoBusqueda.isEmpty()) {
+			filters.add(RowFilter.regexFilter("(?i)" + textoBusqueda));
+		}
+
+		// Filtro por Producto (usando cboxMetodoPago)
+		String productoSeleccionado = (String) verPedidosFrame.getCboxMetodoPago().getSelectedItem();
+		if (productoSeleccionado != null && !productoSeleccionado.equals("Producto:")) {
+			// Asumiendo que la columna de Producto es la segunda (indice 1)
+			filters.add(RowFilter.regexFilter("(?i)" + productoSeleccionado, 1));
+		}
+
+		// Filtro por Proveedor (usando cboxEstado)
+		String proveedorSeleccionado = (String) verPedidosFrame.getCboxEstado().getSelectedItem();
+		if (proveedorSeleccionado != null && !proveedorSeleccionado.equals("Proveedor:")) {
+			// TODO: Implementar filtro por proveedor. Necesitas obtener el nombre del proveedor en la tabla
+            // y filtrar por el nombre seleccionado. Asumiendo columna de Proveedor es la séptima (indice 6) si muestras ID Inventario o donde muestres el nombre del proveedor
+			// filters.add(RowFilter.regexFilter("(?i)" + proveedorSeleccionado, 6)); 
+		}
+
+		// Filtro por Fecha (usando cboxFecha)
+		String fechaSeleccionada = (String) verPedidosFrame.getCboxFecha().getSelectedItem();
+		if (fechaSeleccionada != null && !fechaSeleccionada.equals("Fecha:")) {
+			// Asumiendo que la columna de Fecha es la quinta (indice 4)
+			filters.add(RowFilter.regexFilter("(?i)" + fechaSeleccionada, 4));
+		}
+
+		// Aplicar filtros combinados
+		if (!filters.isEmpty()) {
+			RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
+			sorter.setRowFilter(combinedFilter);
+		} else {
+			sorter.setRowFilter(null); // Remover todos los filtros si no hay ninguno seleccionado
 		}
 	}
 }
