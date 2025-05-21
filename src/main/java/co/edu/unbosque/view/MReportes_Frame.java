@@ -23,6 +23,7 @@ public class MReportes_Frame extends JFrame {
 	private JButton btnDevolucionProve;
 	private JButton btnProductos;
 	private JButton btnRegresar;
+	private JButton btnDian;
 
 	private final String HISTORIAV = "Historial de Ventas";
 	private final String CLIENTES = "Clientes";
@@ -30,6 +31,7 @@ public class MReportes_Frame extends JFrame {
 	private final String PROVEEDORES = "Proveedores";
 	private final String DEVOLUCIONPROVE = "Devoluciones del Proveedor";
 	private final String PRODUCTOS = "Productos";
+	private final String FACTURAELECTRONICA = "Emitir Factura electronica";
 
 	public MReportes_Frame() {
 		setTitle("Papelería de Rosita - Módulo de Reportes");
@@ -77,6 +79,7 @@ public class MReportes_Frame extends JFrame {
 		contenedor.add(crearPanelOpcion(PROVEEDORES));
 		contenedor.add(crearPanelOpcion(DEVOLUCIONPROVE));
 		contenedor.add(crearPanelOpcion(PRODUCTOS));
+		contenedor.add(crearPanelOpcion(FACTURAELECTRONICA));
 
 		fondo.add(contenedor, BorderLayout.CENTER);
 	}
@@ -129,6 +132,11 @@ public class MReportes_Frame extends JFrame {
 			lbProductos = etiqueta;
 			btnProductos = boton;
 		}
+		case FACTURAELECTRONICA -> {
+			lbProveedores = etiqueta;
+			btnDian = boton;
+		}
+
 		}
 
 		panel.add(izq, BorderLayout.WEST);
@@ -164,4 +172,9 @@ public class MReportes_Frame extends JFrame {
 	public JButton getBtnRegresar() {
 		return btnRegresar;
 	}
+
+	public JButton getBtnDian() {
+		return btnDian;
+	}
+
 }

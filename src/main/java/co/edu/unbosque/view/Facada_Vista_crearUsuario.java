@@ -10,6 +10,7 @@ public class Facada_Vista_crearUsuario extends JFrame {
 	private JTextField txtUsuario;
 	private JPasswordField jpContraseña, jpConfirmarContraseña;
 	private JButton btnCrearUsuario;
+	private JButton btnRegresar;
 
 	public Facada_Vista_crearUsuario() {
 		setTitle("Crear Usuario - Papelería de Rosita");
@@ -92,18 +93,27 @@ public class Facada_Vista_crearUsuario extends JFrame {
 		btnCrearUsuario.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnCrearUsuario.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		centerPanel.add(btnCrearUsuario);
-		btnCrearUsuario.addActionListener(e -> {
-			if (validarContraseñas()) {
-				// Aquí podrías continuar con el registro, guardar en base de datos, etc.
-				JOptionPane.showMessageDialog(this, "Usuario creado con éxito.", "Éxito",
-						JOptionPane.INFORMATION_MESSAGE);
-				// Podrías cerrar la ventana con: dispose();
-			}
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+		btnRegresar = new JButton("Regresar");
+		btnRegresar.setBackground(new Color(240, 200, 200)); // Rojo claro
+		btnRegresar.setFocusPainted(false);
+		btnRegresar.setFont(new Font("Arial", Font.PLAIN, 14));
+		btnRegresar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+		btnRegresar.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		centerPanel.add(btnRegresar);
+
+		// Acción del botón Regresar
+		btnRegresar.addActionListener(e -> {
+			// Aquí decides si cierras la ventana o vuelves a otra
+			dispose(); // Cierra esta ventana
+			// O podrías abrir otra ventana, por ejemplo:
+			// new VentanaAnterior().setVisible(true);
 		});
 
 		mainPanel.add(centerPanel);
 
-		setVisible(true);
 	}
 
 	public static void main(String[] args) {
@@ -210,5 +220,9 @@ public class Facada_Vista_crearUsuario extends JFrame {
 	public void setBtnCrearUsuario(JButton btnCrearUsuario) {
 		this.btnCrearUsuario = btnCrearUsuario;
 	}
-	
+
+	public JButton getBtnRegresar() {
+		return btnRegresar;
+	}
+
 }

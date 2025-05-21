@@ -32,7 +32,7 @@ public class UsuariosDao {
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setString(1, usuario.getUsuario());
-            pstmt.setString(2, usuario.getContraseña()); // ¡RECUERDA! Hashear la contraseña antes de guardarla.
+            pstmt.setString(2, usuario.getContraseña()); 
             pstmt.setString(3, usuario.getAcceso());
             
             int affectedRows = pstmt.executeUpdate();
@@ -141,6 +141,37 @@ public class UsuariosDao {
             return affectedRows > 0;
         }
     }
+    /**
+     * Valida si un usuario con las credenciales dadas existe en la base de datos.
+     * @param usuario El nombre de usuario.
+     * @param contraseña La contraseña del usuario.
+     * @return Un objeto UsuariosDto si las credenciales son válidas, o null si no lo son.
+     * @throws SQLException Si ocurre un error de base de datos.
+     */
+    public UsuariosDto validarUsuario(String usuario, String contraseña) throws SQLException {
+        String sql = "SELECT id_usuario, usuario, contraseña, acceso FROM Usuario WHERE usuario = ? AND contraseña = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, usuario);
+            pstmt.setString(2, contraseña);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    UsuariosDto user = new UsuariosDto();
+                    user.setIdUsuario(rs.getInt("id_usuario"));
+                    user.setUsuario(rs.getString("usuario"));
+                    user.setContraseña(rs.getString("contraseña")); // solo para validación
+                    user.setAcceso(rs.getString("acceso"));
+                    return user;
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
 
     // Podrías añadir más métodos según tus necesidades, por ejemplo:
     // public Optional<UsuariosDto> obtenerUsuarioPorNombreUsuario(String nombreUsuario) throws SQLException { ... }

@@ -2,6 +2,7 @@ package co.edu.unbosque.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +47,7 @@ import co.edu.unbosque.view.VerPedidos_Frame;
 import co.edu.unbosque.view.VerProducto_Frame;
 import co.edu.unbosque.view.VerProve_Frame;
 import co.edu.unbosque.model.Facada_Model;
+import co.edu.unbosque.model.FacturaElectronicaPDF;
 import co.edu.unbosque.model.ReporteClientesPDF;
 import co.edu.unbosque.model.ReporteDevolucionesProveedorPDF;
 import co.edu.unbosque.model.ReporteFacturasPDF;
@@ -57,6 +59,8 @@ import co.edu.unbosque.model.daosYdtos.InventarioDto;
 import co.edu.unbosque.model.daosYdtos.MoviProveInDto;
 import co.edu.unbosque.model.daosYdtos.ProductoDto;
 import co.edu.unbosque.model.daosYdtos.ProveedorDto;
+import co.edu.unbosque.model.daosYdtos.UsuariosDao;
+import co.edu.unbosque.model.daosYdtos.UsuariosDto;
 import co.edu.unbosque.model.daosYdtos.DetalleFacturaDto;
 import co.edu.unbosque.model.daosYdtos.FacturasDto;
 import co.edu.unbosque.model.daosYdtos.DFacturaDto;
@@ -91,6 +95,7 @@ public class controllerprueba implements ActionListener {
 	private Devoluciones_Frame devolucionProveedoresFrame;
 	private NuevoInventario_Frame nuevoInventario;
 	private String tipoUsuarioLogueado = "";
+	private String nombreUsuario;
 	private Facada_Vista_crearUsuario crearU;
 
 	public controllerprueba(Facada_Vista_login loginView, Admin_View adminView, User_View userView,
@@ -103,7 +108,8 @@ public class controllerprueba implements ActionListener {
 			EditarProducto_Frame editarProductoFrame, EliminarProducto_Frame eliminarProductoFrame,
 			VerProducto_Frame verProductoFrame, RegistroProve_Frame registroProveFrame,
 			EditarProve_Frame editarProveFrame, VerProve_Frame verProveFrame, RegistroPedido_Frame registroPedidoFrame,
-			VerPedidos_Frame verPedidosFrame, Devoluciones_Frame devolucionProveedoresFrame,NuevoInventario_Frame nuevoInventario,Facada_Vista_crearUsuario crearU) {
+			VerPedidos_Frame verPedidosFrame, Devoluciones_Frame devolucionProveedoresFrame,
+			NuevoInventario_Frame nuevoInventario, Facada_Vista_crearUsuario crearU) {
 		this.loginView = loginView;
 		this.adminView = adminView;
 		this.userView = userView;
@@ -130,8 +136,8 @@ public class controllerprueba implements ActionListener {
 		this.registroPedidoFrame = registroPedidoFrame;
 		this.verPedidosFrame = verPedidosFrame;
 		this.devolucionProveedoresFrame = devolucionProveedoresFrame;
-		this.nuevoInventario=nuevoInventario;
-		this.crearU =crearU;
+		this.nuevoInventario = nuevoInventario;
+		this.crearU = crearU;
 		addListeners();
 
 		iniciar();
@@ -155,8 +161,10 @@ public class controllerprueba implements ActionListener {
 			loginView.getBtnInicio().addActionListener(this);
 			loginView.getBtnCrearUsuario().addActionListener(this);
 			loginView.getBtnCrearUsuario().setActionCommand("crearU");
+			crearU.getBtnRegresar().addActionListener(this);
+			crearU.getBtnRegresar().setActionCommand("regresarLogin");
 			crearU.getBtnCrearUsuario().addActionListener(this);
-			crearU.getBtnCrearUsuario().setActionCommand("CrearUsiario");
+			crearU.getBtnCrearUsuario().setActionCommand("CrearUsuario");
 		}
 
 		// ADMIN VIEW
@@ -276,6 +284,9 @@ public class controllerprueba implements ActionListener {
 			mreportesFrame.getBtnHistoriaV().addActionListener(this);
 			mreportesFrame.getBtnHistoriaV().setActionCommand("pdfHistorialVentas");
 
+			mreportesFrame.getBtnDian().addActionListener(this);
+			mreportesFrame.getBtnDian().setActionCommand("Dian");
+
 		}
 
 		// SUB-VISTAS CLIENTES
@@ -372,19 +383,26 @@ public class controllerprueba implements ActionListener {
 			editarProveFrame.getBtnGuardar().setActionCommand("ConfirmarEditarProvedor");
 			editarProveFrame.getBtnGuardar().addActionListener(this);
 
-
 		}
 		if (verProveFrame != null) {
 			verProveFrame.getBtnRegresar().setActionCommand("regresarVerProve");
 			verProveFrame.getBtnRegresar().addActionListener(this);
-			
+
 			// Agregar listeners para búsqueda y filtros
 			verProveFrame.getTxtBuscar().getDocument().addDocumentListener(new DocumentListener() {
-				public void changedUpdate(DocumentEvent e) { filtrarProveedores(); }
-				public void removeUpdate(DocumentEvent e) { filtrarProveedores(); }
-				public void insertUpdate(DocumentEvent e) { filtrarProveedores(); }
+				public void changedUpdate(DocumentEvent e) {
+					filtrarProveedores();
+				}
+
+				public void removeUpdate(DocumentEvent e) {
+					filtrarProveedores();
+				}
+
+				public void insertUpdate(DocumentEvent e) {
+					filtrarProveedores();
+				}
 			});
-			
+
 			verProveFrame.getCboxMetodoPago().addActionListener(e -> filtrarProveedores());
 			verProveFrame.getCboxFecha().addActionListener(e -> filtrarProveedores());
 			verProveFrame.getCboxEstado().addActionListener(e -> filtrarProveedores());
@@ -398,15 +416,24 @@ public class controllerprueba implements ActionListener {
 		if (verPedidosFrame != null) {
 			verPedidosFrame.getBtnRegresar().setActionCommand("regresarVerPedidos");
 			verPedidosFrame.getBtnRegresar().addActionListener(this);
-			
+
 			// Agregar listeners para búsqueda y filtros en VerPedidos_Frame
 			verPedidosFrame.getTxtBuscar().getDocument().addDocumentListener(new DocumentListener() {
-				public void changedUpdate(DocumentEvent e) { filtrarPedidos(); }
-				public void removeUpdate(DocumentEvent e) { filtrarPedidos(); }
-				public void insertUpdate(DocumentEvent e) { filtrarPedidos(); }
+				public void changedUpdate(DocumentEvent e) {
+					filtrarPedidos();
+				}
+
+				public void removeUpdate(DocumentEvent e) {
+					filtrarPedidos();
+				}
+
+				public void insertUpdate(DocumentEvent e) {
+					filtrarPedidos();
+				}
 			});
-			
-			verPedidosFrame.getCboxMetodoPago().addActionListener(e -> filtrarPedidos()); // cboxMetodoPago es para Producto
+
+			verPedidosFrame.getCboxMetodoPago().addActionListener(e -> filtrarPedidos()); // cboxMetodoPago es para
+																							// Producto
 			verPedidosFrame.getCboxEstado().addActionListener(e -> filtrarPedidos()); // cboxEstado es para Proveedor
 			verPedidosFrame.getCboxFecha().addActionListener(e -> filtrarPedidos()); // cboxFecha es para Fecha
 		}
@@ -425,57 +452,92 @@ public class controllerprueba implements ActionListener {
 			String user = loginView.getTxtUsuario().getText();
 			if ("admin".equalsIgnoreCase(user)) {
 				tipoUsuarioLogueado = "admin";
+				nombreUsuario = "Rosita González"; // asignamos el nombre real del emisor
 				loginView.setVisible(false);
 				adminView.setVisible(true);
 			} else if ("user".equalsIgnoreCase(user)) {
 				tipoUsuarioLogueado = "user";
+				nombreUsuario = "Gladys Arango"; // nombre del usuario
 				loginView.setVisible(false);
 				userView.setVisible(true);
 			} else {
 				loginView.mostrarMensajeError("Usuario de prueba no reconocido (use 'admin' o 'user')");
 			}
 			break;
+
 		case "crearU":
-			loginView.setVisible(false);
 			crearU.setVisible(true);
+			loginView.setVisible(false);
 			break;
-			
+		case "CrearUsuario":
+			String nombredUsuario = crearU.getTxtUsuario().getText().trim();
+			String contraseña = String.valueOf(crearU.getJpContraseña().getPassword()).trim();
+			String confirmar = String.valueOf(crearU.getJpConfirmarContraseña().getPassword()).trim();
+
+			if (nombredUsuario.isEmpty() || contraseña.isEmpty() || confirmar.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Por favor, completa todos los campos.");
+				break;
+			}
+
+			if (!contraseña.equals(confirmar)) {
+				JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden.");
+				break;
+			}
+
+			UsuariosDto nuevoUsuario = new UsuariosDto();
+			nuevoUsuario.setUsuario(nombredUsuario);
+			nuevoUsuario.setContraseña(contraseña);
+			nuevoUsuario.setAcceso("user");
+
+			try {
+				UsuariosDao usuarioDAO = new UsuariosDao();
+				usuarioDAO.crearUsuario(nuevoUsuario);
+				JOptionPane.showMessageDialog(null, "Usuario creado con éxito.");
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Error al crear el usuario: " + ex.getMessage());
+			}
+			break;
+
+		case "regresarLogin":
+			loginView.setVisible(true);
+			crearU.setVisible(false);
+
 		case "cerrarSesion":
-			tipoUsuarioLogueado = "";
 			if ("admin".equals(tipoUsuarioLogueado)) {
 				adminView.setVisible(false);
 			} else if ("user".equals(tipoUsuarioLogueado)) {
 				userView.setVisible(false);
 			}
+			tipoUsuarioLogueado = "";
 			loginView.setVisible(true);
 			break;
 
 		// NAVEGACIÓN DESDE Admin_View
 		case "adminVentas":
-			adminView.setVisible(false);
 			mventasView.setVisible(true);
+			adminView.setVisible(false);
 			break;
 		case "adminClientes":
-			adminView.setVisible(false);
 			mclientesView.setVisible(true);
+			adminView.setVisible(false);
 			break;
 		case "adminProductos":
-			adminView.setVisible(false);
 			mproductosFrame.setVisible(true);
+			adminView.setVisible(false);
 			break;
 		case "adminProveedores":
-			adminView.setVisible(false);
 			mproveedoresFrame.setVisible(true);
+			adminView.setVisible(false);
 			break;
 		case "adminReportes":
-			adminView.setVisible(false);
 			mreportesFrame.setVisible(true);
+			adminView.setVisible(false);
 			break;
 
 		// NAVEGACIÓN DESDE User_View
 		case "abrirVentas":
-			userView.setVisible(false);
 			mventasView.setVisible(true);
+			userView.setVisible(false);
 			break;
 		case "abrirClientes":
 			userView.setVisible(false);
@@ -507,8 +569,7 @@ public class controllerprueba implements ActionListener {
 					Long.parseLong(editarClienteFrame.getTxtTelefono().getText().toString()));
 			break;
 
-
-			// eliminar cliente
+		// eliminar cliente
 		case "confirmacionEliminarcliente":
 			eliminarClienteFrame.getTxtNombre()
 					.setText(model.getClientes()
@@ -605,59 +666,64 @@ public class controllerprueba implements ActionListener {
 			}
 			break;
 
-				//PROVEDOR
-				case "ConfirmarProvedor":
-				String nombreProveedor = registroProveFrame.getTxtNombre().getText().trim();
-				String telefonoProveedor = registroProveFrame.getTxtTelefono().getText().trim();
-				String direccionProveedor = registroProveFrame.getTxtDireccion().getText().trim();
-				String nombreProductoSeleccionado = (String) registroProveFrame.getComboProductos().getSelectedItem();
-	
-				int idProductoAsociado = 0; // Valor por defecto si no se selecciona un producto valido
-	
-				// Buscar el ID del producto seleccionado
-				if (nombreProductoSeleccionado != null && !nombreProductoSeleccionado.equals("Seleccione un producto")) {
-					List<ProductoDto> listaProductos = model.getProductos().obtenerTodosLosProductos();
-					if (listaProductos != null) {
-						for (ProductoDto producto : listaProductos) {
-							if (producto.getNombre().equals(nombreProductoSeleccionado)) {
-								idProductoAsociado = producto.getIdProducto();
-								break; // Encontramos el producto, salimos del bucle
-							}
+		// PROVEDOR
+		case "ConfirmarProvedor":
+			String nombreProveedor = registroProveFrame.getTxtNombre().getText().trim();
+			String telefonoProveedor = registroProveFrame.getTxtTelefono().getText().trim();
+			String direccionProveedor = registroProveFrame.getTxtDireccion().getText().trim();
+			String nombreProductoSeleccionado = (String) registroProveFrame.getComboProductos().getSelectedItem();
+
+			int idProductoAsociado = 0; // Valor por defecto si no se selecciona un producto valido
+
+			// Buscar el ID del producto seleccionado
+			if (nombreProductoSeleccionado != null && !nombreProductoSeleccionado.equals("Seleccione un producto")) {
+				List<ProductoDto> listaProductos = model.getProductos().obtenerTodosLosProductos();
+				if (listaProductos != null) {
+					for (ProductoDto producto : listaProductos) {
+						if (producto.getNombre().equals(nombreProductoSeleccionado)) {
+							idProductoAsociado = producto.getIdProducto();
+							break; // Encontramos el producto, salimos del bucle
 						}
 					}
 				}
-	
-				// Validar campos obligatorios y si se selecciono un producto
-				if (nombreProveedor.isEmpty() || telefonoProveedor.isEmpty() || direccionProveedor.isEmpty()) {
-					JOptionPane.showMessageDialog(registroProveFrame, "Por favor, complete todos los campos obligatorios.", "Campos vacíos",
-							JOptionPane.WARNING_MESSAGE);
-				} else if (idProductoAsociado == 0) {
-					JOptionPane.showMessageDialog(registroProveFrame, "Por favor, seleccione un producto válido.", "Producto no seleccionado",
-							JOptionPane.WARNING_MESSAGE);
-				} else {
-					// Llamar al metodo crearProveedor con el ID del producto seleccionado
-					model.getProveedores().crearProveedor(
-						nombreProveedor,
-						telefonoProveedor, // Usando telefono para el campo 'contacto'
-						direccionProveedor,
-						idProductoAsociado,
-						Long.parseLong(registroProveFrame.getTxtCedula().getText().toString()) // Asumiendo que getTxtCedula es para cedula/NIT del proveedor
-					);
-					JOptionPane.showMessageDialog(registroProveFrame, "Proveedor registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-					registroProveFrame.limpiarFormulario(); // Limpiar el formulario si el registro fue exitoso
-				}
+			}
+
+			// Validar campos obligatorios y si se selecciono un producto
+			if (nombreProveedor.isEmpty() || telefonoProveedor.isEmpty() || direccionProveedor.isEmpty()) {
+				JOptionPane.showMessageDialog(registroProveFrame, "Por favor, complete todos los campos obligatorios.",
+						"Campos vacíos", JOptionPane.WARNING_MESSAGE);
+			} else if (idProductoAsociado == 0) {
+				JOptionPane.showMessageDialog(registroProveFrame, "Por favor, seleccione un producto válido.",
+						"Producto no seleccionado", JOptionPane.WARNING_MESSAGE);
+			} else {
+				// Llamar al metodo crearProveedor con el ID del producto seleccionado
+				model.getProveedores().crearProveedor(nombreProveedor, telefonoProveedor, // Usando telefono para el
+																							// campo 'contacto'
+						direccionProveedor, idProductoAsociado,
+						Long.parseLong(registroProveFrame.getTxtCedula().getText().toString()) // Asumiendo que
+																								// getTxtCedula es para
+																								// cedula/NIT del
+																								// proveedor
+				);
+				JOptionPane.showMessageDialog(registroProveFrame, "Proveedor registrado exitosamente.", "Éxito",
+						JOptionPane.INFORMATION_MESSAGE);
+				registroProveFrame.limpiarFormulario(); // Limpiar el formulario si el registro fue exitoso
+			}
 			break;
-			case "ConfirmarEditarProvedor":
+		case "ConfirmarEditarProvedor":
 			String nombreProveedorEdit = editarProveFrame.getTxtNombre().getText().trim();
-			String cedulaProveedorEdit = editarProveFrame.getTxtCedula().getText().trim(); // Asumiendo que la cedula se usa para identificar al proveedor
+			String cedulaProveedorEdit = editarProveFrame.getTxtCedula().getText().trim(); // Asumiendo que la cedula se
+																							// usa para identificar al
+																							// proveedor
 			String telefonoProveedorEdit = editarProveFrame.getTxtTelefono().getText().trim();
 			String direccionProveedorEdit = editarProveFrame.getTxtDireccion().getText().trim();
 			String nombreProductoSeleccionadoEdit = (String) editarProveFrame.getComboProductos().getSelectedItem();
-	
+
 			int idProductoAsociadoEdit = 0;
-	
+
 			// Buscar el ID del producto seleccionado para la actualizacion
-			if (nombreProductoSeleccionadoEdit != null && !nombreProductoSeleccionadoEdit.equals("Seleccione un producto")) {
+			if (nombreProductoSeleccionadoEdit != null
+					&& !nombreProductoSeleccionadoEdit.equals("Seleccione un producto")) {
 				List<ProductoDto> listaProductosEdit = model.getProductos().obtenerTodosLosProductos();
 				if (listaProductosEdit != null) {
 					for (ProductoDto producto : listaProductosEdit) {
@@ -668,60 +734,62 @@ public class controllerprueba implements ActionListener {
 					}
 				}
 			}
-	
+
 			// Validar campos obligatorios y si se selecciono un producto
-			if (nombreProveedorEdit.isEmpty() || cedulaProveedorEdit.isEmpty() || telefonoProveedorEdit.isEmpty() || direccionProveedorEdit.isEmpty()) {
-				JOptionPane.showMessageDialog(editarProveFrame, "Por favor, complete todos los campos obligatorios.", "Campos vacíos",
-						JOptionPane.WARNING_MESSAGE);
+			if (nombreProveedorEdit.isEmpty() || cedulaProveedorEdit.isEmpty() || telefonoProveedorEdit.isEmpty()
+					|| direccionProveedorEdit.isEmpty()) {
+				JOptionPane.showMessageDialog(editarProveFrame, "Por favor, complete todos los campos obligatorios.",
+						"Campos vacíos", JOptionPane.WARNING_MESSAGE);
 			} else if (idProductoAsociadoEdit == 0) {
-				JOptionPane.showMessageDialog(editarProveFrame, "Por favor, seleccione un producto válido.", "Producto no seleccionado",
-						JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editarProveFrame, "Por favor, seleccione un producto válido.",
+						"Producto no seleccionado", JOptionPane.WARNING_MESSAGE);
 			} else {
 				// Convertir cedula a long
 				long cedulaLongEdit;
 				try {
 					cedulaLongEdit = Long.parseLong(cedulaProveedorEdit);
 				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(editarProveFrame, "La cédula/NIT debe ser un número válido.", "Error de formato", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(editarProveFrame, "La cédula/NIT debe ser un número válido.",
+							"Error de formato", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				// Llamar al metodo actualizarProveedor
 				boolean exitoActualizacion = model.getProveedores().actualizarProveedor(
-					
-					 // Aquí deberías pasar el ID del proveedor si actualizarProveedor lo requiere y tienes acceso a el
-					nombreProveedorEdit,
-					telefonoProveedorEdit, // Usando telefono para el campo \'contacto\'
-					direccionProveedorEdit,
-					idProductoAsociadoEdit,
-					cedulaLongEdit // Pasando la cedula/NIT convertida
-					
+
+						// Aquí deberías pasar el ID del proveedor si actualizarProveedor lo requiere y
+						// tienes acceso a el
+						nombreProveedorEdit, telefonoProveedorEdit, // Usando telefono para el campo \'contacto\'
+						direccionProveedorEdit, idProductoAsociadoEdit, cedulaLongEdit // Pasando la cedula/NIT
+																						// convertida
+
 				);
-	
+
 				if (exitoActualizacion) {
-					JOptionPane.showMessageDialog(editarProveFrame, "Proveedor actualizado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-					
+					JOptionPane.showMessageDialog(editarProveFrame, "Proveedor actualizado exitosamente.", "Éxito",
+							JOptionPane.INFORMATION_MESSAGE);
+
 					// Opcional: Limpiar campos o cerrar ventana después de actualizar
 				} else {
-					JOptionPane.showMessageDialog(editarProveFrame, "Error al actualizar el proveedor.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(editarProveFrame, "Error al actualizar el proveedor.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			break;
-	
-		//Pedidos
+
+		// Pedidos
 		case "ConfirmarPedido":
 			try {
 				// Validar que todos los campos estén llenos
-				if (registroPedidoFrame.getTxtTipoMovimiento().getText().isEmpty() ||
-					registroPedidoFrame.getTxtCantidad().getText().isEmpty() ||
-					!registroPedidoFrame.hayFechaSeleccionada() ||
-					registroPedidoFrame.getTxtMotivo().getText().isEmpty() ||
-					registroPedidoFrame.getTxtProvedor().getSelectedIndex() == 0 ||
-					registroPedidoFrame.getTxtProducto().getSelectedIndex() == 0) {
-					
+				if (registroPedidoFrame.getTxtTipoMovimiento().getText().isEmpty()
+						|| registroPedidoFrame.getTxtCantidad().getText().isEmpty()
+						|| !registroPedidoFrame.hayFechaSeleccionada()
+						|| registroPedidoFrame.getTxtMotivo().getText().isEmpty()
+						|| registroPedidoFrame.getTxtProvedor().getSelectedIndex() == 0
+						|| registroPedidoFrame.getTxtProducto().getSelectedIndex() == 0) {
+
 					JOptionPane.showMessageDialog(registroPedidoFrame,
-						"Por favor, complete todos los campos del formulario.",
-						"Campos incompletos",
-						JOptionPane.WARNING_MESSAGE);
+							"Por favor, complete todos los campos del formulario.", "Campos incompletos",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 
@@ -730,12 +798,13 @@ public class controllerprueba implements ActionListener {
 				int cantidad = Integer.parseInt(registroPedidoFrame.getTxtCantidad().getText());
 				Date fecha = registroPedidoFrame.getFechaDate();
 				String motivo = registroPedidoFrame.getTxtMotivo().getText();
-				
+
 				// Obtener el ID del producto seleccionado
 				String productoSeleccionado = registroPedidoFrame.getTxtProducto().getSelectedItem().toString();
 				int idProducto = 0;
-				
-				// Extraer el ID del producto del texto seleccionado (formato: "Nombre - $Precio")
+
+				// Extraer el ID del producto del texto seleccionado (formato: "Nombre -
+				// $Precio")
 				List<ProductoDto> productos = model.getProductos().obtenerTodosLosProductos();
 				for (ProductoDto producto : productos) {
 					if (productoSeleccionado.startsWith(producto.getNombre())) {
@@ -746,9 +815,7 @@ public class controllerprueba implements ActionListener {
 
 				if (idProducto == 0) {
 					JOptionPane.showMessageDialog(registroPedidoFrame,
-						"Error al obtener el ID del producto seleccionado.",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
+							"Error al obtener el ID del producto seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
@@ -756,21 +823,13 @@ public class controllerprueba implements ActionListener {
 				int idInventario = 12; // Por ahora lo dejamos fijo, pero deberías obtenerlo según tu lógica
 
 				// Crear el movimiento
-				MoviProveInDto movimiento = model.getMoviProveIn().crear_movi_prove_in(
-					idInventario,
-					tipoMovimiento,
-					cantidad,
-					fecha,
-					motivo,
-					idProducto
-				);
+				MoviProveInDto movimiento = model.getMoviProveIn().crear_movi_prove_in(idInventario, tipoMovimiento,
+						cantidad, fecha, motivo, idProducto);
 
 				if (movimiento != null) {
-					JOptionPane.showMessageDialog(registroPedidoFrame,
-						"Movimiento registrado exitosamente.",
-						"Éxito",
-						JOptionPane.INFORMATION_MESSAGE);
-					
+					JOptionPane.showMessageDialog(registroPedidoFrame, "Movimiento registrado exitosamente.", "Éxito",
+							JOptionPane.INFORMATION_MESSAGE);
+
 					// Limpiar el formulario
 					registroPedidoFrame.getTxtTipoMovimiento().setText("");
 					registroPedidoFrame.getTxtCantidad().setText("");
@@ -779,32 +838,26 @@ public class controllerprueba implements ActionListener {
 					registroPedidoFrame.getTxtProducto().setSelectedIndex(0);
 					registroPedidoFrame.setFechaActual();
 				} else {
-					JOptionPane.showMessageDialog(registroPedidoFrame,
-						"Error al registrar el movimiento.",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(registroPedidoFrame, "Error al registrar el movimiento.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(registroPedidoFrame,
-					"La cantidad debe ser un número válido.",
-					"Error de formato",
-					JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(registroPedidoFrame, "La cantidad debe ser un número válido.",
+						"Error de formato", JOptionPane.ERROR_MESSAGE);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(registroPedidoFrame,
-					"Error al procesar el movimiento: " + ex.getMessage(),
-					"Error",
-					JOptionPane.ERROR_MESSAGE);
+						"Error al procesar el movimiento: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
-		//Inventario
+		// Inventario
 		case "abrirCrearInventario":
 			nuevoInventario.setVisible(true);
 			mproductosFrame.setVisible(false);
-			
+
 			// Limpiar y cargar el combobox de productos
 			nuevoInventario.getComboProducto().removeAllItems();
 			nuevoInventario.getComboProducto().addItem("Seleccione un producto");
-			
+
 			List<ProductoDto> listaProductosInventario = model.getProductos().obtenerTodosLosProductos();
 			if (listaProductosInventario != null) {
 				for (ProductoDto producto : listaProductosInventario) {
@@ -819,15 +872,14 @@ public class controllerprueba implements ActionListener {
 		case "confirmarCrearInventario":
 			try {
 				// Validar que todos los campos estén llenos
-				if (nuevoInventario.getComboProducto().getSelectedIndex() == 0 ||
-					nuevoInventario.getTxtStock().getText().isEmpty() ||
-					nuevoInventario.getTxtStockMinimo().getText().isEmpty() ||
-					nuevoInventario.getTxtUbicacion().getText().isEmpty()) {
-					
+				if (nuevoInventario.getComboProducto().getSelectedIndex() == 0
+						|| nuevoInventario.getTxtStock().getText().isEmpty()
+						|| nuevoInventario.getTxtStockMinimo().getText().isEmpty()
+						|| nuevoInventario.getTxtUbicacion().getText().isEmpty()) {
+
 					JOptionPane.showMessageDialog(nuevoInventario,
-						"Por favor, complete todos los campos del formulario.",
-						"Campos incompletos",
-						JOptionPane.WARNING_MESSAGE);
+							"Por favor, complete todos los campos del formulario.", "Campos incompletos",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 
@@ -836,7 +888,7 @@ public class controllerprueba implements ActionListener {
 				int stock = Integer.parseInt(nuevoInventario.getTxtStock().getText());
 				int stockMinimo = Integer.parseInt(nuevoInventario.getTxtStockMinimo().getText());
 				String ubicacion = nuevoInventario.getTxtUbicacion().getText();
-				
+
 				// Obtener el ID del producto seleccionado
 				int idProducto = 0;
 				List<ProductoDto> productos = model.getProductos().obtenerTodosLosProductos();
@@ -848,49 +900,35 @@ public class controllerprueba implements ActionListener {
 				}
 
 				if (idProducto == 0) {
-					JOptionPane.showMessageDialog(nuevoInventario,
-						"Error al obtener el ID del producto seleccionado.",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(nuevoInventario, "Error al obtener el ID del producto seleccionado.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
 				// Crear el inventario
-				InventarioDto inventarioCreado = model.getInventario().crearInventario(
-					stock,
-					stockMinimo,
-					ubicacion,
-					idProducto,
-					new java.util.Date() // Fecha actual
+				InventarioDto inventarioCreado = model.getInventario().crearInventario(stock, stockMinimo, ubicacion,
+						idProducto, new java.util.Date() // Fecha actual
 				);
 
 				if (inventarioCreado != null) {
-					JOptionPane.showMessageDialog(nuevoInventario,
-						"Inventario registrado exitosamente.",
-						"Éxito",
-						JOptionPane.INFORMATION_MESSAGE);
-					
+					JOptionPane.showMessageDialog(nuevoInventario, "Inventario registrado exitosamente.", "Éxito",
+							JOptionPane.INFORMATION_MESSAGE);
+
 					// Limpiar el formulario
 					nuevoInventario.getComboProducto().setSelectedIndex(0);
 					nuevoInventario.getTxtStock().setText("");
 					nuevoInventario.getTxtStockMinimo().setText("");
 					nuevoInventario.getTxtUbicacion().setText("");
 				} else {
-					JOptionPane.showMessageDialog(nuevoInventario,
-						"Error al registrar el inventario.",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(nuevoInventario, "Error al registrar el inventario.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(nuevoInventario,
-					"El stock y stock mínimo deben ser números válidos.",
-					"Error de formato",
-					JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(nuevoInventario, "El stock y stock mínimo deben ser números válidos.",
+						"Error de formato", JOptionPane.ERROR_MESSAGE);
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(nuevoInventario,
-					"Error al procesar el inventario: " + ex.getMessage(),
-					"Error",
-					JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(nuevoInventario, "Error al procesar el inventario: " + ex.getMessage(),
+						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
 		case "confirmarVenta":
@@ -904,52 +942,40 @@ public class controllerprueba implements ActionListener {
 
 				// Validar datos del cliente
 				if (nombreCliente.isEmpty()) {
-					JOptionPane.showMessageDialog(nuevaVentaView, 
-						"Por favor ingrese el nombre del cliente", 
-						"Error", 
-						JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(nuevaVentaView, "Por favor ingrese el nombre del cliente", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
 				// Buscar cliente por nombre
 				List<ClientesDto> clientes = model.getClientes().obtener_todos_los_clientes();
 				Optional<ClientesDto> clienteOpt = clientes.stream()
-					.filter(c -> c.getNombre().equalsIgnoreCase(nombreCliente))
-					.findFirst();
+						.filter(c -> c.getNombre().equalsIgnoreCase(nombreCliente)).findFirst();
 
 				int idCliente;
 				if (clienteOpt.isPresent()) {
 					idCliente = clienteOpt.get().getIdCliente();
 				} else {
 					// Crear nuevo cliente
-					ClientesDto nuevoCliente = model.getClientes().crear_cliente(
-						nombreCliente,
-						"Cliente",
-						"cliente@email.com",
-						0L, // Cedula temporal
-						0L  // Teléfono temporal
+					ClientesDto nuevoCliente = model.getClientes().crear_cliente(nombreCliente, "Cliente",
+							"cliente@email.com", 0L, // Cedula temporal
+							0L // Teléfono temporal
 					);
 					if (nuevoCliente == null) {
-						JOptionPane.showMessageDialog(nuevaVentaView, 
-							"Error al crear el cliente", 
-							"Error", 
-							JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(nuevaVentaView, "Error al crear el cliente", "Error",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					idCliente = nuevoCliente.getIdCliente();
 				}
 
 				// Crear factura
-				FacturasDto factura = model.getFacturas().crear_factura(
-					idCliente,
-					fecha,
-					metodoPago
-				);
+				FacturasDto factura = model.getFacturas().crear_factura(idCliente, fecha, metodoPago);
 
 				if (factura != null) {
 					// Obtener detalles de productos
 					DefaultTableModel modelo = (DefaultTableModel) nuevaVentaView.getTablaProductos().getModel();
-					
+
 					for (int i = 0; i < modelo.getRowCount(); i++) {
 						int idProducto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
 						int cantidad = Integer.parseInt(modelo.getValueAt(i, 2).toString());
@@ -957,16 +983,10 @@ public class controllerprueba implements ActionListener {
 						double subtotal = Double.parseDouble(modelo.getValueAt(i, 4).toString());
 
 						// Crear detalle de factura
-						model.getDfactura().crear_dfactura(
-							factura.getIdFactura(),
-							idProducto,
-							null, // idProveedor
-							null, // idPromocion
-							"venta", // tipo
-							cantidad,
-							precioUnitario,
-							subtotal
-						);
+						model.getDfactura().crear_dfactura(factura.getIdFactura(), idProducto, null, // idProveedor
+								null, // idPromocion
+								"venta", // tipo
+								cantidad, precioUnitario, subtotal);
 
 						// Actualizar inventario
 						InventarioDto inventario = model.getInventario().obtenerInventarioPorProducto(idProducto);
@@ -976,45 +996,39 @@ public class controllerprueba implements ActionListener {
 						}
 					}
 
-					JOptionPane.showMessageDialog(nuevaVentaView, 
-						"Venta registrada exitosamente", 
-						"Éxito", 
-						JOptionPane.INFORMATION_MESSAGE);
-					
+					JOptionPane.showMessageDialog(nuevaVentaView, "Venta registrada exitosamente", "Éxito",
+							JOptionPane.INFORMATION_MESSAGE);
+
 					// Limpiar formulario
 					nuevaVentaView.getTxtCliente().setText("");
 					nuevaVentaView.getFechaVenta().setDate(new Date());
 					nuevaVentaView.getMetodoPago().setSelectedIndex(0);
 					nuevaVentaView.getTxtTotal().setText("$ 0.00");
 					nuevaVentaView.getTxtIva().setText("$ 0.00");
-					((DefaultTableModel)nuevaVentaView.getTablaProductos().getModel()).setRowCount(0);
+					((DefaultTableModel) nuevaVentaView.getTablaProductos().getModel()).setRowCount(0);
 				} else {
-					JOptionPane.showMessageDialog(nuevaVentaView, 
-						"Error al registrar la venta", 
-						"Error", 
-						JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(nuevaVentaView, "Error al registrar la venta", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				JOptionPane.showMessageDialog(nuevaVentaView, 
-					"Error al procesar la venta: " + ex.getMessage(), 
-					"Error", 
-					JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(nuevaVentaView, "Error al procesar la venta: " + ex.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			break;
 		case "agregarProductoV":
 			// Obtener todos los productos de la base de datos
 			List<ProductoDto> productos = model.getProductos().obtenerTodosLosProductos();
-			
+
 			// Crear matriz de datos para la tabla
 			Object[][] datosProductos = new Object[productos.size()][7];
-			
+
 			for (int i = 0; i < productos.size(); i++) {
 				ProductoDto producto = productos.get(i);
 				// Obtener el inventario del producto
 				InventarioDto inventario = model.getInventario().obtenerInventarioPorProducto(producto.getIdProducto());
 				int stock = (inventario != null) ? inventario.getStock() : 0;
-				
+
 				datosProductos[i][0] = producto.getIdProducto(); // ID
 				datosProductos[i][1] = producto.getNombre(); // Nombre
 				datosProductos[i][2] = producto.getPrecio(); // Precio
@@ -1023,7 +1037,7 @@ public class controllerprueba implements ActionListener {
 				datosProductos[i][5] = producto.getPrecio(); // Precio Unitario
 				datosProductos[i][6] = producto.getPrecio(); // Subtotal inicial
 			}
-			
+
 			nuevaVentaView.mostrarVentanaProductos(datosProductos);
 			break;
 		case "confirmarEliminacion":
@@ -1039,19 +1053,18 @@ public class controllerprueba implements ActionListener {
 				// Validar que la venta exista
 				Optional<FacturasDto> facturaOpt = model.getFacturas().ver_factura(idVenta);
 				if (!facturaOpt.isPresent()) {
-					JOptionPane.showMessageDialog(eliminarVentaFrame,
-						"No se encontró la venta con el ID especificado",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(eliminarVentaFrame, "No se encontró la venta con el ID especificado",
+							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
 				// Obtener los detalles de la factura para actualizar el inventario
 				List<DFacturaDto> detalles = model.getDfactura().obtener_detalles_por_id_factura(idVenta);
-				
+
 				// Restaurar el inventario
 				for (DFacturaDto detalle : detalles) {
-					InventarioDto inventario = model.getInventario().obtenerInventarioPorProducto(detalle.getIdProducto());
+					InventarioDto inventario = model.getInventario()
+							.obtenerInventarioPorProducto(detalle.getIdProducto());
 					if (inventario != null) {
 						int nuevoStock = inventario.getStock() + detalle.getCantidad();
 						model.getInventario().actualizarStock(detalle.getIdProducto(), nuevoStock);
@@ -1065,13 +1078,11 @@ public class controllerprueba implements ActionListener {
 
 				// Eliminar la factura
 				boolean eliminado = model.getFacturas().eliminar_factura(idVenta);
-				
+
 				if (eliminado) {
-					JOptionPane.showMessageDialog(eliminarVentaFrame,
-						"Venta eliminada exitosamente",
-						"Éxito",
-						JOptionPane.INFORMATION_MESSAGE);
-					
+					JOptionPane.showMessageDialog(eliminarVentaFrame, "Venta eliminada exitosamente", "Éxito",
+							JOptionPane.INFORMATION_MESSAGE);
+
 					// Limpiar campos
 					eliminarVentaFrame.getTxtIdVenta().setText("");
 					eliminarVentaFrame.getTxtFechaVenta().setText("");
@@ -1080,30 +1091,23 @@ public class controllerprueba implements ActionListener {
 					eliminarVentaFrame.getTxtMotivo().setText("");
 					eliminarVentaFrame.getComboEstado().setSelectedIndex(0);
 				} else {
-					JOptionPane.showMessageDialog(eliminarVentaFrame,
-						"Error al eliminar la venta",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(eliminarVentaFrame, "Error al eliminar la venta", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (NumberFormatException ex) {
 				JOptionPane.showMessageDialog(eliminarVentaFrame,
-					"Por favor ingrese valores numéricos válidos para el ID y el total",
-					"Error de formato",
-					JOptionPane.ERROR_MESSAGE);
+						"Por favor ingrese valores numéricos válidos para el ID y el total", "Error de formato",
+						JOptionPane.ERROR_MESSAGE);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(eliminarVentaFrame,
-					"Error al procesar la eliminación: " + ex.getMessage(),
-					"Error",
-					JOptionPane.ERROR_MESSAGE);
+						"Error al procesar la eliminación: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
-		//usuario
+		// usuario
 		case "CrearUsiario":
-		model.getUsuarios().crearUsuario(
-			crearU.getTxtUsuario().getText().toString()
-			, new String(crearU.getJpContraseña().getPassword())
-			, "usuario");
-		break;
+			model.getUsuarios().crearUsuario(crearU.getTxtUsuario().getText().toString(),
+					new String(crearU.getJpContraseña().getPassword()), "usuario");
+			break;
 		// BOTONES "REGRESAR" DE MÓDULOS PRINCIPALES
 		case "regresarVentas":
 			mventasView.setVisible(false);
@@ -1158,17 +1162,25 @@ public class controllerprueba implements ActionListener {
 		case "abrirHistorialVenta":
 			mventasView.setVisible(false);
 			historialVentasUI.setVisible(true);
-			
+
 			// Cargar el historial de ventas
 			cargarHistorialVentas();
-			
+
 			// Agregar listeners para los filtros
 			historialVentasUI.getTxtBuscar().getDocument().addDocumentListener(new DocumentListener() {
-				public void changedUpdate(DocumentEvent e) { filtrarHistorialVentas(); }
-				public void removeUpdate(DocumentEvent e) { filtrarHistorialVentas(); }
-				public void insertUpdate(DocumentEvent e) { filtrarHistorialVentas(); }
+				public void changedUpdate(DocumentEvent e) {
+					filtrarHistorialVentas();
+				}
+
+				public void removeUpdate(DocumentEvent e) {
+					filtrarHistorialVentas();
+				}
+
+				public void insertUpdate(DocumentEvent e) {
+					filtrarHistorialVentas();
+				}
 			});
-			
+
 			historialVentasUI.getCbMetodoPago().addActionListener(event -> filtrarHistorialVentas());
 			historialVentasUI.getCbEstado().addActionListener(event -> filtrarHistorialVentas());
 			historialVentasUI.getTxtFecha().addPropertyChangeListener("value", event -> filtrarHistorialVentas());
@@ -1289,7 +1301,7 @@ public class controllerprueba implements ActionListener {
 				System.out.println("Procesando productos...");
 				for (ProductoDto producto : listaProductos) {
 					System.out.println("Procesando producto: " + producto.getNombre());
-					
+
 					// Obtener el inventario del producto
 					String stock = "N/A";
 					List<InventarioDto> inventarios = model.getInventario().obtenerTodosLosInventarios();
@@ -1301,7 +1313,7 @@ public class controllerprueba implements ActionListener {
 							}
 						}
 					}
-					
+
 					Object[] fila = new Object[7];
 					fila[0] = producto.getIdProducto();
 					fila[1] = producto.getNombre();
@@ -1338,7 +1350,8 @@ public class controllerprueba implements ActionListener {
 			List<ProductoDto> listaProductosProveedores = model.getProductos().obtenerTodosLosProductos();
 			if (listaProductosProveedores != null) {
 				for (ProductoDto producto : listaProductosProveedores) {
-					registroProveFrame.getComboProductos().addItem(producto.getNombre()); // Añadir el nombre del producto
+					registroProveFrame.getComboProductos().addItem(producto.getNombre()); // Añadir el nombre del
+																							// producto
 				}
 			} else {
 				System.out.println("No hay productos disponibles para cargar en el ComboBox.");
@@ -1366,17 +1379,22 @@ public class controllerprueba implements ActionListener {
 				System.out.println("No hay productos disponibles para cargar en el ComboBox de edición.");
 			}
 
-			// --- Parte 2: Cargar los datos del proveedor existente y seleccionar su producto asociado ---
+			// --- Parte 2: Cargar los datos del proveedor existente y seleccionar su
+			// producto asociado ---
 
 			// **Paso A:** Obtener el identificador del proveedor a editar.
 			// Esto es CRUCIAL. Necesitas saber qué proveedor editar.
 			// En el ejemplo anterior, asumí que la cedula se ingresa en txtCedula antes.
-			// Si tu lógica es diferente (ej. seleccionas de una tabla), adapta cómo obtienes la cedula/ID aquí.
-			String cedulaProveedorStr = editarProveFrame.getTxtCedula().getText().trim(); // O el método que obtenga la cedula
+			// Si tu lógica es diferente (ej. seleccionas de una tabla), adapta cómo
+			// obtienes la cedula/ID aquí.
+			String cedulaProveedorStr = editarProveFrame.getTxtCedula().getText().trim(); // O el método que obtenga la
+																							// cedula
 
 			if (cedulaProveedorStr.isEmpty()) {
 				// Si no hay identificador, no podemos cargar datos. Muestra un mensaje y sales.
-				JOptionPane.showMessageDialog(editarProveFrame, "Por favor, ingrese la cédula/NIT del proveedor a editar.", "Cédula/NIT Vacía", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(editarProveFrame,
+						"Por favor, ingrese la cédula/NIT del proveedor a editar.", "Cédula/NIT Vacía",
+						JOptionPane.WARNING_MESSAGE);
 				// Además, limpia o resetea los campos si la cédula está vacía
 				editarProveFrame.getTxtNombre().setText("");
 				editarProveFrame.getTxtTelefono().setText("");
@@ -1390,7 +1408,8 @@ public class controllerprueba implements ActionListener {
 			try {
 				cedulaProveedor = Long.parseLong(cedulaProveedorStr);
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(editarProveFrame, "La cédula/NIT debe ser un número válido.", "Error de formato", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(editarProveFrame, "La cédula/NIT debe ser un número válido.",
+						"Error de formato", JOptionPane.ERROR_MESSAGE);
 				// Limpiar o resetear campos
 				editarProveFrame.getTxtNombre().setText("");
 				editarProveFrame.getTxtTelefono().setText("");
@@ -1400,45 +1419,62 @@ public class controllerprueba implements ActionListener {
 				return;
 			}
 
-
 			// **Paso B:** Buscar el proveedor usando su identificador.
-			Optional<ProveedorDto> proveedorOpt = model.getProveedores().obtenerProveedorPorCedula(cedulaProveedor); // Usar tu método de búsqueda por cedula
+			Optional<ProveedorDto> proveedorOpt = model.getProveedores().obtenerProveedorPorCedula(cedulaProveedor); // Usar
+																														// tu
+																														// método
+																														// de
+																														// búsqueda
+																														// por
+																														// cedula
 
 			if (proveedorOpt.isPresent()) {
 				ProveedorDto proveedor = proveedorOpt.get();
 
-				// **Paso C:** Llenar los campos de texto con los datos del proveedor encontrado.
+				// **Paso C:** Llenar los campos de texto con los datos del proveedor
+				// encontrado.
 				editarProveFrame.getTxtNombre().setText(proveedor.getNombre());
-				editarProveFrame.getTxtTelefono().setText(proveedor.getContacto()); // Asegurate que getContacto devuelve String o conviertelo
+				editarProveFrame.getTxtTelefono().setText(proveedor.getContacto()); // Asegurate que getContacto
+																					// devuelve String o conviertelo
 				editarProveFrame.getTxtDireccion().setText(proveedor.getDireccion());
 				// El campo txtCedula ya debería tener la cédula que se usó para buscar.
 
-				// **Paso D, E y F:** Identificar el producto asociado y seleccionarlo en el JComboBox.
+				// **Paso D, E y F:** Identificar el producto asociado y seleccionarlo en el
+				// JComboBox.
 
 				// Necesitas el ID del producto asociado al proveedor.
-				String nomrbeProductoAsociado = proveedor.getNombre(); // Obtienes el ID del producto del DTO del proveedor
+				String nomrbeProductoAsociado = proveedor.getNombre(); // Obtienes el ID del producto del DTO del
+																		// proveedor
 
 				// Ahora, busca el nombre de ese producto en la lista completa de productos.
-				// Revisa si tu model.getProductos().obtenerProductoPorId(int idProducto) existe y busca por ID (int).
+				// Revisa si tu model.getProductos().obtenerProductoPorId(int idProducto) existe
+				// y busca por ID (int).
 				// Si no, NECESITAS agregar ese método primero en ProductoDao y Productos.java.
-				// Si obtenerProductoPorId en Productos.java SÍ busca por ID (int), la llamada sería:
-				Optional<ProductoDto> productoAsociadoOpt = model.getProductos().obtenerProductoPorId(nomrbeProductoAsociado); // Llama con el ID (int)
+				// Si obtenerProductoPorId en Productos.java SÍ busca por ID (int), la llamada
+				// sería:
+				Optional<ProductoDto> productoAsociadoOpt = model.getProductos()
+						.obtenerProductoPorId(nomrbeProductoAsociado); // Llama con el ID (int)
 
 				if (productoAsociadoOpt.isPresent()) {
 					String nombreProductoAsociado = productoAsociadoOpt.get().getNombre();
 					// **Finalmente, selecciona el nombre del producto asociado en el JComboBox.**
 					editarProveFrame.getComboProductos().setSelectedItem(nombreProductoAsociado);
 				} else {
-					// Si por alguna razón el producto asociado no se encuentra, selecciona la opción por defecto.
+					// Si por alguna razón el producto asociado no se encuentra, selecciona la
+					// opción por defecto.
 					editarProveFrame.getComboProductos().setSelectedItem("Seleccione un producto");
 				}
 
-				// TODO: Si tienes un JComboBox para el tipo de proveedor en EditarProve_Frame, selecciona el tipo correcto aquí
-				// editarProveFrame.getComboTipoProveedor().setSelectedItem(proveedor.getTipoProveedor()); // si existiera getTipoProveedor()
+				// TODO: Si tienes un JComboBox para el tipo de proveedor en EditarProve_Frame,
+				// selecciona el tipo correcto aquí
+				// editarProveFrame.getComboTipoProveedor().setSelectedItem(proveedor.getTipoProveedor());
+				// // si existiera getTipoProveedor()
 
 			} else {
 				// Proveedor no encontrado con esa cedula
-				JOptionPane.showMessageDialog(editarProveFrame, "No se encontró ningún proveedor con la cédula/NIT ingresada.", "Proveedor no encontrado", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(editarProveFrame,
+						"No se encontró ningún proveedor con la cédula/NIT ingresada.", "Proveedor no encontrado",
+						JOptionPane.INFORMATION_MESSAGE);
 				// Limpia o resetea los campos si el proveedor no se encontró
 				editarProveFrame.getTxtNombre().setText("");
 				editarProveFrame.getTxtTelefono().setText("");
@@ -1449,7 +1485,6 @@ public class controllerprueba implements ActionListener {
 				// editarProveFrame.setVisible(false);
 				// mproveedoresFrame.setVisible(true);
 			}
-
 
 			break;
 		case "regresarEditarProve":
@@ -1479,10 +1514,8 @@ public class controllerprueba implements ActionListener {
 					modeloTablaProveedores.addRow(fila);
 				}
 			} else {
-				JOptionPane.showMessageDialog(verProveFrame, 
-					"No hay proveedores registrados en el sistema.", 
-					"Información", 
-					JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(verProveFrame, "No hay proveedores registrados en el sistema.",
+						"Información", JOptionPane.INFORMATION_MESSAGE);
 			}
 			break;
 		case "regresarVerProve":
@@ -1517,25 +1550,33 @@ public class controllerprueba implements ActionListener {
 				for (MoviProveInDto movimiento : listaMovimientos) {
 					// Obtener el nombre del producto
 					String nombreProducto = "N/A";
-					Optional<ProductoDto> productoEnPedidoOpt = model.getProductos().obtenerProductoPorId1(movimiento.getIdProducto()); // Usar el ID (int)
+					Optional<ProductoDto> productoEnPedidoOpt = model.getProductos()
+							.obtenerProductoPorId1(movimiento.getIdProducto()); // Usar el ID (int)
 					if (productoEnPedidoOpt.isPresent()) {
 						nombreProducto = productoEnPedidoOpt.get().getNombre();
 						productosUnicos.add(nombreProducto); // Agregar producto al set de unicos
 					} else {
-                         System.err.println("Advertencia: No se encontró el producto con ID " + movimiento.getIdProducto() + " para el movimiento " + movimiento.getIdMovimientoProveedorINC());
-                         nombreProducto = "Producto Desconocido (ID: " + movimiento.getIdProducto() + ")";
-                    }
+						System.err
+								.println("Advertencia: No se encontró el producto con ID " + movimiento.getIdProducto()
+										+ " para el movimiento " + movimiento.getIdMovimientoProveedorINC());
+						nombreProducto = "Producto Desconocido (ID: " + movimiento.getIdProducto() + ")";
+					}
 
-					// Obtener el nombre del proveedor (Necesitas un método para obtener Proveedor por ID de Movimiento o Proveedor)
-					// Asumiendo que puedes obtener el ProveedorDto usando el idInventario o algún otro campo del movimiento
+					// Obtener el nombre del proveedor (Necesitas un método para obtener Proveedor
+					// por ID de Movimiento o Proveedor)
+					// Asumiendo que puedes obtener el ProveedorDto usando el idInventario o algún
+					// otro campo del movimiento
 					// String nombreProveedor = "N/A"; // Variable duplicada, comentada o eliminada
-					// TODO: Implementar lógica para obtener el proveedor y añadir su nombre a proveedoresUnicos
-                    // Ejemplo (requiere método en model.getProveedores() que busque por idInventario o similar):
-                    // Optional<ProveedorDto> proveedorOpt = model.getProveedores().obtenerProveedorPorInventarioId(movimiento.getIdInventario());
-                    // if(proveedorOpt.isPresent()) { 
-                    //     nombreProveedor = proveedorOpt.get().getNombre();
-                    //     proveedoresUnicos.add(nombreProveedor);
-                    // }
+					// TODO: Implementar lógica para obtener el proveedor y añadir su nombre a
+					// proveedoresUnicos
+					// Ejemplo (requiere método en model.getProveedores() que busque por
+					// idInventario o similar):
+					// Optional<ProveedorDto> proveedorOpt =
+					// model.getProveedores().obtenerProveedorPorInventarioId(movimiento.getIdInventario());
+					// if(proveedorOpt.isPresent()) {
+					// nombreProveedor = proveedorOpt.get().getNombre();
+					// proveedoresUnicos.add(nombreProveedor);
+					// }
 
 					// Formatear y agregar fecha al set de unicos
 					if (movimiento.getFecha() != null) {
@@ -1557,37 +1598,37 @@ public class controllerprueba implements ActionListener {
 				}
 			}
 
-            // Llenar los ComboBoxes de filtro
-            verPedidosFrame.getCboxMetodoPago().removeAllItems(); // ComboBox para Producto
-            verPedidosFrame.getCboxMetodoPago().addItem("Producto:");
-            List<String> productosOrdenados = new ArrayList<>(productosUnicos);
-            Collections.sort(productosOrdenados);
-            for (String producto : productosOrdenados) {
-                verPedidosFrame.getCboxMetodoPago().addItem(producto);
-            }
+			// Llenar los ComboBoxes de filtro
+			verPedidosFrame.getCboxMetodoPago().removeAllItems(); // ComboBox para Producto
+			verPedidosFrame.getCboxMetodoPago().addItem("Producto:");
+			List<String> productosOrdenados = new ArrayList<>(productosUnicos);
+			Collections.sort(productosOrdenados);
+			for (String producto : productosOrdenados) {
+				verPedidosFrame.getCboxMetodoPago().addItem(producto);
+			}
 
-            verPedidosFrame.getCboxEstado().removeAllItems(); // ComboBox para Proveedor
-            verPedidosFrame.getCboxEstado().addItem("Proveedor:");
-             // TODO: Llenar ComboBox de Proveedor una vez que se pueda obtener el nombre del proveedor por movimiento
-            // List<String> proveedoresOrdenados = new ArrayList<>(proveedoresUnicos);
-            // Collections.sort(proveedoresOrdenados);
-            // for (String proveedor : proveedoresOrdenados) {
-            //     verPedidosFrame.getCboxEstado().addItem(proveedor);
-            // }
+			verPedidosFrame.getCboxEstado().removeAllItems(); // ComboBox para Proveedor
+			verPedidosFrame.getCboxEstado().addItem("Proveedor:");
+			// TODO: Llenar ComboBox de Proveedor una vez que se pueda obtener el nombre del
+			// proveedor por movimiento
+			// List<String> proveedoresOrdenados = new ArrayList<>(proveedoresUnicos);
+			// Collections.sort(proveedoresOrdenados);
+			// for (String proveedor : proveedoresOrdenados) {
+			// verPedidosFrame.getCboxEstado().addItem(proveedor);
+			// }
 
-            verPedidosFrame.getCboxFecha().removeAllItems(); // ComboBox para Fecha
-            verPedidosFrame.getCboxFecha().addItem("Fecha:");
-            List<String> fechasOrdenadas = new ArrayList<>(fechasUnicas);
-            Collections.sort(fechasOrdenadas);
-            for (String fecha : fechasOrdenadas) {
-                verPedidosFrame.getCboxFecha().addItem(fecha);
-            }
+			verPedidosFrame.getCboxFecha().removeAllItems(); // ComboBox para Fecha
+			verPedidosFrame.getCboxFecha().addItem("Fecha:");
+			List<String> fechasOrdenadas = new ArrayList<>(fechasUnicas);
+			Collections.sort(fechasOrdenadas);
+			for (String fecha : fechasOrdenadas) {
+				verPedidosFrame.getCboxFecha().addItem(fecha);
+			}
 
-			 if (listaMovimientos == null || listaMovimientos.isEmpty()) {
-				JOptionPane.showMessageDialog(verPedidosFrame, 
-					"No hay movimientos de proveedores registrados en el sistema.", 
-					"Información", 
-					JOptionPane.INFORMATION_MESSAGE);
+			if (listaMovimientos == null || listaMovimientos.isEmpty()) {
+				JOptionPane.showMessageDialog(verPedidosFrame,
+						"No hay movimientos de proveedores registrados en el sistema.", "Información",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 			break;
 		case "regresarVerPedidos":
@@ -1601,7 +1642,7 @@ public class controllerprueba implements ActionListener {
 			// Limpiar y cargar el combobox de proveedores
 			registroPedidoFrame.getTxtProvedor().removeAllItems();
 			registroPedidoFrame.getTxtProvedor().addItem("Seleccione un proveedor");
-			
+
 			List<ProveedorDto> listaProveedoresPedido = model.getProveedores().obtenerTodosLosProveedores();
 			if (listaProveedoresPedido != null) {
 				for (ProveedorDto proveedor : listaProveedoresPedido) {
@@ -1612,7 +1653,7 @@ public class controllerprueba implements ActionListener {
 			// Limpiar y cargar el combobox de productos
 			registroPedidoFrame.getTxtProducto().removeAllItems();
 			registroPedidoFrame.getTxtProducto().addItem("Seleccione un producto");
-			
+
 			List<ProductoDto> listaProductosPedido = model.getProductos().obtenerTodosLosProductos();
 			if (listaProductosPedido != null) {
 				for (ProductoDto producto : listaProductosPedido) {
@@ -1647,31 +1688,35 @@ public class controllerprueba implements ActionListener {
 			ReportePedidosPDF reportePedido = new ReportePedidosPDF();
 			reportePedido.generarReportePDF();
 			break;
+		case "Dian":
+			FacturaElectronicaPDF f = new FacturaElectronicaPDF();
+			f.emitirFacturaElectronica(nombreUsuario, model);
 		default:
 			throw new IllegalArgumentException("Comando no reconocido: " + command);
 		}
 	}
 
 	private void filtrarProveedores() {
-		if (verProveFrame == null) return;
-		
+		if (verProveFrame == null)
+			return;
+
 		String textoBusqueda = verProveFrame.getTxtBuscar().getText().toLowerCase();
 		String metodoPago = (String) verProveFrame.getCboxMetodoPago().getSelectedItem();
 		String fecha = (String) verProveFrame.getCboxFecha().getSelectedItem();
 		String estado = (String) verProveFrame.getCboxEstado().getSelectedItem();
-		
+
 		DefaultTableModel modeloTabla = (DefaultTableModel) verProveFrame.getTbProve().getModel();
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloTabla);
 		verProveFrame.getTbProve().setRowSorter(sorter);
-		
+
 		// Crear filtros
 		List<RowFilter<Object, Object>> filters = new ArrayList<>();
-		
+
 		// Filtro de texto de búsqueda
 		if (!textoBusqueda.isEmpty()) {
 			filters.add(RowFilter.regexFilter("(?i)" + textoBusqueda));
 		}
-		
+
 		// Aplicar filtros
 		if (!filters.isEmpty()) {
 			RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
@@ -1682,7 +1727,8 @@ public class controllerprueba implements ActionListener {
 	}
 
 	private void filtrarPedidos() {
-		if (verPedidosFrame == null) return;
+		if (verPedidosFrame == null)
+			return;
 
 		DefaultTableModel modeloTabla = (DefaultTableModel) verPedidosFrame.getTbPedidos().getModel();
 		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloTabla);
@@ -1706,9 +1752,12 @@ public class controllerprueba implements ActionListener {
 		// Filtro por Proveedor (usando cboxEstado)
 		String proveedorSeleccionado = (String) verPedidosFrame.getCboxEstado().getSelectedItem();
 		if (proveedorSeleccionado != null && !proveedorSeleccionado.equals("Proveedor:")) {
-			// TODO: Implementar filtro por proveedor. Necesitas obtener el nombre del proveedor en la tabla
-            // y filtrar por el nombre seleccionado. Asumiendo columna de Proveedor es la séptima (indice 6) si muestras ID Inventario o donde muestres el nombre del proveedor
-			// filters.add(RowFilter.regexFilter("(?i)" + proveedorSeleccionado, 6)); 
+			// TODO: Implementar filtro por proveedor. Necesitas obtener el nombre del
+			// proveedor en la tabla
+			// y filtrar por el nombre seleccionado. Asumiendo columna de Proveedor es la
+			// séptima (indice 6) si muestras ID Inventario o donde muestres el nombre del
+			// proveedor
+			// filters.add(RowFilter.regexFilter("(?i)" + proveedorSeleccionado, 6));
 		}
 
 		// Filtro por Fecha (usando cboxFecha)
@@ -1732,26 +1781,27 @@ public class controllerprueba implements ActionListener {
 			// Obtener todas las facturas
 			List<FacturasDto> facturas = model.getFacturas().obtener_todas_las_facturas();
 			Object[][] datos = new Object[facturas.size()][7];
-			
+
 			for (int i = 0; i < facturas.size(); i++) {
 				FacturasDto factura = facturas.get(i);
-				
+
 				// Obtener el cliente
 				String nombreCliente = "N/A";
 				Optional<ClientesDto> clienteOpt = model.getClientes().ver_cliente(factura.getIdCliente());
 				nombreCliente = clienteOpt.map(ClientesDto::getNombre).orElse("N/A");
-				
+
 				// Formatear la fecha
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				String fechaFormateada = sdf.format(factura.getFecha());
-				
+
 				// Calcular el total
 				double total = 0;
-				List<DFacturaDto> detalles = model.getDfactura().obtener_detalles_por_id_factura(factura.getIdFactura());
+				List<DFacturaDto> detalles = model.getDfactura()
+						.obtener_detalles_por_id_factura(factura.getIdFactura());
 				for (DFacturaDto detalle : detalles) {
 					total += detalle.getTotal();
 				}
-				
+
 				datos[i][0] = factura.getIdFactura();
 				datos[i][1] = fechaFormateada;
 				datos[i][2] = nombreCliente;
@@ -1760,13 +1810,11 @@ public class controllerprueba implements ActionListener {
 				datos[i][5] = String.format("$%.2f", total); // Columna "Total"
 				datos[i][6] = "Ver"; // Columna "Ver"
 			}
-			
+
 			historialVentasUI.actualizarTabla(datos);
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(historialVentasUI,
-				"Error al cargar el historial de ventas: " + ex.getMessage(),
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+					"Error al cargar el historial de ventas: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1776,56 +1824,57 @@ public class controllerprueba implements ActionListener {
 			String metodoPago = (String) historialVentasUI.getCbMetodoPago().getSelectedItem();
 			String estado = (String) historialVentasUI.getCbEstado().getSelectedItem();
 			Date fechaSeleccionada = (Date) historialVentasUI.getTxtFecha().getValue();
-			
+
 			// Obtener todas las facturas
 			List<FacturasDto> facturas = model.getFacturas().obtener_todas_las_facturas();
 			List<Object[]> datosFiltrados = new ArrayList<>();
-			
+
 			for (FacturasDto factura : facturas) {
 				// Obtener el cliente
 				String nombreCliente = "N/A";
 				Optional<ClientesDto> clienteOpt = model.getClientes().ver_cliente(factura.getIdCliente());
 				nombreCliente = clienteOpt.map(ClientesDto::getNombre).orElse("N/A");
-				
+
 				// Formatear la fecha
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				String fechaFormateada = sdf.format(factura.getFecha());
-				
+
 				// Calcular el total
 				double total = 0;
-				List<DFacturaDto> detalles = model.getDfactura().obtener_detalles_por_id_factura(factura.getIdFactura());
+				List<DFacturaDto> detalles = model.getDfactura()
+						.obtener_detalles_por_id_factura(factura.getIdFactura());
 				for (DFacturaDto detalle : detalles) {
 					total += detalle.getTotal();
 				}
-				
+
 				// Aplicar filtros
 				boolean cumpleFiltros = true;
-				
+
 				// Filtro de texto
 				if (!textoBusqueda.isEmpty()) {
-					cumpleFiltros = cumpleFiltros && (
-						String.valueOf(factura.getIdFactura()).toLowerCase().contains(textoBusqueda) ||
-						nombreCliente.toLowerCase().contains(textoBusqueda) ||
-						fechaFormateada.toLowerCase().contains(textoBusqueda)
-					);
+					cumpleFiltros = cumpleFiltros
+							&& (String.valueOf(factura.getIdFactura()).toLowerCase().contains(textoBusqueda)
+									|| nombreCliente.toLowerCase().contains(textoBusqueda)
+									|| fechaFormateada.toLowerCase().contains(textoBusqueda));
 				}
-				
+
 				// Filtro de método de pago
 				if (metodoPago != null && !metodoPago.isEmpty()) {
 					cumpleFiltros = cumpleFiltros && factura.getEstadoPago().equals(metodoPago);
 				}
-				
+
 				// Filtro de estado
 				if (estado != null && !estado.isEmpty()) {
 					cumpleFiltros = cumpleFiltros && factura.getEstadoPago().equals(estado);
 				}
-				
+
 				// Filtro de fecha
 				if (fechaSeleccionada != null) {
 					SimpleDateFormat sdfDia = new SimpleDateFormat("dd/MM/yyyy");
-					cumpleFiltros = cumpleFiltros && sdfDia.format(factura.getFecha()).equals(sdfDia.format(fechaSeleccionada));
+					cumpleFiltros = cumpleFiltros
+							&& sdfDia.format(factura.getFecha()).equals(sdfDia.format(fechaSeleccionada));
 				}
-				
+
 				if (cumpleFiltros) {
 					Object[] fila = new Object[7];
 					fila[0] = factura.getIdFactura();
@@ -1838,14 +1887,12 @@ public class controllerprueba implements ActionListener {
 					datosFiltrados.add(fila);
 				}
 			}
-			
+
 			// Actualizar la tabla con los datos filtrados
 			historialVentasUI.actualizarTabla(datosFiltrados.toArray(new Object[0][]));
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(historialVentasUI,
-				"Error al filtrar el historial de ventas: " + ex.getMessage(),
-				"Error",
-				JOptionPane.ERROR_MESSAGE);
+					"Error al filtrar el historial de ventas: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

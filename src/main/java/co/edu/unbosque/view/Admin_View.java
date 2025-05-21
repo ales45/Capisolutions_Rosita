@@ -78,7 +78,6 @@ public class Admin_View extends JFrame {
 		contenedor.add(Box.createVerticalGlue());
 
 		fondo.add(contenedor, BorderLayout.CENTER);
-		setVisible(true);
 	}
 
 	private void estiloBoton(JButton boton) {

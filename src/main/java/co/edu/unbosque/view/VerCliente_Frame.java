@@ -82,7 +82,7 @@ public class VerCliente_Frame extends JFrame {
 		tarjeta.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		// Tabla no editable
-		String[] columnas = { "Nombre", "Cédula/NIT", "Teléfono", "Correo electrónico", "Dirección" };
+		String[] columnas = { "Nombre", "Cédula/NIT", "Teléfono", "Correo electrónico" };
 
 		DefaultTableModel modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override

@@ -7,7 +7,7 @@ import java.awt.event.*;
 import java.util.regex.Pattern;
 
 public class NuevoCliente_Frame extends JFrame {
-	private JTextField txtNombre, txtCedula, txtTelefono, txtCorreo, txtDireccion;
+	private JTextField txtNombre, txtCedula, txtTelefono, txtCorreo;
 	private JComboBox<String> comboTipoCliente;
 
 	private JButton btnLimpiar;
@@ -61,7 +61,6 @@ public class NuevoCliente_Frame extends JFrame {
 		txtCedula = new JTextField(20);
 		txtTelefono = new JTextField(20);
 		txtCorreo = new JTextField(20);
-		txtDireccion = new JTextField(20);
 		comboTipoCliente = new JComboBox<>(new String[] { "Natural", "Jurídico" });
 
 		// Filtros para que solo acepten números
@@ -73,7 +72,6 @@ public class NuevoCliente_Frame extends JFrame {
 		addField(formPanel, gbc, row++, "Cédula/NIT:", txtCedula);
 		addField(formPanel, gbc, row++, "Teléfono:", txtTelefono);
 		addField(formPanel, gbc, row++, "Correo electrónico:", txtCorreo);
-		addField(formPanel, gbc, row++, "Dirección:", txtDireccion);
 		addField(formPanel, gbc, row++, "Tipo de cliente:", comboTipoCliente);
 
 		box.add(formPanel, BorderLayout.CENTER);
@@ -117,15 +115,13 @@ public class NuevoCliente_Frame extends JFrame {
 		txtCedula.setText("");
 		txtTelefono.setText("");
 		txtCorreo.setText("");
-		txtDireccion.setText("");
 		comboTipoCliente.setSelectedIndex(0);
 	}
 
 	private void registrarCliente() {
 		// Verificar campos vacíos
 		if (txtNombre.getText().trim().isEmpty() || txtCedula.getText().trim().isEmpty()
-				|| txtTelefono.getText().trim().isEmpty() || txtCorreo.getText().trim().isEmpty()
-				|| txtDireccion.getText().trim().isEmpty()) {
+				|| txtTelefono.getText().trim().isEmpty() || txtCorreo.getText().trim().isEmpty()) {
 
 			JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Campos incompletos",
 					JOptionPane.WARNING_MESSAGE);
@@ -141,8 +137,8 @@ public class NuevoCliente_Frame extends JFrame {
 		}
 
 		// Mostrar información
-		String info = String.format("Nombre: %s\nCédula/NIT: %s\nTeléfono: %s\nCorreo: %s\nDirección: %s\nTipo: %s",
-				txtNombre.getText(), txtCedula.getText(), txtTelefono.getText(), correo, txtDireccion.getText(),
+		String info = String.format("Nombre: %s\nCédula/NIT: %s\nTeléfono: %s\nCorreo: %s\nTipo: %s",
+				txtNombre.getText(), txtCedula.getText(), txtTelefono.getText(), correo,
 				comboTipoCliente.getSelectedItem());
 		JOptionPane.showMessageDialog(this, info, "Cliente Registrado", JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -213,13 +209,7 @@ public class NuevoCliente_Frame extends JFrame {
 		this.txtCorreo = txtCorreo;
 	}
 
-	public JTextField getTxtDireccion() {
-		return txtDireccion;
-	}
 
-	public void setTxtDireccion(JTextField txtDireccion) {
-		this.txtDireccion = txtDireccion;
-	}
 
 	public JComboBox<String> getComboTipoCliente() {
 		return comboTipoCliente;
