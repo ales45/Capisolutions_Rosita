@@ -54,7 +54,7 @@ public class NuevoInventario_Frame extends JFrame {
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		comboProducto = new JComboBox<>(new String[] { "Seleccione", "Producto 1", "Producto 2" }); // ← Llenar dinámicamente
+		comboProducto = new JComboBox<>(new String[] { "Seleccione un producto" }); // Inicializar con opción por defecto
 		txtStock = new JTextField(20);
 		txtStockMinimo = new JTextField(20);
 		txtUbicacion = new JTextField(20);
@@ -139,11 +139,8 @@ public class NuevoInventario_Frame extends JFrame {
 		JOptionPane.showMessageDialog(this, "Inventario registrado exitosamente.", "Éxito",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
-public static void main(String[] args) {
-	NuevoInventario_Frame n=new NuevoInventario_Frame();
-	n.setVisible(true);
-}
-	// Getters para el controlador (si lo necesitas)
+
+	// Getters para el controlador
 	public JButton getBtnGuardar() {
 		return btnGuardar;
 	}

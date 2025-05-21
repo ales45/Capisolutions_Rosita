@@ -88,29 +88,28 @@ public class NuevaVenta_View extends JFrame {
 		estiloBoton(btnAgregarProducto);
 		btnAgregarProducto.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnAgregarProducto.setMaximumSize(new Dimension(200, 40));
-		btnAgregarProducto.addActionListener(e -> mostrarVentanaProductos());
 		caja.add(btnAgregarProducto);
 		caja.add(Box.createVerticalStrut(10));
 
 		// Tabla productos
-		String[] columnas = { "Producto", "Cantidad", "Precio Unitario", "Subtotal" };
+		String[] columnas = { "ID", "Producto", "Cantidad", "Precio Unitario", "Subtotal" };
 		DefaultTableModel modeloTabla = new DefaultTableModel(new Object[][] {}, columnas) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
-				return column == 1; // Solo la columna "Cantidad" es editable
+				return column == 2; // Solo la columna "Cantidad" es editable
 			}
 		};
 
 		tablaProductos = new JTable(modeloTabla);
 		tablaProductos.getModel().addTableModelListener(e -> {
-			if (e.getColumn() == 1) {
+			if (e.getColumn() == 2) {
 				int fila = e.getFirstRow();
 				DefaultTableModel modelo = (DefaultTableModel) tablaProductos.getModel();
 				try {
-					int cantidad = Integer.parseInt(modelo.getValueAt(fila, 1).toString());
-					double precio = Double.parseDouble(modelo.getValueAt(fila, 2).toString());
+					int cantidad = Integer.parseInt(modelo.getValueAt(fila, 2).toString());
+					double precio = Double.parseDouble(modelo.getValueAt(fila, 3).toString());
 					double subtotal = cantidad * precio;
-					modelo.setValueAt(subtotal, fila, 3);
+					modelo.setValueAt(subtotal, fila, 4);
 					actualizarTotales();
 				} catch (NumberFormatException ex) {
 					JOptionPane.showMessageDialog(this, "Cantidad inválida.");
@@ -212,7 +211,7 @@ public class NuevaVenta_View extends JFrame {
 		DefaultTableModel modelo = (DefaultTableModel) tablaProductos.getModel();
 		double total = 0;
 		for (int i = 0; i < modelo.getRowCount(); i++) {
-			total += Double.parseDouble(modelo.getValueAt(i, 3).toString());
+			total += Double.parseDouble(modelo.getValueAt(i, 4).toString());
 		}
 		double iva = total * 0.21;
 		double totalConIva = total + iva;
@@ -222,50 +221,83 @@ public class NuevaVenta_View extends JFrame {
 	}
 
 	private void calcularCambio() {
-	    txtCambio.setText("");
+		try {
+			String totalStr = txtTotal.getText().replace("$", "").trim();
+			String pagaStr = txtPaga.getText().trim();
+			String metodoPagoStr = metodoPago.getSelectedItem().toString();
 
-	    try {
-	        // Reemplaza el símbolo $ y cambia la coma decimal a punto
-	        String totalTexto = txtTotal.getText().replace("$", "").replace(",", ".").trim();
-	        System.out.println("Total leído: [" + totalTexto + "]");
+			// Si el método de pago es tarjeta, no calcular cambio
+			if (metodoPagoStr.equalsIgnoreCase("Tarjeta")) {
+				txtCambio.setText("$ 0.00");
+				return;
+			}
 
-	        double totalConIva = Double.parseDouble(totalTexto);
+			// Validar que los campos contengan números válidos
+			if (totalStr.isEmpty() || pagaStr.isEmpty()) {
+				JOptionPane.showMessageDialog(this,
+					"Por favor ingrese el total y el monto a pagar",
+					"Campos vacíos",
+					JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 
-	        String pagaTexto = txtPaga.getText().trim();
-	        System.out.println("Paga leído: [" + pagaTexto + "]");
+			double total = Double.parseDouble(totalStr);
+			double paga = Double.parseDouble(pagaStr);
 
-	        double paga = Double.parseDouble(pagaTexto);
+			if (paga < total) {
+				JOptionPane.showMessageDialog(this,
+					"El monto a pagar debe ser mayor o igual al total",
+					"Monto insuficiente",
+					JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 
-	        double cambio = paga - totalConIva;
+			double cambio = paga - total;
+			txtCambio.setText(String.format("$ %.2f", cambio));
 
-	        if (cambio < 0) {
-	            txtCambio.setText("Insuficiente");
-	        } else {
-	            txtCambio.setText(String.format("$ %.2f", cambio));
-	        }
-
-	    } catch (Exception ex) {
-	        ex.printStackTrace();
-	        txtCambio.setText("Error");
-	    }
+		} catch (NumberFormatException ex) {
+			JOptionPane.showMessageDialog(this,
+				"Por favor ingrese valores numéricos válidos",
+				"Error de formato",
+				JOptionPane.ERROR_MESSAGE);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this,
+				"Error al calcular el cambio: " + ex.getMessage(),
+				"Error",
+				JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
-
-
-
-	private void mostrarVentanaProductos() {
+	public void mostrarVentanaProductos(Object[][] datos) {
 		JDialog dialogo = new JDialog(this, "Seleccionar Producto", true);
-		dialogo.setSize(500, 400);
+		dialogo.setSize(800, 600);
 		dialogo.setLocationRelativeTo(this);
 
 		JPanel panel = new JPanel(new BorderLayout());
-		String[] columnas = { "Nombre", "Precio", "Stock" };
-		Object[][] datos = { { "Lápiz", 1000.0, 50 }, { "Cuaderno", 3500.0, 30 }, { "Borrador", 500.0, 100 } };
-
-		JTable tabla = new JTable(new DefaultTableModel(datos, columnas) {
+		String[] columnas = { "ID", "Nombre", "Precio", "Stock", "Cantidad", "Precio Unit.", "Subtotal" };
+		
+		DefaultTableModel modeloTabla = new DefaultTableModel(datos, columnas) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
-				return false;
+				return column == 4; // Solo la columna de cantidad es editable
+			}
+		};
+
+		JTable tabla = new JTable(modeloTabla);
+		
+		// Agregar listener para calcular subtotal cuando cambia la cantidad
+		tabla.getModel().addTableModelListener(e -> {
+			if (e.getColumn() == 4) { // Columna de cantidad
+				int row = e.getFirstRow();
+				try {
+					int cantidad = Integer.parseInt(modeloTabla.getValueAt(row, 4).toString());
+					double precioUnitario = Double.parseDouble(modeloTabla.getValueAt(row, 5).toString());
+					double subtotal = cantidad * precioUnitario;
+					modeloTabla.setValueAt(subtotal, row, 6);
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(dialogo, "Por favor ingrese una cantidad válida", 
+						"Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 
@@ -292,20 +324,74 @@ public class NuevaVenta_View extends JFrame {
 		dialogo.setVisible(true);
 	}
 
-	private void seleccionarProductoDesdeTabla(JTable tabla, JDialog dialogo) {
+	public void seleccionarProductoDesdeTabla(JTable tabla, JDialog dialogo) {
 		int fila = tabla.getSelectedRow();
 		if (fila != -1) {
-			String nombre = tabla.getValueAt(fila, 0).toString();
-			double precio = Double.parseDouble(tabla.getValueAt(fila, 1).toString());
-			int cantidad = 1;
-			double subtotal = precio * cantidad;
+			int idProducto = Integer.parseInt(tabla.getValueAt(fila, 0).toString());
+			String nombre = tabla.getValueAt(fila, 1).toString();
+			double precio = Double.parseDouble(tabla.getValueAt(fila, 2).toString());
+			int cantidad = Integer.parseInt(tabla.getValueAt(fila, 4).toString());
+			double subtotal = Double.parseDouble(tabla.getValueAt(fila, 6).toString());
 
 			DefaultTableModel modelo = (DefaultTableModel) tablaProductos.getModel();
-			modelo.addRow(new Object[] { nombre, cantidad, precio, subtotal });
+			modelo.addRow(new Object[] { idProducto, nombre, cantidad, precio, subtotal });
 
 			actualizarTotales();
 			dialogo.dispose();
 		}
+	}
+
+	public void guardarVenta() {
+		// Validar campos obligatorios
+		if (txtCliente.getText().trim().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Por favor ingrese el nombre del cliente", 
+				"Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (tablaProductos.getRowCount() == 0) {
+			JOptionPane.showMessageDialog(this, "Por favor agregue al menos un producto", 
+				"Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (metodoPago.getSelectedItem() == null) {
+			JOptionPane.showMessageDialog(this, "Por favor seleccione un método de pago", 
+				"Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		// Obtener datos de la venta
+		String nombreCliente = txtCliente.getText().trim();
+		Date fecha = fechaVenta.getDate();
+		String metodoPagoStr = metodoPago.getSelectedItem().toString();
+		double total = Double.parseDouble(txtTotal.getText().replace("$", "").trim());
+		double iva = Double.parseDouble(txtIva.getText().replace("$", "").trim());
+
+		// Obtener detalles de los productos
+		DefaultTableModel modelo = (DefaultTableModel) tablaProductos.getModel();
+		Object[][] detallesProductos = new Object[modelo.getRowCount()][5];
+		
+		for (int i = 0; i < modelo.getRowCount(); i++) {
+			detallesProductos[i][0] = modelo.getValueAt(i, 0); // ID Producto
+			detallesProductos[i][1] = modelo.getValueAt(i, 2); // Cantidad
+			detallesProductos[i][2] = modelo.getValueAt(i, 3); // Precio Unitario
+			detallesProductos[i][3] = modelo.getValueAt(i, 4); // Subtotal
+			detallesProductos[i][4] = metodoPagoStr; // Método de pago
+		}
+
+		// Crear objeto con todos los datos de la venta
+		Object[] datosVenta = new Object[] {
+			nombreCliente,
+			fecha,
+			metodoPagoStr,
+			total,
+			iva,
+			detallesProductos
+		};
+
+		// Notificar al controlador
+		firePropertyChange("guardarVenta", null, datosVenta);
 	}
 
 	// Getters
@@ -353,4 +439,56 @@ public class NuevaVenta_View extends JFrame {
 		return fechaVenta;
 	}
 
+	public void setBtnRegresar(JButton btnRegresar) {
+		this.btnRegresar = btnRegresar;
+	}
+
+	public void setBtnConfirmar(JButton btnConfirmar) {
+		this.btnConfirmar = btnConfirmar;
+	}
+
+	public JButton getBtnAgregarProducto() {
+		return btnAgregarProducto;
+	}
+
+	public void setBtnAgregarProducto(JButton btnAgregarProducto) {
+		this.btnAgregarProducto = btnAgregarProducto;
+	}
+
+	public void setBtnCalcularCambio(JButton btnCalcularCambio) {
+		this.btnCalcularCambio = btnCalcularCambio;
+	}
+
+	public void setTablaProductos(JTable tablaProductos) {
+		this.tablaProductos = tablaProductos;
+	}
+
+	public void setTxtCliente(JTextField txtCliente) {
+		this.txtCliente = txtCliente;
+	}
+
+	public void setTxtCambio(JTextField txtCambio) {
+		this.txtCambio = txtCambio;
+	}
+
+	public void setTxtIva(JTextField txtIva) {
+		this.txtIva = txtIva;
+	}
+
+	public void setTxtTotal(JTextField txtTotal) {
+		this.txtTotal = txtTotal;
+	}
+
+	public void setTxtPaga(JTextField txtPaga) {
+		this.txtPaga = txtPaga;
+	}
+
+	public void setMetodoPago(JComboBox<String> metodoPago) {
+		this.metodoPago = metodoPago;
+	}
+
+	public void setFechaVenta(JDateChooser fechaVenta) {
+		this.fechaVenta = fechaVenta;
+	}
+	
 }

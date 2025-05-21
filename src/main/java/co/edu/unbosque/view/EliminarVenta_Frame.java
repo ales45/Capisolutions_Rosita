@@ -3,11 +3,12 @@ package co.edu.unbosque.view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Date;
 
 public class EliminarVenta_Frame extends JFrame {
 	private JTextField txtIdVenta, txtFechaVenta, txtCliente, txtTotal, txtMotivo;
 	private JComboBox<String> comboEstado;
-	private JButton btnEliminar, btnRegresar; // Agregados como atributos privados
+	private JButton btnEliminar, btnRegresar;
 
 	public EliminarVenta_Frame() {
 		setTitle("Eliminar Venta");
@@ -18,7 +19,7 @@ public class EliminarVenta_Frame extends JFrame {
 
 		// Logo en la esquina superior izquierda
 		JPanel panelLogo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panelLogo.setBackground(new Color(144, 238, 144)); // Verde claro para el fondo
+		panelLogo.setBackground(new Color(144, 238, 144));
 
 		ImageIcon icono = new ImageIcon("src/logo.png");
 		Image imagen = icono.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
@@ -29,15 +30,16 @@ public class EliminarVenta_Frame extends JFrame {
 
 		// Fondo
 		JPanel fondo = new JPanel(new GridBagLayout());
-		fondo.setBackground(new Color(144, 238, 144)); // Verde claro
+		fondo.setBackground(new Color(144, 238, 144));
 		add(fondo, BorderLayout.CENTER);
 
 		// Recuadro central
 		JPanel recuadro = new JPanel(new GridBagLayout());
 		recuadro.setBackground(Color.WHITE);
 		recuadro.setPreferredSize(new Dimension(500, 470));
-		recuadro.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1, true),
-				BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+		recuadro.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1, true),
+			BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(10, 10, 10, 10);
@@ -138,21 +140,35 @@ public class EliminarVenta_Frame extends JFrame {
 		String estado = (String) comboEstado.getSelectedItem();
 
 		if (idVenta.isEmpty() || fechaVenta.isEmpty() || cliente.isEmpty() || total.isEmpty() || motivo.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Campos vacíos",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, 
+				"Por favor, complete todos los campos.", 
+				"Campos vacíos",
+				JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
 		try {
 			Double.parseDouble(total);
 		} catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(this, "El total debe ser un número válido.", "Error en total",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, 
+				"El total debe ser un número válido.", 
+				"Error en total",
+				JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
-		JOptionPane.showMessageDialog(this, "Venta eliminada exitosamente. Estado: " + estado, "Éxito",
-				JOptionPane.INFORMATION_MESSAGE);
+		// Crear objeto con los datos de la venta a eliminar
+		Object[] datosVenta = new Object[] {
+			Integer.parseInt(idVenta),
+			fechaVenta,
+			cliente,
+			Double.parseDouble(total),
+			estado,
+			motivo
+		};
+
+		// Notificar al controlador
+		firePropertyChange("eliminarVenta", null, datosVenta);
 	}
 
 	private void agregarFiltroNumerico(JTextField campo, boolean permitirDecimal) {
@@ -178,5 +194,30 @@ public class EliminarVenta_Frame extends JFrame {
 
 	public JButton getBtnRegresar() {
 		return btnRegresar;
+	}
+
+	// Getters para los campos
+	public JTextField getTxtIdVenta() {
+		return txtIdVenta;
+	}
+
+	public JTextField getTxtFechaVenta() {
+		return txtFechaVenta;
+	}
+
+	public JTextField getTxtCliente() {
+		return txtCliente;
+	}
+
+	public JTextField getTxtTotal() {
+		return txtTotal;
+	}
+
+	public JTextField getTxtMotivo() {
+		return txtMotivo;
+	}
+
+	public JComboBox<String> getComboEstado() {
+		return comboEstado;
 	}
 }

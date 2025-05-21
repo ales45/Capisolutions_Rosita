@@ -195,4 +195,45 @@ public class Inventario { // Nombre de la clase 'Inventario' tomado del diagrama
             return "Error al generar el reporte de stock bajo.";
         }
     }
+
+    /**
+     * Obtiene el inventario de un producto específico.
+     * @param idProducto El ID del producto.
+     * @return El InventarioDto del producto, o null si no se encuentra.
+     */
+    public InventarioDto obtenerInventarioPorProducto(int idProducto) {
+        try {
+            List<InventarioDto> inventarios = inventarioDao.obtenerTodosLosInventarios();
+            return inventarios.stream()
+                .filter(inv -> inv.getIdProducto() == idProducto)
+                .findFirst()
+                .orElse(null);
+        } catch (SQLException e) {
+            System.err.println("Error en InventarioService al obtener inventario por producto: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Actualiza el stock de un producto.
+     * @param idProducto El ID del producto.
+     * @param nuevoStock El nuevo valor del stock.
+     * @return true si la actualización fue exitosa, false en caso contrario.
+     */
+    public boolean actualizarStock(int idProducto, int nuevoStock) {
+        InventarioDto inventario = obtenerInventarioPorProducto(idProducto);
+        if (inventario == null) {
+            return false;
+        }
+
+        return actualizarInventario(
+            inventario.getIdInventario(),
+            idProducto,
+            nuevoStock,
+            inventario.getStockMinimo(),
+            inventario.getUbicacion(),
+            new java.util.Date()
+        );
+    }
 }

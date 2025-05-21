@@ -53,9 +53,13 @@ import co.edu.unbosque.model.ReportePedidosPDF;
 import co.edu.unbosque.model.ReporteProductosPDF;
 import co.edu.unbosque.model.ReporteProveedoresPDF;
 import co.edu.unbosque.model.daosYdtos.ClientesDto;
+import co.edu.unbosque.model.daosYdtos.InventarioDto;
 import co.edu.unbosque.model.daosYdtos.MoviProveInDto;
 import co.edu.unbosque.model.daosYdtos.ProductoDto;
 import co.edu.unbosque.model.daosYdtos.ProveedorDto;
+import co.edu.unbosque.model.daosYdtos.DetalleFacturaDto;
+import co.edu.unbosque.model.daosYdtos.FacturasDto;
+import co.edu.unbosque.model.daosYdtos.DFacturaDto;
 
 public class controllerprueba implements ActionListener {
 	private Facada_Model model;
@@ -225,6 +229,8 @@ public class controllerprueba implements ActionListener {
 			mproductosFrame.getBtnInventarioCrear().setActionCommand("abrirCrearInventario");
 			nuevoInventario.getBtnRegresar().addActionListener(this);
 			nuevoInventario.getBtnRegresar().setActionCommand("regresarCrearI");
+			nuevoInventario.getBtnGuardar().addActionListener(this);
+			nuevoInventario.getBtnGuardar().setActionCommand("confirmarCrearInventario");
 		}
 
 		// MÓDULO PROVEEDORES
@@ -329,10 +335,16 @@ public class controllerprueba implements ActionListener {
 		if (nuevaVentaView != null) {
 			nuevaVentaView.getBtnRegresar().setActionCommand("regresarNuevaVenta");
 			nuevaVentaView.getBtnRegresar().addActionListener(this);
+			nuevaVentaView.getBtnConfirmar().setActionCommand("confirmarVenta");
+			nuevaVentaView.getBtnConfirmar().addActionListener(this);
+			nuevaVentaView.getBtnAgregarProducto().setActionCommand("agregarProductoV");
+			nuevaVentaView.getBtnAgregarProducto().addActionListener(this);
 		}
 		if (eliminarVentaFrame != null) {
 			eliminarVentaFrame.getBtnRegresar().setActionCommand("regresarEliminarV");
 			eliminarVentaFrame.getBtnRegresar().addActionListener(this);
+			eliminarClienteFrame.getBtnEliminar().setActionCommand("confirmarEliminacion");
+			eliminarClienteFrame.getBtnEliminar().addActionListener(this);
 		}
 		if (historialVentasUI != null) {
 			historialVentasUI.getBtnRegresar().setActionCommand("regresarHistorial");
@@ -782,7 +794,307 @@ public class controllerprueba implements ActionListener {
 					JOptionPane.ERROR_MESSAGE);
 			}
 			break;
+		//Inventario
+		case "abrirCrearInventario":
+			nuevoInventario.setVisible(true);
+			mproductosFrame.setVisible(false);
+			
+			// Limpiar y cargar el combobox de productos
+			nuevoInventario.getComboProducto().removeAllItems();
+			nuevoInventario.getComboProducto().addItem("Seleccione un producto");
+			
+			List<ProductoDto> listaProductosInventario = model.getProductos().obtenerTodosLosProductos();
+			if (listaProductosInventario != null) {
+				for (ProductoDto producto : listaProductosInventario) {
+					nuevoInventario.getComboProducto().addItem(producto.getNombre());
+				}
+			}
+			break;
+		case "regresarCrearI":
+			mproductosFrame.setVisible(true);
+			nuevoInventario.setVisible(false);
+			break;
+		case "confirmarCrearInventario":
+			try {
+				// Validar que todos los campos estén llenos
+				if (nuevoInventario.getComboProducto().getSelectedIndex() == 0 ||
+					nuevoInventario.getTxtStock().getText().isEmpty() ||
+					nuevoInventario.getTxtStockMinimo().getText().isEmpty() ||
+					nuevoInventario.getTxtUbicacion().getText().isEmpty()) {
+					
+					JOptionPane.showMessageDialog(nuevoInventario,
+						"Por favor, complete todos los campos del formulario.",
+						"Campos incompletos",
+						JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 
+				// Obtener los valores del formulario
+				String productoSeleccionado = (String) nuevoInventario.getComboProducto().getSelectedItem();
+				int stock = Integer.parseInt(nuevoInventario.getTxtStock().getText());
+				int stockMinimo = Integer.parseInt(nuevoInventario.getTxtStockMinimo().getText());
+				String ubicacion = nuevoInventario.getTxtUbicacion().getText();
+				
+				// Obtener el ID del producto seleccionado
+				int idProducto = 0;
+				List<ProductoDto> productos = model.getProductos().obtenerTodosLosProductos();
+				for (ProductoDto producto : productos) {
+					if (productoSeleccionado.equals(producto.getNombre())) {
+						idProducto = producto.getIdProducto();
+						break;
+					}
+				}
+
+				if (idProducto == 0) {
+					JOptionPane.showMessageDialog(nuevoInventario,
+						"Error al obtener el ID del producto seleccionado.",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				// Crear el inventario
+				InventarioDto inventarioCreado = model.getInventario().crearInventario(
+					stock,
+					stockMinimo,
+					ubicacion,
+					idProducto,
+					new java.util.Date() // Fecha actual
+				);
+
+				if (inventarioCreado != null) {
+					JOptionPane.showMessageDialog(nuevoInventario,
+						"Inventario registrado exitosamente.",
+						"Éxito",
+						JOptionPane.INFORMATION_MESSAGE);
+					
+					// Limpiar el formulario
+					nuevoInventario.getComboProducto().setSelectedIndex(0);
+					nuevoInventario.getTxtStock().setText("");
+					nuevoInventario.getTxtStockMinimo().setText("");
+					nuevoInventario.getTxtUbicacion().setText("");
+				} else {
+					JOptionPane.showMessageDialog(nuevoInventario,
+						"Error al registrar el inventario.",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(nuevoInventario,
+					"El stock y stock mínimo deben ser números válidos.",
+					"Error de formato",
+					JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(nuevoInventario,
+					"Error al procesar el inventario: " + ex.getMessage(),
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
+			}
+			break;
+		case "confirmarVenta":
+			try {
+				// Obtener datos de la venta
+				String nombreCliente = nuevaVentaView.getTxtCliente().getText().trim();
+				Date fecha = nuevaVentaView.getFechaVenta().getDate();
+				String metodoPago = nuevaVentaView.getMetodoPago().getSelectedItem().toString();
+				double total = Double.parseDouble(nuevaVentaView.getTxtTotal().getText().replace("$", "").trim());
+				double iva = Double.parseDouble(nuevaVentaView.getTxtIva().getText().replace("$", "").trim());
+
+				// Validar datos del cliente
+				if (nombreCliente.isEmpty()) {
+					JOptionPane.showMessageDialog(nuevaVentaView, 
+						"Por favor ingrese el nombre del cliente", 
+						"Error", 
+						JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				// Buscar cliente por nombre
+				List<ClientesDto> clientes = model.getClientes().obtener_todos_los_clientes();
+				Optional<ClientesDto> clienteOpt = clientes.stream()
+					.filter(c -> c.getNombre().equalsIgnoreCase(nombreCliente))
+					.findFirst();
+
+				int idCliente;
+				if (clienteOpt.isPresent()) {
+					idCliente = clienteOpt.get().getIdCliente();
+				} else {
+					// Crear nuevo cliente
+					ClientesDto nuevoCliente = model.getClientes().crear_cliente(
+						nombreCliente,
+						"Cliente",
+						"cliente@email.com",
+						0L, // Cedula temporal
+						0L  // Teléfono temporal
+					);
+					if (nuevoCliente == null) {
+						JOptionPane.showMessageDialog(nuevaVentaView, 
+							"Error al crear el cliente", 
+							"Error", 
+							JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					idCliente = nuevoCliente.getIdCliente();
+				}
+
+				// Crear factura
+				FacturasDto factura = model.getFacturas().crear_factura(
+					idCliente,
+					fecha,
+					metodoPago
+				);
+
+				if (factura != null) {
+					// Obtener detalles de productos
+					DefaultTableModel modelo = (DefaultTableModel) nuevaVentaView.getTablaProductos().getModel();
+					
+					for (int i = 0; i < modelo.getRowCount(); i++) {
+						int idProducto = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+						int cantidad = Integer.parseInt(modelo.getValueAt(i, 2).toString());
+						double precioUnitario = Double.parseDouble(modelo.getValueAt(i, 3).toString());
+						double subtotal = Double.parseDouble(modelo.getValueAt(i, 4).toString());
+
+						// Crear detalle de factura
+						model.getDfactura().crear_dfactura(
+							factura.getIdFactura(),
+							idProducto,
+							null, // idProveedor
+							null, // idPromocion
+							"venta", // tipo
+							cantidad,
+							precioUnitario,
+							subtotal
+						);
+
+						// Actualizar inventario
+						InventarioDto inventario = model.getInventario().obtenerInventarioPorProducto(idProducto);
+						if (inventario != null) {
+							int nuevoStock = inventario.getStock() - cantidad;
+							model.getInventario().actualizarStock(idProducto, nuevoStock);
+						}
+					}
+
+					JOptionPane.showMessageDialog(nuevaVentaView, 
+						"Venta registrada exitosamente", 
+						"Éxito", 
+						JOptionPane.INFORMATION_MESSAGE);
+					
+					// Limpiar formulario
+					nuevaVentaView.getTxtCliente().setText("");
+					nuevaVentaView.getFechaVenta().setDate(new Date());
+					nuevaVentaView.getMetodoPago().setSelectedIndex(0);
+					nuevaVentaView.getTxtTotal().setText("$ 0.00");
+					nuevaVentaView.getTxtIva().setText("$ 0.00");
+					((DefaultTableModel)nuevaVentaView.getTablaProductos().getModel()).setRowCount(0);
+				} else {
+					JOptionPane.showMessageDialog(nuevaVentaView, 
+						"Error al registrar la venta", 
+						"Error", 
+						JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(nuevaVentaView, 
+					"Error al procesar la venta: " + ex.getMessage(), 
+					"Error", 
+					JOptionPane.ERROR_MESSAGE);
+			}
+			break;
+		case "agregarProductoV":
+			// Obtener todos los productos de la base de datos
+			List<ProductoDto> productos = model.getProductos().obtenerTodosLosProductos();
+			
+			// Crear matriz de datos para la tabla
+			Object[][] datosProductos = new Object[productos.size()][7];
+			
+			for (int i = 0; i < productos.size(); i++) {
+				ProductoDto producto = productos.get(i);
+				// Obtener el inventario del producto
+				InventarioDto inventario = model.getInventario().obtenerInventarioPorProducto(producto.getIdProducto());
+				int stock = (inventario != null) ? inventario.getStock() : 0;
+				
+				datosProductos[i][0] = producto.getIdProducto(); // ID
+				datosProductos[i][1] = producto.getNombre(); // Nombre
+				datosProductos[i][2] = producto.getPrecio(); // Precio
+				datosProductos[i][3] = stock; // Stock
+				datosProductos[i][4] = 1; // Cantidad inicial
+				datosProductos[i][5] = producto.getPrecio(); // Precio Unitario
+				datosProductos[i][6] = producto.getPrecio(); // Subtotal inicial
+			}
+			
+			nuevaVentaView.mostrarVentanaProductos(datosProductos);
+			break;
+		case "confirmarEliminacion":
+			try {
+				// Obtener los datos de la venta a eliminar
+				int idVenta = Integer.parseInt(eliminarVentaFrame.getTxtIdVenta().getText().trim());
+				String fechaVenta = eliminarVentaFrame.getTxtFechaVenta().getText().trim();
+				String cliente = eliminarVentaFrame.getTxtCliente().getText().trim();
+				double total = Double.parseDouble(eliminarVentaFrame.getTxtTotal().getText().trim());
+				String estado = (String) eliminarVentaFrame.getComboEstado().getSelectedItem();
+				String motivo = eliminarVentaFrame.getTxtMotivo().getText().trim();
+
+				// Validar que la venta exista
+				Optional<FacturasDto> facturaOpt = model.getFacturas().ver_factura(idVenta);
+				if (!facturaOpt.isPresent()) {
+					JOptionPane.showMessageDialog(eliminarVentaFrame,
+						"No se encontró la venta con el ID especificado",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				// Obtener los detalles de la factura para actualizar el inventario
+				List<DFacturaDto> detalles = model.getDfactura().obtener_detalles_por_id_factura(idVenta);
+				
+				// Restaurar el inventario
+				for (DFacturaDto detalle : detalles) {
+					InventarioDto inventario = model.getInventario().obtenerInventarioPorProducto(detalle.getIdProducto());
+					if (inventario != null) {
+						int nuevoStock = inventario.getStock() + detalle.getCantidad();
+						model.getInventario().actualizarStock(detalle.getIdProducto(), nuevoStock);
+					}
+				}
+
+				// Eliminar los detalles de la factura
+				for (DFacturaDto detalle : detalles) {
+					model.getDfactura().eliminar_dfactura(detalle.getIdDetalle());
+				}
+
+				// Eliminar la factura
+				boolean eliminado = model.getFacturas().eliminar_factura(idVenta);
+				
+				if (eliminado) {
+					JOptionPane.showMessageDialog(eliminarVentaFrame,
+						"Venta eliminada exitosamente",
+						"Éxito",
+						JOptionPane.INFORMATION_MESSAGE);
+					
+					// Limpiar campos
+					eliminarVentaFrame.getTxtIdVenta().setText("");
+					eliminarVentaFrame.getTxtFechaVenta().setText("");
+					eliminarVentaFrame.getTxtCliente().setText("");
+					eliminarVentaFrame.getTxtTotal().setText("");
+					eliminarVentaFrame.getTxtMotivo().setText("");
+					eliminarVentaFrame.getComboEstado().setSelectedIndex(0);
+				} else {
+					JOptionPane.showMessageDialog(eliminarVentaFrame,
+						"Error al eliminar la venta",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(eliminarVentaFrame,
+					"Por favor ingrese valores numéricos válidos para el ID y el total",
+					"Error de formato",
+					JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(eliminarVentaFrame,
+					"Error al procesar la eliminación: " + ex.getMessage(),
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
+			}
+			break;
 		// BOTONES "REGRESAR" DE MÓDULOS PRINCIPALES
 		case "regresarVentas":
 			mventasView.setVisible(false);
@@ -837,6 +1149,20 @@ public class controllerprueba implements ActionListener {
 		case "abrirHistorialVenta":
 			mventasView.setVisible(false);
 			historialVentasUI.setVisible(true);
+			
+			// Cargar el historial de ventas
+			cargarHistorialVentas();
+			
+			// Agregar listeners para los filtros
+			historialVentasUI.getTxtBuscar().getDocument().addDocumentListener(new DocumentListener() {
+				public void changedUpdate(DocumentEvent e) { filtrarHistorialVentas(); }
+				public void removeUpdate(DocumentEvent e) { filtrarHistorialVentas(); }
+				public void insertUpdate(DocumentEvent e) { filtrarHistorialVentas(); }
+			});
+			
+			historialVentasUI.getCbMetodoPago().addActionListener(event -> filtrarHistorialVentas());
+			historialVentasUI.getCbEstado().addActionListener(event -> filtrarHistorialVentas());
+			historialVentasUI.getTxtFecha().addPropertyChangeListener("value", event -> filtrarHistorialVentas());
 			break;
 		case "regresarHistorial":
 			historialVentasUI.setVisible(false);
@@ -954,6 +1280,19 @@ public class controllerprueba implements ActionListener {
 				System.out.println("Procesando productos...");
 				for (ProductoDto producto : listaProductos) {
 					System.out.println("Procesando producto: " + producto.getNombre());
+					
+					// Obtener el inventario del producto
+					String stock = "N/A";
+					List<InventarioDto> inventarios = model.getInventario().obtenerTodosLosInventarios();
+					if (inventarios != null) {
+						for (InventarioDto inventario : inventarios) {
+							if (inventario.getIdProducto() == producto.getIdProducto()) {
+								stock = String.valueOf(inventario.getStock());
+								break;
+							}
+						}
+					}
+					
 					Object[] fila = new Object[7];
 					fila[0] = producto.getIdProducto();
 					fila[1] = producto.getNombre();
@@ -961,7 +1300,7 @@ public class controllerprueba implements ActionListener {
 					fila[3] = producto.getDescripcion();
 					fila[4] = producto.getPrecio();
 					fila[5] = producto.getIva();
-					fila[6] = "N/A"; // Stock - Usamos N/A ya que no hay campo stock en ProductoDto
+					fila[6] = stock; // Ahora mostramos el stock real del inventario
 
 					modeloTablaProductos.addRow(fila);
 					System.out.println("Fila añadida para producto: " + producto.getNombre());
@@ -1160,7 +1499,7 @@ public class controllerprueba implements ActionListener {
 			// Obtener la lista de todos los movimientos de proveedores
 			List<MoviProveInDto> listaMovimientos = model.getMoviProveIn().obtener_todos_los_movi_prove_in();
 
-			// Listas para llenar los ComboBox de filtro
+			// Listas para llenar los ComboBoxes de filtro
 			Set<String> productosUnicos = new java.util.HashSet<>();
 			Set<String> proveedoresUnicos = new java.util.HashSet<>();
 			Set<String> fechasUnicas = new java.util.HashSet<>();
@@ -1376,6 +1715,128 @@ public class controllerprueba implements ActionListener {
 			sorter.setRowFilter(combinedFilter);
 		} else {
 			sorter.setRowFilter(null); // Remover todos los filtros si no hay ninguno seleccionado
+		}
+	}
+
+	private void cargarHistorialVentas() {
+		try {
+			// Obtener todas las facturas
+			List<FacturasDto> facturas = model.getFacturas().obtener_todas_las_facturas();
+			Object[][] datos = new Object[facturas.size()][7];
+			
+			for (int i = 0; i < facturas.size(); i++) {
+				FacturasDto factura = facturas.get(i);
+				
+				// Obtener el cliente
+				String nombreCliente = "N/A";
+				Optional<ClientesDto> clienteOpt = model.getClientes().ver_cliente(factura.getIdCliente());
+				nombreCliente = clienteOpt.map(ClientesDto::getNombre).orElse("N/A");
+				
+				// Formatear la fecha
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+				String fechaFormateada = sdf.format(factura.getFecha());
+				
+				// Calcular el total
+				double total = 0;
+				List<DFacturaDto> detalles = model.getDfactura().obtener_detalles_por_id_factura(factura.getIdFactura());
+				for (DFacturaDto detalle : detalles) {
+					total += detalle.getTotal();
+				}
+				
+				datos[i][0] = factura.getIdFactura();
+				datos[i][1] = fechaFormateada;
+				datos[i][2] = nombreCliente;
+				datos[i][3] = factura.getEstadoPago(); // Columna "Método de pago"
+				datos[i][4] = factura.getEstadoPago(); // Columna "Estado"
+				datos[i][5] = String.format("$%.2f", total); // Columna "Total"
+				datos[i][6] = "Ver"; // Columna "Ver"
+			}
+			
+			historialVentasUI.actualizarTabla(datos);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(historialVentasUI,
+				"Error al cargar el historial de ventas: " + ex.getMessage(),
+				"Error",
+				JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void filtrarHistorialVentas() {
+		try {
+			String textoBusqueda = historialVentasUI.getTxtBuscar().getText().toLowerCase();
+			String metodoPago = (String) historialVentasUI.getCbMetodoPago().getSelectedItem();
+			String estado = (String) historialVentasUI.getCbEstado().getSelectedItem();
+			Date fechaSeleccionada = (Date) historialVentasUI.getTxtFecha().getValue();
+			
+			// Obtener todas las facturas
+			List<FacturasDto> facturas = model.getFacturas().obtener_todas_las_facturas();
+			List<Object[]> datosFiltrados = new ArrayList<>();
+			
+			for (FacturasDto factura : facturas) {
+				// Obtener el cliente
+				String nombreCliente = "N/A";
+				Optional<ClientesDto> clienteOpt = model.getClientes().ver_cliente(factura.getIdCliente());
+				nombreCliente = clienteOpt.map(ClientesDto::getNombre).orElse("N/A");
+				
+				// Formatear la fecha
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+				String fechaFormateada = sdf.format(factura.getFecha());
+				
+				// Calcular el total
+				double total = 0;
+				List<DFacturaDto> detalles = model.getDfactura().obtener_detalles_por_id_factura(factura.getIdFactura());
+				for (DFacturaDto detalle : detalles) {
+					total += detalle.getTotal();
+				}
+				
+				// Aplicar filtros
+				boolean cumpleFiltros = true;
+				
+				// Filtro de texto
+				if (!textoBusqueda.isEmpty()) {
+					cumpleFiltros = cumpleFiltros && (
+						String.valueOf(factura.getIdFactura()).toLowerCase().contains(textoBusqueda) ||
+						nombreCliente.toLowerCase().contains(textoBusqueda) ||
+						fechaFormateada.toLowerCase().contains(textoBusqueda)
+					);
+				}
+				
+				// Filtro de método de pago
+				if (metodoPago != null && !metodoPago.isEmpty()) {
+					cumpleFiltros = cumpleFiltros && factura.getEstadoPago().equals(metodoPago);
+				}
+				
+				// Filtro de estado
+				if (estado != null && !estado.isEmpty()) {
+					cumpleFiltros = cumpleFiltros && factura.getEstadoPago().equals(estado);
+				}
+				
+				// Filtro de fecha
+				if (fechaSeleccionada != null) {
+					SimpleDateFormat sdfDia = new SimpleDateFormat("dd/MM/yyyy");
+					cumpleFiltros = cumpleFiltros && sdfDia.format(factura.getFecha()).equals(sdfDia.format(fechaSeleccionada));
+				}
+				
+				if (cumpleFiltros) {
+					Object[] fila = new Object[7];
+					fila[0] = factura.getIdFactura();
+					fila[1] = fechaFormateada;
+					fila[2] = nombreCliente;
+					fila[3] = factura.getEstadoPago(); // Columna "Método de pago"
+					fila[4] = factura.getEstadoPago(); // Columna "Estado"
+					fila[5] = String.format("$%.2f", total); // Columna "Total"
+					fila[6] = "Ver"; // Columna "Ver"
+					datosFiltrados.add(fila);
+				}
+			}
+			
+			// Actualizar la tabla con los datos filtrados
+			historialVentasUI.actualizarTabla(datosFiltrados.toArray(new Object[0][]));
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(historialVentasUI,
+				"Error al filtrar el historial de ventas: " + ex.getMessage(),
+				"Error",
+				JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

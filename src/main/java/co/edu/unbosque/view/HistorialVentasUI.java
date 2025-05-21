@@ -8,14 +8,17 @@ import java.text.SimpleDateFormat;
 
 public class HistorialVentasUI extends JFrame {
 
-	private JButton btnProductos;
 	private JButton btnRegresar;
+	private JTable tablaVentas;
+	private JTextField txtBuscar;
+	private JComboBox<String> cbMetodoPago;
+	private JComboBox<String> cbEstado;
+	private JFormattedTextField txtFecha;
 
 	public HistorialVentasUI() {
-
 		setTitle("Historial de Ventas");
-		setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximizar ventana
-		setUndecorated(true); // Opcional: quitar bordes
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setUndecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 
@@ -43,73 +46,48 @@ public class HistorialVentasUI extends JFrame {
 		// Agregar el contenedor al mainPanel
 		mainPanel.add(filterContainer, BorderLayout.NORTH);
 
-		JTextField txtBuscar = new JTextField(15);
+		// Componentes de filtro
+		txtBuscar = new JTextField(15);
 		txtBuscar.setBorder(BorderFactory.createTitledBorder("Buscar"));
 		filterPanel.add(txtBuscar);
 
-		JFormattedTextField txtFecha = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
+		txtFecha = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
 		txtFecha.setColumns(10);
 		txtFecha.setBorder(BorderFactory.createTitledBorder("Fecha:"));
 		filterPanel.add(txtFecha);
 
-		JComboBox<String> cbMetodoPago = new JComboBox<>(new String[] { "", "Efectivo", "Tarjeta" });
+		cbMetodoPago = new JComboBox<>(new String[] { "", "Efectivo", "Tarjeta" });
 		cbMetodoPago.setBorder(BorderFactory.createTitledBorder("Método de pago:"));
 		filterPanel.add(cbMetodoPago);
 
-		JComboBox<String> cbEstado = new JComboBox<>(new String[] { "", "Pagado", "Pendiente", "Anulado" });
+		cbEstado = new JComboBox<>(new String[] { "", "Pagado", "Pendiente", "Anulado" });
 		cbEstado.setBorder(BorderFactory.createTitledBorder("Estado:"));
 		filterPanel.add(cbEstado);
 
-		// Botón para mostrar productos (desplegable)
-		btnProductos = new JButton("Productos");
-		btnProductos.setFocusPainted(false);
-		btnProductos.setFont(new Font("Arial", Font.PLAIN, 13));
-		filterPanel.add(btnProductos);
-
-		// Menú desplegable
-		JPopupMenu popupMenu = new JPopupMenu();
-		JMenuItem item1 = new JMenuItem("Croquetas para perro");
-		JMenuItem item2 = new JMenuItem("Arena para gato");
-		JMenuItem item3 = new JMenuItem("Vacuna antirrábica");
-		JMenuItem item4 = new JMenuItem("Shampoo para mascotas");
-
-		popupMenu.add(item1);
-		popupMenu.add(item2);
-		popupMenu.add(item3);
-		popupMenu.add(item4);
-
-		// Acción del botón para mostrar el menú
-		btnProductos.addActionListener(e -> {
-			popupMenu.show(btnProductos, 0, btnProductos.getHeight());
-		});
-
 		// Tabla de ventas
-		String[] columnas = { "Nº de Venta", "Fecha", "Cliente", "Método de pago", "Estado", "" };
-		Object[][] datos = { { "1001", "20/03/2024 09:45", "Juan Pérez", "Efectivo", "Pagado", "Ver" },
-				{ "1000", "18/03/2024 14:12", "María López", "Tarjeta", "Pagado", "Ver" },
-				{ "999", "15/03/2024 10:30", "-", "Efectivo", "Pendiente", "Ver" },
-				{ "998", "12/03/2024 10:20", "Carlos Gómez", "Efectivo", "Anulado", "Ver" }, };
-
-		JTable tabla = new JTable(new DefaultTableModel(datos, columnas)) {
+		String[] columnas = { "Nº de Venta", "Fecha", "Cliente", "Método de pago", "Estado", "Total", "Ver" };
+		DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
+			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
-
-		tabla.setRowHeight(30);
-		tabla.setFont(new Font("Arial", Font.PLAIN, 14));
-		tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-		tabla.setFillsViewportHeight(true);
+		
+		tablaVentas = new JTable(modelo);
+		tablaVentas.setRowHeight(30);
+		tablaVentas.setFont(new Font("Arial", Font.PLAIN, 14));
+		tablaVentas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+		tablaVentas.setFillsViewportHeight(true);
 
 		// Colorear columna "Estado"
-		tabla.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+		tablaVentas.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
 			@Override
 			public void setValue(Object value) {
 				setForeground(Color.BLACK);
 				if ("Pagado".equals(value)) {
-					setForeground(new Color(0, 153, 0)); // verde
+					setForeground(new Color(0, 153, 0));
 				} else if ("Pendiente".equals(value)) {
-					setForeground(new Color(0, 0, 128)); // azul oscuro
+					setForeground(new Color(0, 0, 128));
 				} else if ("Anulado".equals(value)) {
 					setForeground(Color.RED);
 				}
@@ -118,15 +96,15 @@ public class HistorialVentasUI extends JFrame {
 		});
 
 		// Colorear "Ver"
-		tabla.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
+		tablaVentas.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
 			@Override
 			public void setValue(Object value) {
-				setForeground(new Color(0, 102, 204)); // azul claro
+				setForeground(new Color(0, 102, 204));
 				setText("Ver");
 			}
 		});
 
-		JScrollPane scroll = new JScrollPane(tabla);
+		JScrollPane scroll = new JScrollPane(tablaVentas);
 		mainPanel.add(scroll, BorderLayout.CENTER);
 
 		// Botón de regresar
@@ -141,21 +119,37 @@ public class HistorialVentasUI extends JFrame {
 		mainPanel.add(regresarPanel, BorderLayout.SOUTH);
 	}
 
-	// Getters y Setters
-	public JButton getBtnProductos() {
-		return btnProductos;
-	}
-
-	public void setBtnProductos(JButton btnProductos) {
-		this.btnProductos = btnProductos;
-	}
-
+	// Getters
 	public JButton getBtnRegresar() {
 		return btnRegresar;
 	}
 
-	public void setBtnRegresar(JButton btnRegresar) {
-		this.btnRegresar = btnRegresar;
+	public JTable getTablaVentas() {
+		return tablaVentas;
 	}
 
+	public JTextField getTxtBuscar() {
+		return txtBuscar;
+	}
+
+	public JComboBox<String> getCbMetodoPago() {
+		return cbMetodoPago;
+	}
+
+	public JComboBox<String> getCbEstado() {
+		return cbEstado;
+	}
+
+	public JFormattedTextField getTxtFecha() {
+		return txtFecha;
+	}
+
+	// Método para actualizar la tabla
+	public void actualizarTabla(Object[][] datos) {
+		DefaultTableModel modelo = (DefaultTableModel) tablaVentas.getModel();
+		modelo.setRowCount(0);
+		for (Object[] fila : datos) {
+			modelo.addRow(fila);
+		}
+	}
 }

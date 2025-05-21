@@ -28,10 +28,10 @@ public class Facturas { // Nombre de clase de servicio en plural
      * El total no se calcula/asigna aquí directamente.
      * @param idCliente El ID del cliente.
      * @param fecha La fecha de la factura.
-     * @param estadoPago El estado de pago de la factura.
+     * @param metodoPago El método de pago de la factura.
      * @return El FacturasDto creado (sin el total calculado), o null si hubo un error.
      */
-    public FacturasDto crear_factura(int idCliente, java.util.Date fecha, String estadoPago) { // Param fecha como java.util.Date
+    public FacturasDto crear_factura(int idCliente, java.util.Date fecha, String metodoPago) { // Param fecha como java.util.Date
         // --- LÓGICA DE NEGOCIO (VALIDACIONES) ---
         if (idCliente <= 0) {
             System.err.println("Error de validación: El ID de cliente no es válido.");
@@ -41,13 +41,12 @@ public class Facturas { // Nombre de clase de servicio en plural
             System.err.println("Error de validación: La fecha no puede ser nula.");
             return null;
         }
-        // Validar estadoPago (ej. contra una lista de estados válidos)
         // --- FIN LÓGICA DE NEGOCIO ---
 
         FacturasDto nuevaFactura = new FacturasDto();
         nuevaFactura.setIdCliente(idCliente);
         nuevaFactura.setFecha(new Date(fecha.getTime())); // Convertir java.util.Date a java.sql.Date
-        nuevaFactura.setEstadoPago(estadoPago);
+        nuevaFactura.setEstadoPago(metodoPago); // Si tienes un campo específico para estado, cámbialo
         // El total se establecería después de agregar los detalles de la factura
 
         try {
