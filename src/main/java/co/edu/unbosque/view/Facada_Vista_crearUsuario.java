@@ -146,4 +146,69 @@ public class Facada_Vista_crearUsuario extends JFrame {
 	public JButton getBtnCrearUsuario() {
 		return btnCrearUsuario;
 	}
+
+	public JLabel getLblLogo() {
+		return lblLogo;
+	}
+
+	public void setLblLogo(JLabel lblLogo) {
+		this.lblLogo = lblLogo;
+	}
+
+	public JLabel getLblTitulo() {
+		return lblTitulo;
+	}
+
+	public void setLblTitulo(JLabel lblTitulo) {
+		this.lblTitulo = lblTitulo;
+	}
+
+	public JLabel getLblSubtitulo() {
+		return lblSubtitulo;
+	}
+
+	public void setLblSubtitulo(JLabel lblSubtitulo) {
+		this.lblSubtitulo = lblSubtitulo;
+	}
+
+	public JLabel getLblUsuario() {
+		return lblUsuario;
+	}
+
+	public void setLblUsuario(JLabel lblUsuario) {
+		this.lblUsuario = lblUsuario;
+	}
+
+	public JLabel getLblContraseña() {
+		return lblContraseña;
+	}
+
+	public void setLblContraseña(JLabel lblContraseña) {
+		this.lblContraseña = lblContraseña;
+	}
+
+	public JLabel getLblConfirmarContraseña() {
+		return lblConfirmarContraseña;
+	}
+
+	public void setLblConfirmarContraseña(JLabel lblConfirmarContraseña) {
+		this.lblConfirmarContraseña = lblConfirmarContraseña;
+	}
+
+	public void setTxtUsuario(JTextField txtUsuario) {
+		this.txtUsuario = txtUsuario;
+	}
+
+	public void setJpContraseña(JPasswordField jpContraseña) {
+		this.jpContraseña = jpContraseña;
+	}
+
+	public void setJpConfirmarContraseña(JPasswordField jpConfirmarContraseña) {
+		this.jpConfirmarContraseña = jpConfirmarContraseña;
+	}
+
+	public void setBtnCrearUsuario(JButton btnCrearUsuario) {
+		this.btnCrearUsuario = btnCrearUsuario;
+	}
+	
 }

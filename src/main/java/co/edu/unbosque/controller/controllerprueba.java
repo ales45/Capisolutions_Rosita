@@ -155,6 +155,8 @@ public class controllerprueba implements ActionListener {
 			loginView.getBtnInicio().addActionListener(this);
 			loginView.getBtnCrearUsuario().addActionListener(this);
 			loginView.getBtnCrearUsuario().setActionCommand("crearU");
+			crearU.getBtnCrearUsuario().addActionListener(this);
+			crearU.getBtnCrearUsuario().setActionCommand("CrearUsiario");
 		}
 
 		// ADMIN VIEW
@@ -1095,6 +1097,13 @@ public class controllerprueba implements ActionListener {
 					JOptionPane.ERROR_MESSAGE);
 			}
 			break;
+		//usuario
+		case "CrearUsiario":
+		model.getUsuarios().crearUsuario(
+			crearU.getTxtUsuario().getText().toString()
+			, new String(crearU.getJpContraseña().getPassword())
+			, "usuario");
+		break;
 		// BOTONES "REGRESAR" DE MÓDULOS PRINCIPALES
 		case "regresarVentas":
 			mventasView.setVisible(false);
