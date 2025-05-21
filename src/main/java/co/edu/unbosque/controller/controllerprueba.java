@@ -934,14 +934,6 @@ public class controllerprueba implements ActionListener {
 			eliminarProductoFrame.setVisible(false);
 			mproductosFrame.setVisible(true);
 			break;
-		case "abrirCrearInventario":
-			nuevoInventario.setVisible(true);
-			mproductosFrame.setVisible(false);
-			break;
-		case "regresarCrearI":
-			mproductosFrame.setVisible(true);
-			nuevoInventario.setVisible(false);
-			break;
 		case "abrirVerProducto":
 			mproductosFrame.setVisible(false);
 			verProductoFrame.setVisible(true);
