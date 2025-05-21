@@ -168,6 +168,14 @@
 		public void setMovimientoDevo(MovimientoDevo movimientoDevo) {
 			this.movimientoDevo = movimientoDevo;
 		}
+
+		public DevoProvedo getDevoProvedo() {
+			return devoProvedo;
+		}
+
+		public void setDevoProvedo(DevoProvedo devoProvedo) {
+			this.devoProvedo = devoProvedo;
+		}
 	
 	    
 		
