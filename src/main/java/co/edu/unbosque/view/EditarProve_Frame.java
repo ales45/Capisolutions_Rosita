@@ -9,6 +9,7 @@ public class EditarProve_Frame extends JFrame {
 	private JComboBox<String> comboTipoProveedor;
 	private JButton btnGuardar;
 	private JButton btnRegresar;
+	private JComboBox<String> comboProductos;
 
 	public EditarProve_Frame() {
 		setTitle("Editar Proveedor");
@@ -56,6 +57,7 @@ public class EditarProve_Frame extends JFrame {
 
 		comboTipoProveedor = new JComboBox<>(
 				new String[] { "Seleccione", "Persona Natural", "Empresa", "Distribuidor" });
+		comboProductos = new JComboBox<>();
 
 		int fila = 0;
 		agregarCampo(formPanel, gbc, fila++, "Nombre:", txtNombre);
@@ -77,6 +79,12 @@ public class EditarProve_Frame extends JFrame {
 		gbc.gridwidth = 2;
 		formPanel.add(comboTipoProveedor, gbc);
 		gbc.gridwidth = 1;
+
+		gbc.gridx = 0;
+		gbc.gridy = ++fila;
+		formPanel.add(new JLabel("Producto Asociado:"), gbc);
+		gbc.gridx = 1;
+		formPanel.add(comboProductos, gbc);
 
 		caja.add(formPanel, BorderLayout.CENTER);
 
@@ -160,7 +168,47 @@ public class EditarProve_Frame extends JFrame {
 		});
 	}
 
-	// Getters y Setters de los botones
+	// Getters y Setters
+
+	public JTextField getTxtNombre() {
+		return txtNombre;
+	}
+
+	public void setTxtNombre(JTextField txtNombre) {
+		this.txtNombre = txtNombre;
+	}
+
+	public JTextField getTxtCedula() {
+		return txtCedula;
+	}
+
+	public void setTxtCedula(JTextField txtCedula) {
+		this.txtCedula = txtCedula;
+	}
+
+	public JTextField getTxtTelefono() {
+		return txtTelefono;
+	}
+
+	public void setTxtTelefono(JTextField txtTelefono) {
+		this.txtTelefono = txtTelefono;
+	}
+
+	public JTextField getTxtDireccion() {
+		return txtDireccion;
+	}
+
+	public void setTxtDireccion(JTextField txtDireccion) {
+		this.txtDireccion = txtDireccion;
+	}
+
+	public JComboBox<String> getComboProductos() {
+		return comboProductos;
+	}
+
+	public void setComboProductos(JComboBox<String> comboProductos) {
+		this.comboProductos = comboProductos;
+	}
 
 	public JButton getBtnGuardar() {
 		return btnGuardar;

@@ -8,6 +8,7 @@ public class RegistroProve_Frame extends JFrame {
 	private JTextField txtNombre, txtCedula, txtTelefono, txtCorreo, txtDireccion;
 	private JComboBox<String> comboTipoProveedor;
 	private JButton btnLimpiar, btnRegistrar, btnRegresar;
+	private JComboBox<String> comboProductos;
 
 	public RegistroProve_Frame() {
 		setTitle("Registrar Proveedor");
@@ -56,6 +57,7 @@ public class RegistroProve_Frame extends JFrame {
 		txtCorreo = new JTextField(20);
 		txtDireccion = new JTextField(20);
 		comboTipoProveedor = new JComboBox<>(new String[] { "Seleccione", "Persona Natural", "Empresa" });
+		comboProductos = new JComboBox<>();
 
 		int fila = 0;
 		agregarCampo(formPanel, gbc, fila++, "Nombre del proveedor:", txtNombre);
@@ -70,6 +72,14 @@ public class RegistroProve_Frame extends JFrame {
 		formPanel.add(new JLabel("Tipo de proveedor (opcional):"), gbc);
 		gbc.gridx = 1;
 		formPanel.add(comboTipoProveedor, gbc);
+		fila++;
+
+		// Campo para seleccionar Producto
+		gbc.gridx = 0;
+		gbc.gridy = fila;
+		formPanel.add(new JLabel("Producto Asociado:"), gbc);
+		gbc.gridx = 1;
+		formPanel.add(comboProductos, gbc);
 
 		caja.add(formPanel, BorderLayout.CENTER);
 
@@ -100,7 +110,7 @@ public class RegistroProve_Frame extends JFrame {
 		btnRegresar.addActionListener(e -> JOptionPane.showMessageDialog(this, "Regresando..."));
 	}
 
-	private void agregarCampo(JPanel panel, GridBagConstraints gbc, int fila, String texto, JComponent campo) {
+	public void agregarCampo(JPanel panel, GridBagConstraints gbc, int fila, String texto, JComponent campo) {
 		gbc.gridx = 0;
 		gbc.gridy = fila;
 		panel.add(new JLabel(texto), gbc);
@@ -108,16 +118,17 @@ public class RegistroProve_Frame extends JFrame {
 		panel.add(campo, gbc);
 	}
 
-	private void limpiarFormulario() {
+	public void limpiarFormulario() {
 		txtNombre.setText("");
 		txtCedula.setText("");
 		txtTelefono.setText("");
 		txtCorreo.setText("");
 		txtDireccion.setText("");
 		comboTipoProveedor.setSelectedIndex(0);
+		comboProductos.setSelectedIndex(0);
 	}
 
-	private void registrarProveedor() {
+	public void registrarProveedor() {
 		String nombre = txtNombre.getText().trim();
 		String cedula = txtCedula.getText().trim();
 		String telefono = txtTelefono.getText().trim();
@@ -175,5 +186,61 @@ public class RegistroProve_Frame extends JFrame {
 
 	public void setBtnRegresar(JButton btnRegresar) {
 		this.btnRegresar = btnRegresar;
+	}
+
+	public JTextField getTxtNombre() {
+		return txtNombre;
+	}
+
+	public void setTxtNombre(JTextField txtNombre) {
+		this.txtNombre = txtNombre;
+	}
+
+	public JTextField getTxtCedula() {
+		return txtCedula;
+	}
+
+	public void setTxtCedula(JTextField txtCedula) {
+		this.txtCedula = txtCedula;
+	}
+
+	public JTextField getTxtTelefono() {
+		return txtTelefono;
+	}
+
+	public void setTxtTelefono(JTextField txtTelefono) {
+		this.txtTelefono = txtTelefono;
+	}
+
+	public JTextField getTxtCorreo() {
+		return txtCorreo;
+	}
+
+	public void setTxtCorreo(JTextField txtCorreo) {
+		this.txtCorreo = txtCorreo;
+	}
+
+	public JTextField getTxtDireccion() {
+		return txtDireccion;
+	}
+
+	public void setTxtDireccion(JTextField txtDireccion) {
+		this.txtDireccion = txtDireccion;
+	}
+
+	public JComboBox<String> getComboTipoProveedor() {
+		return comboTipoProveedor;
+	}
+
+	public void setComboTipoProveedor(JComboBox<String> comboTipoProveedor) {
+		this.comboTipoProveedor = comboTipoProveedor;
+	}
+
+	public JComboBox<String> getComboProductos() {
+		return comboProductos;
+	}
+
+	public void setComboProductos(JComboBox<String> comboProductos) {
+		this.comboProductos = comboProductos;
 	}
 }
