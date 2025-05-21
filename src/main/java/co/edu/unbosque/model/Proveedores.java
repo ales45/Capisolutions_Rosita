@@ -24,7 +24,7 @@ public class Proveedores { // Usando 'ProveedoresService' para seguir patrón, o
      * @param idProducto El ID del producto asociado (según DDL).
      * @return El ProveedorDto creado, o null si hubo un error.
      */
-    public ProveedorDto crearProveedor(String nombre, String contacto, String direccion, int idProducto) {
+    public ProveedorDto crearProveedor(String nombre, String contacto, String direccion, int idProducto,Long cedula) {
         // --- LÓGICA DE NEGOCIO (VALIDACIONES) ---
         if (nombre == null || nombre.trim().isEmpty()) {
             System.err.println("Error de validación: El nombre del proveedor no puede estar vacío.");
@@ -41,6 +41,7 @@ public class Proveedores { // Usando 'ProveedoresService' para seguir patrón, o
         nuevoProveedor.setContacto(contacto);
         nuevoProveedor.setDireccion(direccion);
         nuevoProveedor.setIdProducto(idProducto);
+        nuevoProveedor.setCedula(cedula);
 
         try {
             proveedorDao.crearProveedor(nuevoProveedor);
@@ -55,37 +56,56 @@ public class Proveedores { // Usando 'ProveedoresService' para seguir patrón, o
     
     /**
      * Actualiza un proveedor existente.
-     * @param idProveedor El ID del proveedor a actualizar.
      * @param nombre El nuevo nombre del proveedor.
      * @param contacto La nueva información de contacto.
      * @param direccion La nueva dirección.
      * @param idProducto El nuevo ID de producto asociado.
+     * @param cedula La cédula del proveedor.
      * @return true si la actualización fue exitosa, false en caso contrario.
      */
-    public boolean actualizarProveedor(int idProveedor, String nombre, String contacto, String direccion, int idProducto) {
-        if (idProveedor <= 0) {
-            System.err.println("Error de validación: Se requiere un ID de proveedor válido para actualizar.");
+    public boolean actualizarProveedor(String nombre, String contacto, String direccion, int idProducto, Long cedula) {
+        Optional<ProveedorDto> provedoresopt;
+        try {
+            provedoresopt = proveedorDao.obtenerProveedorPorCedula(cedula);
+        } catch (SQLException e) {
+            System.err.println("Error al buscar proveedor por cédula para actualizar: " + e.getMessage());
+            e.printStackTrace();
+            return false; // Retorna false si hay un error SQL
+        }
+
+        if (!provedoresopt.isPresent()) {
+            System.err.println("Error: No se encontró el proveedor con cédula " + cedula);
             return false;
         }
+
         // --- LÓGICA DE NEGOCIO (VALIDACIONES) ---
-        if (nombre == null || nombre.trim().isEmpty()) { /* ... */ }
-        // ... más validaciones ...
+        if (nombre == null || nombre.trim().isEmpty()) {
+            System.err.println("Error de validación: El nombre del proveedor no puede estar vacío.");
+            return false;
+        }
+        if (contacto == null || contacto.trim().isEmpty()) {
+            System.err.println("Error de validación: El contacto del proveedor no puede estar vacío.");
+            return false;
+        }
+        if (direccion == null || direccion.trim().isEmpty()) {
+            System.err.println("Error de validación: La dirección del proveedor no puede estar vacía.");
+            return false;
+        }
+        if (idProducto <= 0) {
+            System.err.println("Error de validación: El ID de producto asociado no es válido.");
+            return false;
+        }
         // --- FIN LÓGICA DE NEGOCIO ---
 
         ProveedorDto proveedorActualizado = new ProveedorDto();
-        proveedorActualizado.setIdProveedor(idProveedor);
+        proveedorActualizado.setIdProveedor(provedoresopt.get().getIdProveedor());
         proveedorActualizado.setNombre(nombre);
         proveedorActualizado.setContacto(contacto);
         proveedorActualizado.setDireccion(direccion);
         proveedorActualizado.setIdProducto(idProducto);
+        proveedorActualizado.setCedula(cedula);
         
         try {
-            // Opcional: verificar si el proveedor existe.
-            // Optional<ProveedorDto> existente = proveedorDao.obtenerProveedorPorId(idProveedor);
-            // if (!existente.isPresent()) {
-            //     System.err.println("Proveedor con ID " + idProveedor + " no encontrado para actualizar.");
-            //     return false;
-            // }
             return proveedorDao.actualizarProveedor(proveedorActualizado);
         } catch (SQLException e) {
             System.err.println("Error en ProveedoresService al actualizar proveedor: " + e.getMessage());
@@ -96,12 +116,24 @@ public class Proveedores { // Usando 'ProveedoresService' para seguir patrón, o
 
     /**
      * Obtiene un proveedor por su ID.
-     * @param idProveedor El ID del proveedor.
+     * @param cedula La cédula del proveedor.
      * @return Un Optional que puede contener el ProveedorDto si se encuentra.
      */
-    public Optional<ProveedorDto> obtenerProveedorPorId(int idProveedor) {
+    public Optional<ProveedorDto> obtenerProveedorPorCedula(long cedula) {
+        Optional<ProveedorDto> provedoresopt = Optional.empty();
         try {
-            return proveedorDao.obtenerProveedorPorId(idProveedor);
+            provedoresopt = proveedorDao.obtenerProveedorPorCedula(cedula);
+        } catch (SQLException e) {
+            System.err.println("Error al buscar proveedor por cédula: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            if (provedoresopt.isPresent()) {
+                return proveedorDao.obtenerProveedorPorId(provedoresopt.get().getIdProveedor());
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException e) {
             System.err.println("Error en ProveedoresService al obtener proveedor por ID: " + e.getMessage());
             e.printStackTrace();
@@ -144,16 +176,36 @@ public class Proveedores { // Usando 'ProveedoresService' para seguir patrón, o
 
     /**
      * Elimina un proveedor por su ID.
-     * @param idProveedor El ID del proveedor a eliminar.
+     * @param cedula La cédula del proveedor a eliminar.
      * @return true si la eliminación fue exitosa, false en caso contrario.
      */
-    public boolean eliminarProveedor(int idProveedor) {
+    public boolean eliminarProveedor(Long cedula) {
+        Optional<ProveedorDto> provedoresopt = Optional.empty();
         try {
-            return proveedorDao.eliminarProveedor(idProveedor);
+            // 1. Buscar el proveedor por cedula
+            provedoresopt = proveedorDao.obtenerProveedorPorCedula(cedula);
         } catch (SQLException e) {
-            System.err.println("Error en ProveedoresService al eliminar proveedor: " + e.getMessage());
+            System.err.println("Error al buscar proveedor por cédula para eliminar: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return false; // Retorna false si hay un error SQL al buscar
+        }
+
+        // 2. Verificar si se encontro el proveedor
+        if (!provedoresopt.isPresent()) {
+            System.err.println("Error: No se encontró el proveedor con cédula " + cedula + " para eliminar.");
+            return false; // Retorna false si no se encontro el proveedor
+        }
+        
+        // 3. Obtener el ID del proveedor encontrado
+        int idProveedorAEliminar = provedoresopt.get().getIdProveedor();
+
+        // 4. Eliminar el proveedor usando el ID
+        try {
+            return proveedorDao.eliminarProveedor(idProveedorAEliminar); // Llama al DAO con el ID y retorna el resultado boolean
+        } catch (SQLException e) {
+            System.err.println("Error en ProveedoresService al eliminar proveedor en la base de datos: " + e.getMessage());
+            e.printStackTrace();
+            return false; // Retorna false si hay un error SQL al eliminar
         }
     }
 }

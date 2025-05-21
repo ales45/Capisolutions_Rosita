@@ -2,11 +2,16 @@ package co.edu.unbosque.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import co.edu.unbosque.view.Admin_View;
 import co.edu.unbosque.view.Devoluciones_Frame;
@@ -36,6 +41,7 @@ import co.edu.unbosque.view.VerProve_Frame;
 import co.edu.unbosque.model.Facada_Model;
 import co.edu.unbosque.model.daosYdtos.ClientesDto;
 import co.edu.unbosque.model.daosYdtos.ProductoDto;
+import co.edu.unbosque.model.daosYdtos.ProveedorDto;
 
 public class controllerprueba implements ActionListener {
 	private Facada_Model model;
@@ -302,14 +308,33 @@ public class controllerprueba implements ActionListener {
 		if (registroProveFrame != null) {
 			registroProveFrame.getBtnRegresar().setActionCommand("regresarRegistroProve");
 			registroProveFrame.getBtnRegresar().addActionListener(this);
+			registroProveFrame.getBtnRegistrar().setActionCommand("ConfirmarProvedor");
+			registroProveFrame.getBtnRegistrar().addActionListener(this);
+			registroProveFrame.getBtnLimpiar().setActionCommand("LimpiarRegistroProve");
+			registroProveFrame.getBtnLimpiar().addActionListener(this);
 		}
 		if (editarProveFrame != null) {
 			editarProveFrame.getBtnRegresar().setActionCommand("regresarEditarProve");
 			editarProveFrame.getBtnRegresar().addActionListener(this);
+			editarProveFrame.getBtnGuardar().setActionCommand("ConfirmarEditarProvedor");
+			editarProveFrame.getBtnGuardar().addActionListener(this);
+
+
 		}
 		if (verProveFrame != null) {
 			verProveFrame.getBtnRegresar().setActionCommand("regresarVerProve");
 			verProveFrame.getBtnRegresar().addActionListener(this);
+			
+			// Agregar listeners para búsqueda y filtros
+			verProveFrame.getTxtBuscar().getDocument().addDocumentListener(new DocumentListener() {
+				public void changedUpdate(DocumentEvent e) { filtrarProveedores(); }
+				public void removeUpdate(DocumentEvent e) { filtrarProveedores(); }
+				public void insertUpdate(DocumentEvent e) { filtrarProveedores(); }
+			});
+			
+			verProveFrame.getCboxMetodoPago().addActionListener(e -> filtrarProveedores());
+			verProveFrame.getCboxFecha().addActionListener(e -> filtrarProveedores());
+			verProveFrame.getCboxEstado().addActionListener(e -> filtrarProveedores());
 		}
 		if (registroPedidoFrame != null) {
 			registroPedidoFrame.getBtnRegresar().setActionCommand("regresarRegistroPedido");
@@ -436,7 +461,7 @@ public class controllerprueba implements ActionListener {
 			nuevoProductoFrame.getTxtNombre().getText().toString(), 
 			nuevoProductoFrame.getTxtDescripcion().getText().toString(),
 			Double.parseDouble(nuevoProductoFrame.getTxtPrecio().getText().toString()),
-			  5, 
+			  2, 
 			  Double.parseDouble(nuevoProductoFrame.getTxtIVA().getText().toString())
 			  );
 		//editar producto
@@ -493,7 +518,107 @@ public class controllerprueba implements ActionListener {
 		// Limpiar JComboBox si aplica
 		}
 			break;
+		//PROVEDOR
+		case "ConfirmarProvedor":
+			String nombreProveedor = registroProveFrame.getTxtNombre().getText().trim();
+			String telefonoProveedor = registroProveFrame.getTxtTelefono().getText().trim();
+			String direccionProveedor = registroProveFrame.getTxtDireccion().getText().trim();
+			String nombreProductoSeleccionado = (String) registroProveFrame.getComboProductos().getSelectedItem();
 
+			int idProductoAsociado = 0; // Valor por defecto si no se selecciona un producto valido
+
+			// Buscar el ID del producto seleccionado
+			if (nombreProductoSeleccionado != null && !nombreProductoSeleccionado.equals("Seleccione un producto")) {
+				List<ProductoDto> listaProductos = model.getProductos().obtenerTodosLosProductos();
+				if (listaProductos != null) {
+					for (ProductoDto producto : listaProductos) {
+						if (producto.getNombre().equals(nombreProductoSeleccionado)) {
+							idProductoAsociado = producto.getIdProducto();
+							break; // Encontramos el producto, salimos del bucle
+						}
+					}
+				}
+			}
+
+			// Validar campos obligatorios y si se selecciono un producto
+			if (nombreProveedor.isEmpty() || telefonoProveedor.isEmpty() || direccionProveedor.isEmpty()) {
+				JOptionPane.showMessageDialog(registroProveFrame, "Por favor, complete todos los campos obligatorios.", "Campos vacíos",
+						JOptionPane.WARNING_MESSAGE);
+			} else if (idProductoAsociado == 0) {
+				JOptionPane.showMessageDialog(registroProveFrame, "Por favor, seleccione un producto válido.", "Producto no seleccionado",
+						JOptionPane.WARNING_MESSAGE);
+			} else {
+				// Llamar al metodo crearProveedor con el ID del producto seleccionado
+				model.getProveedores().crearProveedor(
+					nombreProveedor,
+					telefonoProveedor, // Usando telefono para el campo 'contacto'
+					direccionProveedor,
+					idProductoAsociado,
+					Long.parseLong(registroProveFrame.getTxtCedula().getText().toString()) // Asumiendo que getTxtCedula es para cedula/NIT del proveedor
+				);
+				JOptionPane.showMessageDialog(registroProveFrame, "Proveedor registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+				registroProveFrame.limpiarFormulario(); // Limpiar el formulario si el registro fue exitoso
+			}
+		break;
+		case "ConfirmarEditarProvedor":
+		String nombreProveedorEdit = editarProveFrame.getTxtNombre().getText().trim();
+		String cedulaProveedorEdit = editarProveFrame.getTxtCedula().getText().trim(); // Asumiendo que la cedula se usa para identificar al proveedor
+		String telefonoProveedorEdit = editarProveFrame.getTxtTelefono().getText().trim();
+		String direccionProveedorEdit = editarProveFrame.getTxtDireccion().getText().trim();
+		String nombreProductoSeleccionadoEdit = (String) editarProveFrame.getComboProductos().getSelectedItem();
+
+		int idProductoAsociadoEdit = 0;
+
+		// Buscar el ID del producto seleccionado para la actualizacion
+		if (nombreProductoSeleccionadoEdit != null && !nombreProductoSeleccionadoEdit.equals("Seleccione un producto")) {
+			List<ProductoDto> listaProductosEdit = model.getProductos().obtenerTodosLosProductos();
+			if (listaProductosEdit != null) {
+				for (ProductoDto producto : listaProductosEdit) {
+					if (producto.getNombre().equals(nombreProductoSeleccionadoEdit)) {
+						idProductoAsociadoEdit = producto.getIdProducto();
+						break;
+					}
+				}
+			}
+		}
+
+		// Validar campos obligatorios y si se selecciono un producto
+		if (nombreProveedorEdit.isEmpty() || cedulaProveedorEdit.isEmpty() || telefonoProveedorEdit.isEmpty() || direccionProveedorEdit.isEmpty()) {
+			JOptionPane.showMessageDialog(editarProveFrame, "Por favor, complete todos los campos obligatorios.", "Campos vacíos",
+					JOptionPane.WARNING_MESSAGE);
+		} else if (idProductoAsociadoEdit == 0) {
+			JOptionPane.showMessageDialog(editarProveFrame, "Por favor, seleccione un producto válido.", "Producto no seleccionado",
+					JOptionPane.WARNING_MESSAGE);
+		} else {
+			// Convertir cedula a long
+			long cedulaLongEdit;
+			try {
+				cedulaLongEdit = Long.parseLong(cedulaProveedorEdit);
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(editarProveFrame, "La cédula/NIT debe ser un número válido.", "Error de formato", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			// Llamar al metodo actualizarProveedor
+			boolean exitoActualizacion = model.getProveedores().actualizarProveedor(
+				
+				 // Aquí deberías pasar el ID del proveedor si actualizarProveedor lo requiere y tienes acceso a el
+				nombreProveedorEdit,
+				telefonoProveedorEdit, // Usando telefono para el campo \'contacto\'
+				direccionProveedorEdit,
+				idProductoAsociadoEdit,
+				cedulaLongEdit // Pasando la cedula/NIT convertida
+				
+			);
+
+			if (exitoActualizacion) {
+				JOptionPane.showMessageDialog(editarProveFrame, "Proveedor actualizado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+				
+				// Opcional: Limpiar campos o cerrar ventana después de actualizar
+			} else {
+				JOptionPane.showMessageDialog(editarProveFrame, "Error al actualizar el proveedor.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		break;
 
 		// BOTONES "REGRESAR" DE MÓDULOS PRINCIPALES
 		case "regresarVentas":
@@ -691,6 +816,20 @@ public class controllerprueba implements ActionListener {
 		case "abrirRegistroProve":
 			mproveedoresFrame.setVisible(false);
 			registroProveFrame.setVisible(true);
+
+			// Llenar el JComboBox de productos
+			registroProveFrame.getComboProductos().removeAllItems(); // Limpiar items existentes
+			registroProveFrame.getComboProductos().addItem("Seleccione un producto"); // Añadir opción por defecto
+
+			List<ProductoDto> listaProductosProveedores = model.getProductos().obtenerTodosLosProductos();
+			if (listaProductosProveedores != null) {
+				for (ProductoDto producto : listaProductosProveedores) {
+					registroProveFrame.getComboProductos().addItem(producto.getNombre()); // Añadir el nombre del producto
+				}
+			} else {
+				System.out.println("No hay productos disponibles para cargar en el ComboBox.");
+			}
+
 			break;
 		case "regresarRegistroProve":
 			registroProveFrame.setVisible(false);
@@ -699,6 +838,105 @@ public class controllerprueba implements ActionListener {
 		case "abrirEditarProve":
 			mproveedoresFrame.setVisible(false);
 			editarProveFrame.setVisible(true);
+			// --- Parte 1: Llenar el JComboBox de productos con TODOS los productos ---
+			editarProveFrame.getComboProductos().removeAllItems(); // Limpiar items existentes
+			editarProveFrame.getComboProductos().addItem("Seleccione un producto"); // Añadir opción por defecto
+
+			List<ProductoDto> productosParaEditar = model.getProductos().obtenerTodosLosProductos();
+			if (productosParaEditar != null) {
+				for (ProductoDto producto : productosParaEditar) {
+					// Aquí añadimos el nombre de cada producto al JComboBox
+					editarProveFrame.getComboProductos().addItem(producto.getNombre());
+				}
+			} else {
+				System.out.println("No hay productos disponibles para cargar en el ComboBox de edición.");
+			}
+
+			// --- Parte 2: Cargar los datos del proveedor existente y seleccionar su producto asociado ---
+
+			// **Paso A:** Obtener el identificador del proveedor a editar.
+			// Esto es CRUCIAL. Necesitas saber qué proveedor editar.
+			// En el ejemplo anterior, asumí que la cedula se ingresa en txtCedula antes.
+			// Si tu lógica es diferente (ej. seleccionas de una tabla), adapta cómo obtienes la cedula/ID aquí.
+			String cedulaProveedorStr = editarProveFrame.getTxtCedula().getText().trim(); // O el método que obtenga la cedula
+
+			if (cedulaProveedorStr.isEmpty()) {
+				// Si no hay identificador, no podemos cargar datos. Muestra un mensaje y sales.
+				JOptionPane.showMessageDialog(editarProveFrame, "Por favor, ingrese la cédula/NIT del proveedor a editar.", "Cédula/NIT Vacía", JOptionPane.WARNING_MESSAGE);
+				// Además, limpia o resetea los campos si la cédula está vacía
+				editarProveFrame.getTxtNombre().setText("");
+				editarProveFrame.getTxtTelefono().setText("");
+				editarProveFrame.getTxtDireccion().setText("");
+				editarProveFrame.getComboProductos().setSelectedItem("Seleccione un producto");
+				// TODO: Limpiar o seleccionar opción por defecto en comboTipoProveedor
+				return;
+			}
+
+			long cedulaProveedor;
+			try {
+				cedulaProveedor = Long.parseLong(cedulaProveedorStr);
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(editarProveFrame, "La cédula/NIT debe ser un número válido.", "Error de formato", JOptionPane.ERROR_MESSAGE);
+				// Limpiar o resetear campos
+				editarProveFrame.getTxtNombre().setText("");
+				editarProveFrame.getTxtTelefono().setText("");
+				editarProveFrame.getTxtDireccion().setText("");
+				editarProveFrame.getComboProductos().setSelectedItem("Seleccione un producto");
+				// TODO: Limpiar o seleccionar opción por defecto en comboTipoProveedor
+				return;
+			}
+
+
+			// **Paso B:** Buscar el proveedor usando su identificador.
+			Optional<ProveedorDto> proveedorOpt = model.getProveedores().obtenerProveedorPorCedula(cedulaProveedor); // Usar tu método de búsqueda por cedula
+
+			if (proveedorOpt.isPresent()) {
+				ProveedorDto proveedor = proveedorOpt.get();
+
+				// **Paso C:** Llenar los campos de texto con los datos del proveedor encontrado.
+				editarProveFrame.getTxtNombre().setText(proveedor.getNombre());
+				editarProveFrame.getTxtTelefono().setText(proveedor.getContacto()); // Asegurate que getContacto devuelve String o conviertelo
+				editarProveFrame.getTxtDireccion().setText(proveedor.getDireccion());
+				// El campo txtCedula ya debería tener la cédula que se usó para buscar.
+
+				// **Paso D, E y F:** Identificar el producto asociado y seleccionarlo en el JComboBox.
+
+				// Necesitas el ID del producto asociado al proveedor.
+				String nomrbeProductoAsociado = proveedor.getNombre(); // Obtienes el ID del producto del DTO del proveedor
+
+				// Ahora, busca el nombre de ese producto en la lista completa de productos.
+				// Revisa si tu model.getProductos().obtenerProductoPorId(int idProducto) existe y busca por ID (int).
+				// Si no, NECESITAS agregar ese método primero en ProductoDao y Productos.java.
+				// Si obtenerProductoPorId en Productos.java SÍ busca por ID (int), la llamada sería:
+				Optional<ProductoDto> productoAsociadoOpt = model.getProductos().obtenerProductoPorId(nomrbeProductoAsociado); // Llama con el ID (int)
+
+				if (productoAsociadoOpt.isPresent()) {
+					String nombreProductoAsociado = productoAsociadoOpt.get().getNombre();
+					// **Finalmente, selecciona el nombre del producto asociado en el JComboBox.**
+					editarProveFrame.getComboProductos().setSelectedItem(nombreProductoAsociado);
+				} else {
+					// Si por alguna razón el producto asociado no se encuentra, selecciona la opción por defecto.
+					editarProveFrame.getComboProductos().setSelectedItem("Seleccione un producto");
+				}
+
+				// TODO: Si tienes un JComboBox para el tipo de proveedor en EditarProve_Frame, selecciona el tipo correcto aquí
+				// editarProveFrame.getComboTipoProveedor().setSelectedItem(proveedor.getTipoProveedor()); // si existiera getTipoProveedor()
+
+			} else {
+				// Proveedor no encontrado con esa cedula
+				JOptionPane.showMessageDialog(editarProveFrame, "No se encontró ningún proveedor con la cédula/NIT ingresada.", "Proveedor no encontrado", JOptionPane.INFORMATION_MESSAGE);
+				// Limpia o resetea los campos si el proveedor no se encontró
+				editarProveFrame.getTxtNombre().setText("");
+				editarProveFrame.getTxtTelefono().setText("");
+				editarProveFrame.getTxtDireccion().setText("");
+				editarProveFrame.getComboProductos().setSelectedItem("Seleccione un producto");
+				// TODO: Limpiar o seleccionar opción por defecto en comboTipoProveedor
+				// Opcional: cerrar la ventana de edición
+				// editarProveFrame.setVisible(false);
+				// mproveedoresFrame.setVisible(true);
+			}
+
+
 			break;
 		case "regresarEditarProve":
 			editarProveFrame.setVisible(false);
@@ -707,6 +945,31 @@ public class controllerprueba implements ActionListener {
 		case "abrirVerProve":
 			mproveedoresFrame.setVisible(false);
 			verProveFrame.setVisible(true);
+
+			// Limpiar la tabla antes de cargar nuevos datos
+			DefaultTableModel modeloTablaProveedores = (DefaultTableModel) verProveFrame.getTbProve().getModel();
+			modeloTablaProveedores.setRowCount(0);
+
+			// Obtener la lista de todos los proveedores
+			List<ProveedorDto> listaProveedores = model.getProveedores().obtenerTodosLosProveedores();
+
+			if (listaProveedores != null && !listaProveedores.isEmpty()) {
+				for (ProveedorDto proveedor : listaProveedores) {
+					Object[] fila = new Object[5]; // 5 columnas: Nombre, NIT/Cédula, Teléfono, Correo, Dirección
+					fila[0] = proveedor.getNombre();
+					fila[1] = proveedor.getCedula();
+					fila[2] = proveedor.getContacto();
+					fila[3] = "N/A"; // No hay campo de correo en ProveedorDto
+					fila[4] = proveedor.getDireccion();
+
+					modeloTablaProveedores.addRow(fila);
+				}
+			} else {
+				JOptionPane.showMessageDialog(verProveFrame, 
+					"No hay proveedores registrados en el sistema.", 
+					"Información", 
+					JOptionPane.INFORMATION_MESSAGE);
+			}
 			break;
 		case "regresarVerProve":
 			verProveFrame.setVisible(false);
@@ -739,6 +1002,35 @@ public class controllerprueba implements ActionListener {
 
 		default:
 			throw new IllegalArgumentException("Comando no reconocido: " + command);
+		}
+	}
+
+	private void filtrarProveedores() {
+		if (verProveFrame == null) return;
+		
+		String textoBusqueda = verProveFrame.getTxtBuscar().getText().toLowerCase();
+		String metodoPago = (String) verProveFrame.getCboxMetodoPago().getSelectedItem();
+		String fecha = (String) verProveFrame.getCboxFecha().getSelectedItem();
+		String estado = (String) verProveFrame.getCboxEstado().getSelectedItem();
+		
+		DefaultTableModel modeloTabla = (DefaultTableModel) verProveFrame.getTbProve().getModel();
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloTabla);
+		verProveFrame.getTbProve().setRowSorter(sorter);
+		
+		// Crear filtros
+		List<RowFilter<Object, Object>> filters = new ArrayList<>();
+		
+		// Filtro de texto de búsqueda
+		if (!textoBusqueda.isEmpty()) {
+			filters.add(RowFilter.regexFilter("(?i)" + textoBusqueda));
+		}
+		
+		// Aplicar filtros
+		if (!filters.isEmpty()) {
+			RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
+			sorter.setRowFilter(combinedFilter);
+		} else {
+			sorter.setRowFilter(null);
 		}
 	}
 }

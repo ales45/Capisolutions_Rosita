@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS proveedores (
     contacto VARCHAR(100),
     direccion TEXT,
     idProducto INT,
+    cedula BIGINT,
     FOREIGN KEY (idProducto) REFERENCES productos(idProducto)
 );
 

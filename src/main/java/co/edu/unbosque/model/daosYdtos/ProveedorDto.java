@@ -5,17 +5,19 @@ public class ProveedorDto {
     private String nombre;
     private String contacto; // VARCHAR en DDL
     private String direccion;
+    private Long cedula;
     private int idProducto; // FK a la tabla productos
 
     public ProveedorDto() {
     }
 
-    public ProveedorDto(int idProveedor, String nombre, String contacto, String direccion, int idProducto) {
+    public ProveedorDto(int idProveedor, String nombre, String contacto, String direccion, int idProducto,long cedula) {
         this.idProveedor = idProveedor;
         this.nombre = nombre;
         this.contacto = contacto;
         this.direccion = direccion;
         this.idProducto = idProducto;
+        this.cedula = cedula;
     }
 
     // Getters y Setters
@@ -58,6 +60,7 @@ public class ProveedorDto {
     public void setIdProducto(int idProducto) {
         this.idProducto = idProducto;
     }
+    
 
     @Override
     public String toString() {
@@ -69,4 +72,13 @@ public class ProveedorDto {
                ", idProducto=" + idProducto +
                '}';
     }
+
+    public Long getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(Long cedula) {
+        this.cedula = cedula;
+    }
+    
 }

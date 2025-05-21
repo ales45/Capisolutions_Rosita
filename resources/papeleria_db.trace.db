@@ -1,260 +1,4 @@
-2025-05-18 22:40:27.775828-05:00 jdbc[6]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Columna "id_usuario" no encontrada
-Column "id_usuario" not found; SQL statement:
-SELECT id_usuario, usuario, contraseña, acceso FROM Usuario WHERE id_usuario = ? [42122-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.expression.ExpressionColumn.getColumnException(ExpressionColumn.java:244)
-	at org.h2.expression.ExpressionColumn.optimizeOther(ExpressionColumn.java:226)
-	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:213)
-	at org.h2.command.query.Select.optimizeExpressionsAndPreserveAliases(Select.java:1285)
-	at org.h2.command.query.Select.prepareExpressions(Select.java:1167)
-	at org.h2.command.query.Query.prepare(Query.java:218)
-	at org.h2.command.Parser.prepareCommand(Parser.java:489)
-	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
-	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
-	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
-	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
-	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
-	at co.edu.unbosque.model.daosYdtos.UsuariosDao.obtenerUsuarioPorId(UsuariosDao.java:61)
-	at co.edu.unbosque.model.Usuarios.obtenerUsuarioPorId(Usuarios.java:78)
-	at test.CrudTests.testUsuariosCrud(CrudTests.java:51)
-	at test.CrudTests.main(CrudTests.java:23)
-	at co.edu.unbosque.controller.Controller.ejecutar(Controller.java:18)
-	at co.edu.unbosque.controller.Controller.<init>(Controller.java:11)
-	at co.edu.unbosque.controller.AplMain.main(AplMain.java:14)
-2025-05-18 22:40:27.821273-05:00 jdbc[7]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Columna "id_usuario" no encontrada
-Column "id_usuario" not found; SQL statement:
-SELECT id_usuario, Usuario, acceso FROM Usuario [42122-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.expression.ExpressionColumn.getColumnException(ExpressionColumn.java:244)
-	at org.h2.expression.ExpressionColumn.optimizeOther(ExpressionColumn.java:226)
-	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:213)
-	at org.h2.command.query.Select.optimizeExpressionsAndPreserveAliases(Select.java:1285)
-	at org.h2.command.query.Select.prepareExpressions(Select.java:1167)
-	at org.h2.command.query.Query.prepare(Query.java:218)
-	at org.h2.command.Parser.prepareCommand(Parser.java:489)
-	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
-	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
-	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
-	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
-	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
-	at co.edu.unbosque.model.daosYdtos.UsuariosDao.obtenerTodosLosUsuarios(UsuariosDao.java:89)
-	at co.edu.unbosque.model.Usuarios.obtenerTodosLosUsuarios(Usuarios.java:94)
-	at test.CrudTests.testUsuariosCrud(CrudTests.java:60)
-	at test.CrudTests.main(CrudTests.java:23)
-	at co.edu.unbosque.controller.Controller.ejecutar(Controller.java:18)
-	at co.edu.unbosque.controller.Controller.<init>(Controller.java:11)
-	at co.edu.unbosque.controller.AplMain.main(AplMain.java:14)
-2025-05-18 22:40:27.837181-05:00 jdbc[8]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Columna "id_usuario" no encontrada
-Column "id_usuario" not found; SQL statement:
-SELECT id_usuario, usuario, contraseña, acceso FROM Usuario WHERE id_usuario = ? [42122-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.expression.ExpressionColumn.getColumnException(ExpressionColumn.java:244)
-	at org.h2.expression.ExpressionColumn.optimizeOther(ExpressionColumn.java:226)
-	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:213)
-	at org.h2.command.query.Select.optimizeExpressionsAndPreserveAliases(Select.java:1285)
-	at org.h2.command.query.Select.prepareExpressions(Select.java:1167)
-	at org.h2.command.query.Query.prepare(Query.java:218)
-	at org.h2.command.Parser.prepareCommand(Parser.java:489)
-	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
-	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
-	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
-	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
-	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
-	at co.edu.unbosque.model.daosYdtos.UsuariosDao.obtenerUsuarioPorId(UsuariosDao.java:61)
-	at co.edu.unbosque.model.Usuarios.obtenerUsuarioPorId(Usuarios.java:78)
-	at co.edu.unbosque.model.Usuarios.actualizarUsuario(Usuarios.java:136)
-	at test.CrudTests.testUsuariosCrud(CrudTests.java:71)
-	at test.CrudTests.main(CrudTests.java:23)
-	at co.edu.unbosque.controller.Controller.ejecutar(Controller.java:18)
-	at co.edu.unbosque.controller.Controller.<init>(Controller.java:11)
-	at co.edu.unbosque.controller.AplMain.main(AplMain.java:14)
-2025-05-18 22:40:27.860925-05:00 jdbc[9]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Columna "id_usuario" no encontrada
-Column "id_usuario" not found; SQL statement:
-DELETE FROM Usuario WHERE id_usuario = ? [42122-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.expression.ExpressionColumn.getColumnException(ExpressionColumn.java:244)
-	at org.h2.expression.ExpressionColumn.optimizeOther(ExpressionColumn.java:226)
-	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:213)
-	at org.h2.expression.condition.Comparison.optimize(Comparison.java:147)
-	at org.h2.expression.Expression.optimizeCondition(Expression.java:148)
-	at org.h2.command.dml.Delete.doPrepare(Delete.java:112)
-	at org.h2.command.dml.DataChangeStatement.prepare(DataChangeStatement.java:37)
-	at org.h2.command.Parser.prepareCommand(Parser.java:489)
-	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
-	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
-	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
-	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
-	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
-	at co.edu.unbosque.model.daosYdtos.UsuariosDao.eliminarUsuario(UsuariosDao.java:136)
-	at co.edu.unbosque.model.Usuarios.eliminarUsuario(Usuarios.java:174)
-	at test.CrudTests.testUsuariosCrud(CrudTests.java:86)
-	at test.CrudTests.main(CrudTests.java:23)
-	at co.edu.unbosque.controller.Controller.ejecutar(Controller.java:18)
-	at co.edu.unbosque.controller.Controller.<init>(Controller.java:11)
-	at co.edu.unbosque.controller.AplMain.main(AplMain.java:14)
-2025-05-18 22:40:27.993474-05:00 jdbc[19]: null
-org.h2.message.DbException: La conexión no fue cerrada por la aplicación y esta siendo limpiada (garbage collected)
-The connection was not closed by the application and is garbage collected [90018-224]
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.message.DbException.get(DbException.java:188)
-	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:218)
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:135)
-	at org.h2.Driver.connect(Driver.java:59)
-	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:682)
-	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
-	at co.edu.unbosque.model.DatabaseManager.getConnection(DatabaseManager.java:27)
-	at co.edu.unbosque.model.daosYdtos.ProductoDao.obtenerProductoPorId(ProductoDao.java:56)
-	at co.edu.unbosque.model.Productos.obtenerProductoPorId(Productos.java:73)
-	at test.CrudTests.testProductosCrud(CrudTests.java:208)
-	at test.CrudTests.main(CrudTests.java:25)
-	at co.edu.unbosque.controller.Controller.ejecutar(Controller.java:18)
-	at co.edu.unbosque.controller.Controller.<init>(Controller.java:11)
-	at co.edu.unbosque.controller.AplMain.main(AplMain.java:14)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: La conexión no fue cerrada por la aplicación y esta siendo limpiada (garbage collected)
-The connection was not closed by the application and is garbage collected [90018-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	... 16 more
-2025-05-18 22:40:27.995488-05:00 jdbc[19]: null
-org.h2.message.DbException: La conexión no fue cerrada por la aplicación y esta siendo limpiada (garbage collected)
-The connection was not closed by the application and is garbage collected [90018-224]
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.message.DbException.get(DbException.java:188)
-	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:218)
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:135)
-	at org.h2.Driver.connect(Driver.java:59)
-	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:682)
-	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
-	at co.edu.unbosque.model.DatabaseManager.getConnection(DatabaseManager.java:27)
-	at co.edu.unbosque.model.daosYdtos.ProductoDao.obtenerProductoPorId(ProductoDao.java:56)
-	at co.edu.unbosque.model.Productos.obtenerProductoPorId(Productos.java:73)
-	at test.CrudTests.testProductosCrud(CrudTests.java:208)
-	at test.CrudTests.main(CrudTests.java:25)
-	at co.edu.unbosque.controller.Controller.ejecutar(Controller.java:18)
-	at co.edu.unbosque.controller.Controller.<init>(Controller.java:11)
-	at co.edu.unbosque.controller.AplMain.main(AplMain.java:14)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: La conexión no fue cerrada por la aplicación y esta siendo limpiada (garbage collected)
-The connection was not closed by the application and is garbage collected [90018-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	... 16 more
-2025-05-20 21:30:14.216855-05:00 jdbc[3]: exception
-java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supported.
-	at org.h2.jdbc.JdbcConnection.setClientInfo(JdbcConnection.java:1626)
-	at org.jkiss.dbeaver.ext.generic.model.GenericDataSource.populateClientAppName(GenericDataSource.java:200)
-	at org.jkiss.dbeaver.ext.generic.model.GenericDataSource.openConnection(GenericDataSource.java:163)
-	at org.jkiss.dbeaver.ext.h2.model.H2DataSource.openConnection(H2DataSource.java:74)
-	at org.jkiss.dbeaver.model.impl.jdbc.JDBCExecutionContext.connect(JDBCExecutionContext.java:124)
-	at org.jkiss.dbeaver.model.impl.jdbc.JDBCRemoteInstance.initializeMainContext(JDBCRemoteInstance.java:106)
-	at org.jkiss.dbeaver.model.impl.jdbc.JDBCRemoteInstance.<init>(JDBCRemoteInstance.java:61)
-	at org.jkiss.dbeaver.model.impl.jdbc.JDBCDataSource.initializeRemoteInstance(JDBCDataSource.java:125)
-	at org.jkiss.dbeaver.ext.generic.model.GenericDataSource.<init>(GenericDataSource.java:125)
-	at org.jkiss.dbeaver.ext.h2.model.H2DataSource.<init>(H2DataSource.java:43)
-	at org.jkiss.dbeaver.ext.h2.model.H2MetaModel.createDataSourceImpl(H2MetaModel.java:56)
-	at org.jkiss.dbeaver.ext.generic.GenericDataSourceProvider.openDataSource(GenericDataSourceProvider.java:57)
-	at org.jkiss.dbeaver.registry.DataSourceDescriptor.openDataSource(DataSourceDescriptor.java:1419)
-	at org.jkiss.dbeaver.registry.DataSourceDescriptor.connect0(DataSourceDescriptor.java:1271)
-	at org.jkiss.dbeaver.registry.DataSourceDescriptor.connect(DataSourceDescriptor.java:1061)
-	at org.jkiss.dbeaver.runtime.jobs.ConnectJob.run(ConnectJob.java:78)
-	at org.jkiss.dbeaver.runtime.jobs.ConnectJob.runSync(ConnectJob.java:109)
-	at org.jkiss.dbeaver.ui.actions.datasource.DataSourceHandler.connectToDataSource(DataSourceHandler.java:123)
-	at org.jkiss.dbeaver.ui.actions.datasource.UIServiceConnectionsImpl.initConnection(UIServiceConnectionsImpl.java:87)
-	at org.jkiss.dbeaver.model.DBUtils.initDataSource(DBUtils.java:2455)
-	at org.jkiss.dbeaver.model.navigator.DBNDataSource.initializeNode(DBNDataSource.java:159)
-	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:226)
-	at org.jkiss.dbeaver.model.navigator.DBNDatabaseNode.getChildren(DBNDatabaseNode.java:1)
-	at org.jkiss.dbeaver.model.navigator.DBNUtils.getNodeChildrenFiltered(DBNUtils.java:94)
-	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:49)
-	at org.jkiss.dbeaver.ui.navigator.database.load.TreeLoadService.evaluate(TreeLoadService.java:1)
-	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:88)
-	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:119)
-	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
-2025-05-20 21:30:20.737710-05:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Columna "KEY_SEQ" no encontrada
-Column "KEY_SEQ" not found [42122-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.jdbc.JdbcResultSet.getColumnIndex(JdbcResultSet.java:3492)
-	at org.h2.jdbc.JdbcResultSet.getInt(JdbcResultSet.java:337)
-	at org.jkiss.dbeaver.model.impl.jdbc.exec.JDBCResultSetImpl.getInt(JDBCResultSetImpl.java:510)
-	at org.jkiss.dbeaver.model.impl.jdbc.JDBCUtils.safeGetInt(JDBCUtils.java:117)
-	at org.jkiss.dbeaver.ext.generic.model.GenericUtils.safeGetInt(GenericUtils.java:84)
-	at org.jkiss.dbeaver.ext.generic.model.meta.GenericMetaModel.createConstraintColumnsImpl(GenericMetaModel.java:949)
-	at org.jkiss.dbeaver.ext.h2.model.H2MetaModel.createConstraintColumnsImpl(H2MetaModel.java:179)
-	at org.jkiss.dbeaver.ext.generic.model.ConstraintKeysCache.fetchObjectRow(ConstraintKeysCache.java:98)
-	at org.jkiss.dbeaver.ext.generic.model.ConstraintKeysCache.fetchObjectRow(ConstraintKeysCache.java:1)
-	at org.jkiss.dbeaver.model.impl.jdbc.cache.JDBCCompositeCache.loadObjects(JDBCCompositeCache.java:369)
-	at org.jkiss.dbeaver.model.impl.jdbc.cache.JDBCCompositeCache.getObjects(JDBCCompositeCache.java:123)
-	at org.jkiss.dbeaver.ext.generic.model.GenericTableBase.getConstraints(GenericTableBase.java:251)
-	at org.jkiss.dbeaver.ext.generic.model.GenericTableBase.getConstraints(GenericTableBase.java:1)
-	at org.jkiss.dbeaver.model.exec.DBExecUtils.getBestIdentifier(DBExecUtils.java:538)
-	at org.jkiss.dbeaver.model.exec.DBExecUtils.bindAttributes(DBExecUtils.java:875)
-	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetDataReceiver.fetchEnd(ResultSetDataReceiver.java:166)
-	at org.jkiss.dbeaver.model.impl.jdbc.struct.JDBCTable.readData(JDBCTable.java:228)
-	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetJobDataRead.lambda$0(ResultSetJobDataRead.java:128)
-	at org.jkiss.dbeaver.model.exec.DBExecUtils.tryExecuteRecover(DBExecUtils.java:189)
-	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetJobDataRead.run(ResultSetJobDataRead.java:126)
-	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer$ResultSetDataPumpJob.run(ResultSetViewer.java:5146)
-	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:119)
-	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
-2025-05-20 21:34:35.514846-05:00 database: flush
-org.h2.message.DbException: Error General : "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/OneDrive/Escritorio/Nueva carpeta/Capisolutions_Rosita/resources/papeleria_db.mv.db [2.2.224/7]"
-General error: "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/OneDrive/Escritorio/Nueva carpeta/Capisolutions_Rosita/resources/papeleria_db.mv.db [2.2.224/7]" [50000-224]
-	at org.h2.message.DbException.get(DbException.java:212)
-	at org.h2.message.DbException.convert(DbException.java:407)
-	at org.h2.mvstore.db.Store.lambda$new$0(Store.java:122)
-	at org.h2.mvstore.MVStore.handleException(MVStore.java:1546)
-	at org.h2.mvstore.MVStore.panic(MVStore.java:371)
-	at org.h2.mvstore.MVStore.<init>(MVStore.java:291)
-	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:2035)
-	at org.h2.mvstore.db.Store.<init>(Store.java:133)
-	at org.h2.engine.Database.<init>(Database.java:326)
-	at org.h2.engine.Engine.openSession(Engine.java:92)
-	at org.h2.engine.Engine.openSession(Engine.java:222)
-	at org.h2.engine.Engine.createSession(Engine.java:201)
-	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:343)
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:125)
-	at org.h2.Driver.connect(Driver.java:59)
-	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:613)
-	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:199)
-	at co.edu.unbosque.model.DatabaseManager.getConnection(DatabaseManager.java:27)
-	at co.edu.unbosque.model.Facada_Model.<init>(Facada_Model.java:31)
-	at co.edu.unbosque.controller.controllerprueba.iniciar(controllerprueba.java:111)
-	at co.edu.unbosque.controller.controllerprueba.<init>(controllerprueba.java:106)
-	at co.edu.unbosque.controller.AplMain.main(AplMain.java:36)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientException: Error General : "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/OneDrive/Escritorio/Nueva carpeta/Capisolutions_Rosita/resources/papeleria_db.mv.db [2.2.224/7]"
-General error: "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/OneDrive/Escritorio/Nueva carpeta/Capisolutions_Rosita/resources/papeleria_db.mv.db [2.2.224/7]" [50000-224]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:566)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	... 22 more
-Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/OneDrive/Escritorio/Nueva carpeta/Capisolutions_Rosita/resources/papeleria_db.mv.db [2.2.224/7]
-	at org.h2.mvstore.DataUtils.newMVStoreException(DataUtils.java:996)
-	at org.h2.mvstore.SingleFileStore.lockFileChannel(SingleFileStore.java:143)
-	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:117)
-	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
-	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
-	... 16 more
-2025-05-20 23:11:20.019615-05:00 database: flush
+2025-05-21 02:02:52.715899-05:00 database: flush
 org.h2.message.DbException: Error General : "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/OneDrive/Escritorio/Nueva carpeta/Capisolutions_Rosita/resources/papeleria_db.mv.db [2.2.224/7]"
 General error: "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/OneDrive/Escritorio/Nueva carpeta/Capisolutions_Rosita/resources/papeleria_db.mv.db [2.2.224/7]" [50000-224]
 	at org.h2.message.DbException.get(DbException.java:212)
@@ -307,7 +51,7 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/algam/O
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 32 more
-2025-05-20 23:11:28.761038-05:00 jdbc[3]: exception
+2025-05-21 02:03:01.288285-05:00 jdbc[3]: exception
 java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supported.
 	at org.h2.jdbc.JdbcConnection.setClientInfo(JdbcConnection.java:1626)
 	at org.jkiss.dbeaver.ext.generic.model.GenericDataSource.populateClientAppName(GenericDataSource.java:200)
@@ -338,7 +82,7 @@ java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supporte
 	at org.jkiss.dbeaver.ui.LoadingJob.run(LoadingJob.java:88)
 	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:119)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
-2025-05-20 23:12:02.584483-05:00 jdbc[3]: exception
+2025-05-21 02:03:11.201918-05:00 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Columna "KEY_SEQ" no encontrada
 Column "KEY_SEQ" not found [42122-224]
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
@@ -368,7 +112,7 @@ Column "KEY_SEQ" not found [42122-224]
 	at org.jkiss.dbeaver.ui.controls.resultset.ResultSetViewer$ResultSetDataPumpJob.run(ResultSetViewer.java:5146)
 	at org.jkiss.dbeaver.model.runtime.AbstractJob.run(AbstractJob.java:119)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
-2025-05-20 23:12:02.595640-05:00 jdbc[3]: exception
+2025-05-21 02:03:11.210925-05:00 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Columna "KEY_SEQ" no encontrada
 Column "KEY_SEQ" not found [42122-224]
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)

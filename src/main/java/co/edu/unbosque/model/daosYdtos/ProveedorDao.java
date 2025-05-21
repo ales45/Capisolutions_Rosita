@@ -21,7 +21,7 @@ public class ProveedorDao {
      */
     public void crearProveedor(ProveedorDto proveedor) throws SQLException {
         // DDL: idProveedor (PK, AI), nombre, contacto, direccion, idProducto
-        String sql = "INSERT INTO proveedores (nombre, contacto, direccion, idProducto) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO proveedores (nombre, contacto, direccion, idProducto,cedula) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -30,6 +30,7 @@ public class ProveedorDao {
             pstmt.setString(2, proveedor.getContacto());
             pstmt.setString(3, proveedor.getDireccion());
             pstmt.setInt(4, proveedor.getIdProducto());
+            pstmt.setLong(5, proveedor.getCedula());
             
             int affectedRows = pstmt.executeUpdate();
 
@@ -71,7 +72,29 @@ public class ProveedorDao {
         }
         return Optional.empty();
     }
-
+    public Optional<ProveedorDto> obtenerProveedorPorCedula(long cedula) throws SQLException {
+        String sql = "SELECT idProveedor, nombre, contacto, direccion, idProducto, cedula FROM proveedores WHERE cedula = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, cedula);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    ProveedorDto proveedor = new ProveedorDto();
+                    proveedor.setIdProveedor(rs.getInt("idProveedor"));
+                    proveedor.setNombre(rs.getString("nombre"));
+                    proveedor.setContacto(rs.getString("contacto"));
+                    proveedor.setDireccion(rs.getString("direccion"));
+                    proveedor.setIdProducto(rs.getInt("idProducto"));
+                    proveedor.setCedula(rs.getLong("cedula"));
+                    return Optional.of(proveedor);
+                }
+            }
+        }
+        return Optional.empty();
+    }
     /**
      * Obtiene todos los proveedores de la base de datos.
      * @return Una lista de ProveedorDto.
@@ -79,7 +102,7 @@ public class ProveedorDao {
      */
     public List<ProveedorDto> obtenerTodosLosProveedores() throws SQLException {
         List<ProveedorDto> proveedores = new ArrayList<>();
-        String sql = "SELECT idProveedor, nombre, contacto, direccion, idProducto FROM proveedores";
+        String sql = "SELECT idProveedor, nombre, contacto, direccion, idProducto,cedula FROM proveedores";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -92,6 +115,7 @@ public class ProveedorDao {
                 proveedor.setContacto(rs.getString("contacto"));
                 proveedor.setDireccion(rs.getString("direccion"));
                 proveedor.setIdProducto(rs.getInt("idProducto"));
+                proveedor.setCedula(rs.getLong("cedula"));
                 proveedores.add(proveedor);
             }
         }
@@ -105,7 +129,7 @@ public class ProveedorDao {
      * @throws SQLException Si ocurre un error de base de datos.
      */
     public boolean actualizarProveedor(ProveedorDto proveedor) throws SQLException {
-        String sql = "UPDATE proveedores SET nombre = ?, contacto = ?, direccion = ?, idProducto = ? WHERE idProveedor = ?";
+        String sql = "UPDATE proveedores SET nombre = ?, contacto = ?, direccion = ?, idProducto = ?, cedula = ? WHERE idProveedor = ?";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -114,7 +138,8 @@ public class ProveedorDao {
             pstmt.setString(2, proveedor.getContacto());
             pstmt.setString(3, proveedor.getDireccion());
             pstmt.setInt(4, proveedor.getIdProducto());
-            pstmt.setInt(5, proveedor.getIdProveedor());
+            pstmt.setLong(5, proveedor.getCedula());
+            pstmt.setInt(6, proveedor.getIdProveedor());
             
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -147,7 +172,7 @@ public class ProveedorDao {
      */
     public List<ProveedorDto> obtenerProveedoresPorIdProducto(int idProducto) throws SQLException {
         List<ProveedorDto> proveedores = new ArrayList<>();
-        String sql = "SELECT idProveedor, nombre, contacto, direccion, idProducto FROM proveedores WHERE idProducto = ?";
+        String sql = "SELECT idProveedor, nombre, contacto, direccion, idProducto,cedula FROM proveedores WHERE idProducto = ?";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -160,6 +185,7 @@ public class ProveedorDao {
                     proveedor.setContacto(rs.getString("contacto"));
                     proveedor.setDireccion(rs.getString("direccion"));
                     proveedor.setIdProducto(rs.getInt("idProducto"));
+                    proveedor.setCedula(rs.getLong("cedula"));
                     proveedores.add(proveedor);
                 }
             }
