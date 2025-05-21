@@ -18,6 +18,7 @@ public class MProductos_Frame extends JFrame {
 	private JButton btnVerProductos;
 	private JButton btnEliminarProducto;
 	private JButton btnRegresar;
+	private JButton btnInventarioCrear;
 
 	public MProductos_Frame() {
 		setTitle("Papelería de Rosita - Gestión de Productos");
@@ -62,16 +63,19 @@ public class MProductos_Frame extends JFrame {
 		btnEditarProducto = new JButton("Editar Producto");
 		btnVerProductos = new JButton("Ver Productos Con Su Stock");
 		btnEliminarProducto = new JButton("Eliminar Un Producto");
+		btnInventarioCrear =new JButton("Crear Inventario");
 
 		estiloBoton(btnNuevoProducto);
 		estiloBoton(btnEditarProducto);
 		estiloBoton(btnVerProductos);
 		estiloBoton(btnEliminarProducto);
+		estiloBoton(btnInventarioCrear);
 
 		botonesPanel.add(btnNuevoProducto);
 		botonesPanel.add(btnEditarProducto);
 		botonesPanel.add(btnVerProductos);
 		botonesPanel.add(btnEliminarProducto);
+		botonesPanel.add(btnInventarioCrear);
 
 		contenedor.add(Box.createVerticalGlue());
 		contenedor.add(botonesPanel);
@@ -113,4 +117,13 @@ public class MProductos_Frame extends JFrame {
 	public JButton getBtnRegresar() {
 		return btnRegresar;
 	}
+
+	public JButton getBtnInventarioCrear() {
+		return btnInventarioCrear;
+	}
+
+	public void setBtnInventarioCrear(JButton btnInventarioCrear) {
+		this.btnInventarioCrear = btnInventarioCrear;
+	}
+	
 }

@@ -31,13 +31,14 @@ public class AplMain {
 		RegistroPedido_Frame registroPedidoFrame = new RegistroPedido_Frame();
 		VerPedidos_Frame verPedidosFrame = new VerPedidos_Frame();
 		Devoluciones_Frame devolucionProveedoresFrame = new Devoluciones_Frame();
-
+		NuevoInventario_Frame nuevoInv = new NuevoInventario_Frame();
+		Facada_Vista_crearUsuario crearU = new Facada_Vista_crearUsuario();
 		// Crear el controlador y pasar todas las vistas
 		controllerprueba controller = new controllerprueba(loginView, adminView, userView, mventasView, mclientesView,
 				mproductosFrame, mproveedoresFrame, mreportesFrame, nuevaVentaView, eliminarVentaFrame,
 				historialVentasUI, devolucionVentasFrame, nuevoClienteFrame, editarClienteFrame, eliminarClienteFrame,
 				verClienteFrame, nuevoProductoFrame, editarProductoFrame, eliminarProductoFrame, verProductoFrame,
 				registroProveFrame, editarProveFrame, verProveFrame, registroPedidoFrame, verPedidosFrame,
-				devolucionProveedoresFrame);
+				devolucionProveedoresFrame, nuevoInv, crearU);
 	}
 }

@@ -8,8 +8,7 @@ public class Facada_Vista_login extends JFrame {
 	private JLabel lblLogo, lblTitulo, lblInicioS, lblUsuario, lblContraseña;
 	private JTextField txtUsuario;
 	private JPasswordField jpContraseña;
-	private JButton btnInicio;
-
+	private JButton btnInicio,btnCrearUsuario;
 	public Facada_Vista_login() {
 		setTitle("Papelería de Rosita");
 		setExtendedState(JFrame.MAXIMIZED_BOTH); // Pantalla completa
@@ -80,6 +79,17 @@ public class Facada_Vista_login extends JFrame {
 		btnInicio.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnInicio.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		centerPanel.add(btnInicio);
+		// Botón "Crear Usuario"
+		btnCrearUsuario = new JButton("Crear Usuario");
+		btnCrearUsuario.setBackground(new Color(200, 220, 255)); // Azul suave
+		btnCrearUsuario.setFocusPainted(false);
+		btnCrearUsuario.setFont(new Font("Arial", Font.PLAIN, 14));
+		btnCrearUsuario.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+		btnCrearUsuario.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnCrearUsuario.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espaciado
+		centerPanel.add(btnCrearUsuario);
+
 
 		mainPanel.add(centerPanel); // Agrega el centro al grid central
 
@@ -156,6 +166,14 @@ public class Facada_Vista_login extends JFrame {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	public JButton getBtnCrearUsuario() {
+	    return btnCrearUsuario;
+	}
+
+	public void setBtnCrearUsuario(JButton btnCrearUsuario) {
+	    this.btnCrearUsuario = btnCrearUsuario;
+	}
+
 
 	
 }
