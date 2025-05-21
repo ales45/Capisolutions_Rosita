@@ -21,6 +21,7 @@ import co.edu.unbosque.view.EditarProve_Frame;
 import co.edu.unbosque.view.EliminarCliente_Frame;
 import co.edu.unbosque.view.EliminarProducto_Frame;
 import co.edu.unbosque.view.EliminarVenta_Frame;
+import co.edu.unbosque.view.Facada_Vista_crearUsuario;
 import co.edu.unbosque.view.Facada_Vista_login;
 import co.edu.unbosque.view.HistorialVentasUI;
 import co.edu.unbosque.view.MClientes_View;
@@ -30,6 +31,7 @@ import co.edu.unbosque.view.MReportes_Frame;
 import co.edu.unbosque.view.MVentas_View;
 import co.edu.unbosque.view.NuevaVenta_View;
 import co.edu.unbosque.view.NuevoCliente_Frame;
+import co.edu.unbosque.view.NuevoInventario_Frame;
 import co.edu.unbosque.view.NuevoProducto_Frame;
 import co.edu.unbosque.view.RegistroPedido_Frame;
 import co.edu.unbosque.view.RegistroProve_Frame;
@@ -45,7 +47,6 @@ import co.edu.unbosque.model.ReporteFacturasPDF;
 import co.edu.unbosque.model.ReportePedidosPDF;
 import co.edu.unbosque.model.ReporteProductosPDF;
 import co.edu.unbosque.model.ReporteProveedoresPDF;
-import co.edu.unbosque.model.reportepedi;
 import co.edu.unbosque.model.daosYdtos.ClientesDto;
 import co.edu.unbosque.model.daosYdtos.ProductoDto;
 import co.edu.unbosque.model.daosYdtos.ProveedorDto;
@@ -78,8 +79,9 @@ public class controllerprueba implements ActionListener {
 	private RegistroPedido_Frame registroPedidoFrame;
 	private VerPedidos_Frame verPedidosFrame;
 	private Devoluciones_Frame devolucionProveedoresFrame;
-
+	private NuevoInventario_Frame nuevoInventario;
 	private String tipoUsuarioLogueado = "";
+	private Facada_Vista_crearUsuario crearU;
 
 	public controllerprueba(Facada_Vista_login loginView, Admin_View adminView, User_View userView,
 			MVentas_View mventasView, MClientes_View mclientesView, MProductos_Frame mproductosFrame,
@@ -91,7 +93,7 @@ public class controllerprueba implements ActionListener {
 			EditarProducto_Frame editarProductoFrame, EliminarProducto_Frame eliminarProductoFrame,
 			VerProducto_Frame verProductoFrame, RegistroProve_Frame registroProveFrame,
 			EditarProve_Frame editarProveFrame, VerProve_Frame verProveFrame, RegistroPedido_Frame registroPedidoFrame,
-			VerPedidos_Frame verPedidosFrame, Devoluciones_Frame devolucionProveedoresFrame) {
+			VerPedidos_Frame verPedidosFrame, Devoluciones_Frame devolucionProveedoresFrame,NuevoInventario_Frame nuevoInventario,Facada_Vista_crearUsuario crearU) {
 		this.loginView = loginView;
 		this.adminView = adminView;
 		this.userView = userView;
@@ -118,7 +120,8 @@ public class controllerprueba implements ActionListener {
 		this.registroPedidoFrame = registroPedidoFrame;
 		this.verPedidosFrame = verPedidosFrame;
 		this.devolucionProveedoresFrame = devolucionProveedoresFrame;
-
+		this.nuevoInventario=nuevoInventario;
+		this.crearU =crearU;
 		addListeners();
 
 		iniciar();
@@ -139,6 +142,8 @@ public class controllerprueba implements ActionListener {
 		if (loginView != null && loginView.getBtnInicio() != null) {
 			loginView.getBtnInicio().setActionCommand("LOGIN_INICIAR_SESION");
 			loginView.getBtnInicio().addActionListener(this);
+			loginView.getBtnCrearUsuario().addActionListener(this);
+			loginView.getBtnCrearUsuario().setActionCommand("crearU");
 		}
 
 		// ADMIN VIEW
@@ -209,6 +214,10 @@ public class controllerprueba implements ActionListener {
 			mproductosFrame.getBtnVerProductos().addActionListener(this);
 			mproductosFrame.getBtnEliminarProducto().setActionCommand("abrirEliminarProducto");
 			mproductosFrame.getBtnEliminarProducto().addActionListener(this);
+			mproductosFrame.getBtnInventarioCrear().addActionListener(this);
+			mproductosFrame.getBtnInventarioCrear().setActionCommand("abrirCrearInventario");
+			nuevoInventario.getBtnRegresar().addActionListener(this);
+			nuevoInventario.getBtnRegresar().setActionCommand("regresarCrearI");
 		}
 
 		// MÓDULO PROVEEDORES
@@ -392,7 +401,11 @@ public class controllerprueba implements ActionListener {
 				loginView.mostrarMensajeError("Usuario de prueba no reconocido (use 'admin' o 'user')");
 			}
 			break;
-
+		case "crearU":
+			loginView.setVisible(false);
+			crearU.setVisible(true);
+			break;
+			
 		case "cerrarSesion":
 			tipoUsuarioLogueado = "";
 			if ("admin".equals(tipoUsuarioLogueado)) {
@@ -716,6 +729,14 @@ public class controllerprueba implements ActionListener {
 		case "regresarEliminarProducto":
 			eliminarProductoFrame.setVisible(false);
 			mproductosFrame.setVisible(true);
+			break;
+		case "abrirCrearInventario":
+			nuevoInventario.setVisible(true);
+			mproductosFrame.setVisible(false);
+			break;
+		case "regresarCrearI":
+			mproductosFrame.setVisible(true);
+			nuevoInventario.setVisible(false);
 			break;
 		case "abrirVerProducto":
 			mproductosFrame.setVisible(false);
