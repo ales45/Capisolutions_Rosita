@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class EliminarCliente_Frame extends JFrame {
-	private JTextField txtNombre, txtCedula, txtTelefono, txtDireccion,txtCorreo;
+	private JTextField txtNombre, txtCedula, txtTelefono,txtCorreo;
 	private JComboBox<String> comboTipoCliente;
 	private JButton btnEliminar, btnRegresar; // ← Botones ahora son atributos de clase
 
@@ -48,7 +48,6 @@ public class EliminarCliente_Frame extends JFrame {
 		txtNombre = new JTextField(20);
 		txtCedula = new JTextField(20);
 		txtTelefono = new JTextField(20);
-		txtDireccion = new JTextField(20);
 		txtCorreo = new JTextField(20);
 		comboTipoCliente = new JComboBox<>(new String[] { "Natural", "Jurídico" });
 
@@ -57,7 +56,6 @@ public class EliminarCliente_Frame extends JFrame {
 		addField(formPanel, gbc, row++, "Cédula/NIT:", txtCedula);
 		addField(formPanel, gbc, row++, "Teléfono:", txtTelefono);
 		addField(formPanel, gbc, row++, "Correo", txtCorreo);
-		addField(formPanel, gbc, row++, "Dirección", txtDireccion);
 		addField(formPanel, gbc, row++, "Tipo de cliente:", comboTipoCliente);
 
 		box.add(formPanel, BorderLayout.CENTER);
@@ -94,7 +92,7 @@ public class EliminarCliente_Frame extends JFrame {
 
 	private void eliminarCliente() {
 		if (txtNombre.getText().trim().isEmpty() || txtCedula.getText().trim().isEmpty()
-				|| txtTelefono.getText().trim().isEmpty() || txtDireccion.getText().trim().isEmpty()) {
+				|| txtTelefono.getText().trim().isEmpty() ) {
 
 			JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos para eliminar el cliente.",
 					"Campos vacíos", JOptionPane.WARNING_MESSAGE);
@@ -150,13 +148,7 @@ public class EliminarCliente_Frame extends JFrame {
 		this.txtTelefono = txtTelefono;
 	}
 
-	public JTextField getTxtDireccion() {
-		return txtDireccion;
-	}
 
-	public void setTxtDireccion(JTextField txtDireccion) {
-		this.txtDireccion = txtDireccion;
-	}
 
 	public JTextField getTxtCorreo() {
 		return txtCorreo;

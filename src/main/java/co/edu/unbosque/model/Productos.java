@@ -68,13 +68,26 @@ public class Productos {
      * @param idProducto El ID del producto.
      * @return Un Optional que puede contener el ProductoDto si se encuentra.
      */
-    public Optional<ProductoDto> obtenerProductoPorId(int idProducto) {
-        try {
-            return productoDao.obtenerProductoPorId(idProducto);
-        } catch (SQLException e) {
-            System.err.println("Error en ProductosService al obtener producto por ID: " + e.getMessage());
-            e.printStackTrace();
+    public Optional<ProductoDto> obtenerProductoPorId(String nombre) { // Mantiene el nombre 'obtenerProductoPorId' pero busca por 'nombre'
+        // 1. Validacion basica de la entrada
+        if (nombre == null || nombre.trim().isEmpty()) {
+            System.err.println("Error de validación: El nombre del producto para buscar no puede estar vacío.");
             return Optional.empty();
+        }
+        // 2. Llama al metodo del DAO que busca por nombre.
+        //    El DAO ya maneja su propia SQLException y devuelve Optional.empty() en caso de error o no encontrado.
+        try {
+            Optional<ProductoDto> productopt = productoDao.obtenerProductoPorNombre(nombre);
+            // 3. Opcional: Puedes añadir un log si el producto no se encuentra (el DAO ya lo haria en caso de error de BD)
+            // if (!productopt.isPresent()) {
+            //     System.out.println("Servicio: No se encontró producto con nombre '" + nombre + "'.");
+            // }
+            // 4. Devuelve el resultado del DAO
+            return productopt;
+        } catch (SQLException e) {
+            System.err.println("Error en ProductosService al buscar producto por nombre: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty(); // Retorna vacío si ocurre un error SQL
         }
     }
     
@@ -98,7 +111,30 @@ public class Productos {
      * @param productoAActualizar El DTO del producto con los datos actualizados (debe incluir el ID).
      * @return true si la actualización fue exitosa, false en caso contrario.
      */
-    public boolean actualizarProducto(ProductoDto productoAActualizar) {
+    public boolean actualizarProducto(String nombre,int idCategoriaP,String descripcion,double precio,double iva) {
+        Optional<ProductoDto> productopt;
+        try {
+            productopt = productoDao.obtenerProductoPorNombre(nombre);
+        } catch (SQLException e) {
+            System.err.println("Error en ProductosService al buscar producto por nombre para actualizar: " + e.getMessage());
+            e.printStackTrace();
+            return false; // Retorna false si ocurre un error SQL al buscar
+        }
+
+        if (!productopt.isPresent()) {
+            System.err.println("Error: No se encontró el producto con nombre " + nombre + " para actualizar.");
+            return false;
+        }
+        
+        ProductoDto productoAActualizar = productopt.get(); // Usar el DTO encontrado
+        // Mantener el ID del producto encontrado, solo actualizar los otros campos
+        // productoAActualizar.setIdProducto(productopt.get().getIdProducto()); // Esto ya está en productopt
+        productoAActualizar.setNombre(nombre); // Asegurar que el nombre (clave de búsqueda) este en el DTO
+        productoAActualizar.setIdCategoriaP(idCategoriaP);
+        productoAActualizar.setDescripcion(descripcion);
+        productoAActualizar.setPrecio(precio);
+        productoAActualizar.setIva(iva);
+
         if (productoAActualizar == null || productoAActualizar.getIdProducto() <= 0) {
             System.err.println("Error de validación: Se requiere un producto válido con ID para actualizar.");
             return false;
@@ -113,17 +149,11 @@ public class Productos {
             return false;
         }
         // --- FIN LÓGICA DE NEGOCIO ---
-        
+
         try {
-            // Opcional: verificar si el producto existe antes de intentar actualizar
-            // Optional<ProductoDto> existente = productoDao.obtenerProductoPorId(productoAActualizar.getIdProducto());
-            // if (!existente.isPresent()) {
-            //     System.err.println("Producto con ID " + productoAActualizar.getIdProducto() + " no encontrado para actualizar.");
-            //     return false;
-            // }
             return productoDao.actualizarProducto(productoAActualizar);
         } catch (SQLException e) {
-            System.err.println("Error en ProductosService al actualizar producto: " + e.getMessage());
+            System.err.println("Error en ProductosService al actualizar producto en la base de datos: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

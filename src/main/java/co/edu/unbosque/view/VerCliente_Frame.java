@@ -91,27 +91,8 @@ public class VerCliente_Frame extends JFrame {
 			}
 		};
 
-		// Cargar datos desde la base de datos
-		String url = "jdbc:sqlite:tiendaRosita.db";
 
-		try (Connection conn = DriverManager.getConnection(url);
-				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt
-						.executeQuery("SELECT nombre, idCliente, telefono, correo, direccion FROM clientes")) {
-
-			while (rs.next()) {
-				String nombre = rs.getString("nombre");
-				String cedula = rs.getString("idCliente");
-				String telefono = rs.getString("telefono");
-				String correo = rs.getString("correo");
-				String direccion = rs.getString("direccion");
-
-				modeloTabla.addRow(new Object[] { nombre, cedula, telefono, correo, direccion });
-			}
-
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(this, "Error al cargar los clientes: " + e.getMessage());
-		}
+		
 
 		tbTablaClientes = new JTable(modeloTabla);
 		tbTablaClientes.setRowHeight(30);

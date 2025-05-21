@@ -112,9 +112,13 @@ public class Clientes { // Nombre de clase de servicio en plural
      * @param id_cliente El ID del cliente.
      * @return Un Optional que puede contener el ClientesDto si se encuentra.
      */
-    public Optional<ClientesDto> ver_cliente(int id_cliente) { // Nombre de método y param como en diagrama
+    public Optional<ClientesDto> ver_cliente(long cedula) { // Nombre de método y param como en diagrama
+        Optional<ClientesDto> clienteOpt = clienteDao.obtenerClientePorCedula(cedula);
+        if (!clienteOpt.isPresent()) {
+            System.err.println("Error: No se encontró el cliente con cédula " + cedula);
+        }
         try {
-            return clienteDao.obtenerClientePorId(id_cliente);
+            return clienteDao.obtenerClientePorId(clienteOpt.get().getIdCliente());
         } catch (SQLException e) {
             System.err.println("Error en ClientesService al obtener cliente por ID: " + e.getMessage());
             e.printStackTrace();
@@ -165,6 +169,14 @@ public class Clientes { // Nombre de clase de servicio en plural
             e.printStackTrace();
             return false;
         }
+    }
+
+    public ClientesDao getClienteDao() {
+        return clienteDao;
+    }
+
+    public void setClienteDao(ClientesDao clienteDao) {
+        this.clienteDao = clienteDao;
     }
 
 }

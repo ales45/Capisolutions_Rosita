@@ -104,7 +104,6 @@ public class EliminarProducto_Frame extends JFrame {
 
 		fondo.add(recuadro);
 
-		btnEliminar.addActionListener(e -> eliminarProducto());
 		btnRegresar.addActionListener(e -> JOptionPane.showMessageDialog(this, "Regresando..."));
 	}
 
@@ -122,41 +121,7 @@ public class EliminarProducto_Frame extends JFrame {
 		return fila + 1;
 	}
 
-	private void eliminarProducto() {
-		String id = txtId.getText().trim();
-		String nombre = txtNombre.getText().trim();
-		String descripcion = txtDescripcion.getText().trim();
-		String precio = txtPrecio.getText().trim();
-		String iva = txtIVA.getText().trim();
-
-		if (id.isEmpty() || nombre.isEmpty() || descripcion.isEmpty() || precio.isEmpty() || iva.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Campos vacíos",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		try {
-			Double.parseDouble(precio);
-		} catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(this, "El precio debe ser un número válido.", "Error en precio",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		try {
-			int ivaNum = Integer.parseInt(iva);
-			if (ivaNum < 0 || ivaNum > 100) {
-				throw new NumberFormatException();
-			}
-		} catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(this, "El IVA debe ser un número entre 0 y 100.", "Error en IVA",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente.", "Éxito",
-				JOptionPane.INFORMATION_MESSAGE);
-	}
+	
 
 	private void agregarFiltroNumerico(JTextField campo, boolean permitirDecimal) {
 		campo.addKeyListener(new KeyAdapter() {
@@ -202,4 +167,53 @@ public class EliminarProducto_Frame extends JFrame {
 	public JButton getBtnRegresar() {
 		return btnRegresar;
 	}
+
+	public JTextField getTxtId() {
+		return txtId;
+	}
+
+	public void setTxtId(JTextField txtId) {
+		this.txtId = txtId;
+	}
+
+	public JTextField getTxtNombre() {
+		return txtNombre;
+	}
+
+	public void setTxtNombre(JTextField txtNombre) {
+		this.txtNombre = txtNombre;
+	}
+
+	public JTextField getTxtDescripcion() {
+		return txtDescripcion;
+	}
+
+	public void setTxtDescripcion(JTextField txtDescripcion) {
+		this.txtDescripcion = txtDescripcion;
+	}
+
+	public JTextField getTxtPrecio() {
+		return txtPrecio;
+	}
+
+	public void setTxtPrecio(JTextField txtPrecio) {
+		this.txtPrecio = txtPrecio;
+	}
+
+	public JTextField getTxtIVA() {
+		return txtIVA;
+	}
+
+	public void setTxtIVA(JTextField txtIVA) {
+		this.txtIVA = txtIVA;
+	}
+
+	public void setBtnEliminar(JButton btnEliminar) {
+		this.btnEliminar = btnEliminar;
+	}
+
+	public void setBtnRegresar(JButton btnRegresar) {
+		this.btnRegresar = btnRegresar;
+	}
+	
 }

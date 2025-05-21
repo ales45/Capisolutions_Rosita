@@ -75,9 +75,7 @@ public class VerProducto_Frame extends JFrame {
             }
         };
 
-        // Ejemplo de fila temporal (esto se reemplazará cuando tengas la base de datos)
-        Object[] filaEjemplo = {1, "Cuaderno", "Papelería", "Cuaderno de rayas", 3000, 19, 8};
-        modelo.addRow(filaEjemplo);
+   
 
         tablaProductos = new JTable(modelo);
         tablaProductos.setRowHeight(28);

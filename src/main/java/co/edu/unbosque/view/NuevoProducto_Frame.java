@@ -156,4 +156,53 @@ public class NuevoProducto_Frame extends JFrame {
 	public JButton getBtnRegresar() {
 		return btnRegresar;
 	}
+
+	public JTextField getTxtNombre() {
+		return txtNombre;
+	}
+
+	public void setTxtNombre(JTextField txtNombre) {
+		this.txtNombre = txtNombre;
+	}
+
+	public JTextField getTxtDescripcion() {
+		return txtDescripcion;
+	}
+
+	public void setTxtDescripcion(JTextField txtDescripcion) {
+		this.txtDescripcion = txtDescripcion;
+	}
+
+	public JTextField getTxtPrecio() {
+		return txtPrecio;
+	}
+
+	public void setTxtPrecio(JTextField txtPrecio) {
+		this.txtPrecio = txtPrecio;
+	}
+
+	public JTextField getTxtIVA() {
+		return txtIVA;
+	}
+
+	public void setTxtIVA(JTextField txtIVA) {
+		this.txtIVA = txtIVA;
+	}
+
+	public JComboBox<String> getComboCategoria() {
+		return comboCategoria;
+	}
+
+	public void setComboCategoria(JComboBox<String> comboCategoria) {
+		this.comboCategoria = comboCategoria;
+	}
+
+	public void setBtnGuardar(JButton btnGuardar) {
+		this.btnGuardar = btnGuardar;
+	}
+
+	public void setBtnRegresar(JButton btnRegresar) {
+		this.btnRegresar = btnRegresar;
+	}
+	
 }

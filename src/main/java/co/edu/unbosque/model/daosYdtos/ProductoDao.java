@@ -142,4 +142,38 @@ public class ProductoDao {
             return affectedRows > 0;
         }
     }
+        /**
+     * Obtiene un unico producto por su nombre de la base de datos.
+     * Devuelve el primer producto encontrado si hay multiples coincidencias.
+     *
+     * @param nombre El nombre exacto del producto a buscar.
+     * @return Un Optional que contiene el ProductoDto si se encuentra, o un Optional vacio si no existe.
+     * @throws SQLException Si ocurre un error de base de datos.
+     */
+    public Optional<ProductoDto> obtenerProductoPorNombre(String nombre) throws SQLException {
+        // Consulta SQL para buscar un producto por su nombre exacto
+        String sql = "SELECT idProducto, nombre, idCategoriaP, descripcion, precio, IVA FROM productos WHERE nombre = ?";
+
+        try (Connection conn = DatabaseManager.getConnection(); // Obtiene la conexion a la base de datos
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Establece el parametro para la consulta
+            pstmt.setString(1, nombre);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // Si se encuentra un resultado, mapea la fila a un objeto ProductoDto
+                    ProductoDto producto = new ProductoDto();
+                    producto.setIdProducto(rs.getInt("idProducto"));
+                    producto.setNombre(rs.getString("nombre"));
+                    producto.setIdCategoriaP(rs.getInt("idCategoriaP"));
+                    producto.setDescripcion(rs.getString("descripcion"));
+                    producto.setPrecio(rs.getDouble("precio"));
+                    producto.setIva(rs.getDouble("IVA"));
+                    return Optional.of(producto); // Devuelve un Optional con el producto encontrado
+                }
+            }
+        }
+        return Optional.empty(); // Devuelve un Optional vacio si no se encontro el producto
+    }
 }
