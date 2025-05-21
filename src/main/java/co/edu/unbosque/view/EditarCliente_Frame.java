@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class EditarCliente_Frame extends JFrame {
-	private JTextField txtNombre, txtCedula, txtTelefono, txtDireccion;
+	private JTextField txtNombre, txtCedula, txtTelefono, txtDireccion,txtCorreo;
 	private JComboBox<String> comboTipoCliente;
 	private JButton btnGuardar;
 	private JButton btnLimpiar;
@@ -54,6 +54,7 @@ public class EditarCliente_Frame extends JFrame {
 		txtNombre = new JTextField(20);
 		txtCedula = new JTextField(20);
 		txtTelefono = new JTextField(20);
+		txtCorreo = new JTextField(20);
 		txtDireccion = new JTextField(20);
 		comboTipoCliente = new JComboBox<>(new String[] { "Natural", "Jurídico" });
 
@@ -61,6 +62,7 @@ public class EditarCliente_Frame extends JFrame {
 		addField(formPanel, gbc, row++, "Nombre:", txtNombre);
 		addField(formPanel, gbc, row++, "Cédula/NIT:", txtCedula);
 		addField(formPanel, gbc, row++, "Teléfono:", txtTelefono);
+		addField(formPanel, gbc, row++, "Correo:", txtCorreo);
 		addField(formPanel, gbc, row++, "Dirección:", txtDireccion);
 		addField(formPanel, gbc, row++, "Tipo de cliente:", comboTipoCliente);
 
@@ -151,6 +153,54 @@ public class EditarCliente_Frame extends JFrame {
 
 	public void setBtnRegresar(JButton btnRegresar) {
 		this.btnRegresar = btnRegresar;
+	}
+
+	public JTextField getTxtNombre() {
+		return txtNombre;
+	}
+
+	public void setTxtNombre(JTextField txtNombre) {
+		this.txtNombre = txtNombre;
+	}
+
+	public JTextField getTxtCedula() {
+		return txtCedula;
+	}
+
+	public void setTxtCedula(JTextField txtCedula) {
+		this.txtCedula = txtCedula;
+	}
+
+	public JTextField getTxtTelefono() {
+		return txtTelefono;
+	}
+
+	public void setTxtTelefono(JTextField txtTelefono) {
+		this.txtTelefono = txtTelefono;
+	}
+
+	public JTextField getTxtDireccion() {
+		return txtDireccion;
+	}
+
+	public void setTxtDireccion(JTextField txtDireccion) {
+		this.txtDireccion = txtDireccion;
+	}
+
+	public JComboBox<String> getComboTipoCliente() {
+		return comboTipoCliente;
+	}
+
+	public void setComboTipoCliente(JComboBox<String> comboTipoCliente) {
+		this.comboTipoCliente = comboTipoCliente;
+	}
+
+	public JTextField getTxtCorreo() {
+		return txtCorreo;
+	}
+
+	public void setTxtCorreo(JTextField txtCorreo) {
+		this.txtCorreo = txtCorreo;
 	}
 
 	

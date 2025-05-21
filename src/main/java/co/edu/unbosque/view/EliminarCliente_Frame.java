@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class EliminarCliente_Frame extends JFrame {
-	private JTextField txtNombre, txtCedula, txtTelefono, txtDireccion;
+	private JTextField txtNombre, txtCedula, txtTelefono, txtDireccion,txtCorreo;
 	private JComboBox<String> comboTipoCliente;
 	private JButton btnEliminar, btnRegresar; // ← Botones ahora son atributos de clase
 
@@ -23,7 +23,7 @@ public class EliminarCliente_Frame extends JFrame {
 		box.setBackground(Color.WHITE);
 		box.setPreferredSize(new Dimension(450, 430));
 		box.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)),
-				BorderFactory.createEmptyBorder(20, 30, 20, 30)));
+		BorderFactory.createEmptyBorder(20, 30, 20, 30)));
 
 		JPanel topPanel = new JPanel(new BorderLayout());
 		topPanel.setBackground(Color.WHITE);
@@ -49,13 +49,15 @@ public class EliminarCliente_Frame extends JFrame {
 		txtCedula = new JTextField(20);
 		txtTelefono = new JTextField(20);
 		txtDireccion = new JTextField(20);
+		txtCorreo = new JTextField(20);
 		comboTipoCliente = new JComboBox<>(new String[] { "Natural", "Jurídico" });
 
 		int row = 0;
 		addField(formPanel, gbc, row++, "Nombre:", txtNombre);
 		addField(formPanel, gbc, row++, "Cédula/NIT:", txtCedula);
 		addField(formPanel, gbc, row++, "Teléfono:", txtTelefono);
-		addField(formPanel, gbc, row++, "Dirección:", txtDireccion);
+		addField(formPanel, gbc, row++, "Correo", txtCorreo);
+		addField(formPanel, gbc, row++, "Dirección", txtDireccion);
 		addField(formPanel, gbc, row++, "Tipo de cliente:", comboTipoCliente);
 
 		box.add(formPanel, BorderLayout.CENTER);
@@ -122,6 +124,54 @@ public class EliminarCliente_Frame extends JFrame {
 
 	public void setBtnRegresar(JButton btnRegresar) {
 		this.btnRegresar = btnRegresar;
+	}
+
+	public JTextField getTxtNombre() {
+		return txtNombre;
+	}
+
+	public void setTxtNombre(JTextField txtNombre) {
+		this.txtNombre = txtNombre;
+	}
+
+	public JTextField getTxtCedula() {
+		return txtCedula;
+	}
+
+	public void setTxtCedula(JTextField txtCedula) {
+		this.txtCedula = txtCedula;
+	}
+
+	public JTextField getTxtTelefono() {
+		return txtTelefono;
+	}
+
+	public void setTxtTelefono(JTextField txtTelefono) {
+		this.txtTelefono = txtTelefono;
+	}
+
+	public JTextField getTxtDireccion() {
+		return txtDireccion;
+	}
+
+	public void setTxtDireccion(JTextField txtDireccion) {
+		this.txtDireccion = txtDireccion;
+	}
+
+	public JTextField getTxtCorreo() {
+		return txtCorreo;
+	}
+
+	public void setTxtCorreo(JTextField txtCorreo) {
+		this.txtCorreo = txtCorreo;
+	}
+
+	public JComboBox<String> getComboTipoCliente() {
+		return comboTipoCliente;
+	}
+
+	public void setComboTipoCliente(JComboBox<String> comboTipoCliente) {
+		this.comboTipoCliente = comboTipoCliente;
 	}
 
 	

@@ -66,18 +66,25 @@ public class Clientes { // Nombre de clase de servicio en plural
      * @param telefono El nuevo teléfono.
      * @return true si la actualización fue exitosa, false en caso contrario.
      */
-    public boolean actualizar_cliente(int id_cliente, String nombre, String rol, String correo, long cedula, long telefono) {
-        if (id_cliente <= 0) {
+    public boolean actualizar_cliente( String nombre, String rol, String correo, long cedula, long telefono) {
+        Optional<ClientesDto> clienteOpt = clienteDao.obtenerClientePorCedula(cedula);
+        if (!clienteOpt.isPresent()) {
+            System.err.println("Error: No se encontró el cliente con cédula " + cedula);
+            return false;
+        }
+        if (clienteOpt.get().getIdCliente() <= 0) {
             System.err.println("Error de validación: Se requiere un ID de cliente válido para actualizar.");
             return false;
         }
         // --- LÓGICA DE NEGOCIO (VALIDACIONES) ---
         if (nombre == null || nombre.trim().isEmpty()) { /* ... */ }
         // ... más validaciones ...
-        // --- FIN LÓGICA DE NEGOCIO ---
 
+
+
+        // --- FIN LÓGICA DE NEGOCIO ---
         ClientesDto clienteActualizado = new ClientesDto();
-        clienteActualizado.setIdCliente(id_cliente);
+        clienteActualizado.setIdCliente(clienteOpt.get().getIdCliente());
         clienteActualizado.setNombre(nombre);
         clienteActualizado.setRol(rol);
         clienteActualizado.setCorreo(correo);
@@ -135,18 +142,29 @@ public class Clientes { // Nombre de clase de servicio en plural
      * @param id_cliente El ID del cliente a eliminar.
      * @return true si la eliminación fue exitosa, false en caso contrario.
      */
-    public boolean eliminar_cliente(int id_cliente) { // Nombre de método y param como en diagrama
+    public boolean eliminar_cliente(long cedula) { // Nombre de método y param como en diagrama
         // Lógica de negocio: verificar si el cliente tiene facturas asociadas antes de eliminar.
         // if (facturaDao.existenFacturasParaCliente(id_cliente)) {
         //    System.err.println("No se puede eliminar el cliente ID " + id_cliente + " porque tiene facturas asociadas.");
         //    return false;
         // }
+        Optional<ClientesDto> clienteOpt = clienteDao.obtenerClientePorCedula(cedula);
+        if (!clienteOpt.isPresent()) {
+            System.err.println("Error: No se encontró el cliente con cédula " + cedula);
+            return false;
+        }
+        if (clienteOpt.get().getIdCliente() <= 0) {
+            System.err.println("Error de validación: Se requiere un ID de cliente válido para actualizar.");
+            return false;
+        }
+
         try {
-            return clienteDao.eliminarCliente(id_cliente);
+            return clienteDao.eliminarCliente(clienteOpt.get().getIdCliente());
         } catch (SQLException e) {
             System.err.println("Error en ClientesService al eliminar cliente: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
+
 }

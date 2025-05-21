@@ -28,9 +28,10 @@ import co.edu.unbosque.view.VerCliente_Frame;
 import co.edu.unbosque.view.VerPedidos_Frame;
 import co.edu.unbosque.view.VerProducto_Frame;
 import co.edu.unbosque.view.VerProve_Frame;
+import co.edu.unbosque.model.Facada_Model;
 
 public class controllerprueba implements ActionListener {
-
+	private Facada_Model model;
 	private Facada_Vista_login loginView;
 	private Admin_View adminView;
 	private User_View userView;
@@ -97,12 +98,20 @@ public class controllerprueba implements ActionListener {
 		this.registroPedidoFrame = registroPedidoFrame;
 		this.verPedidosFrame = verPedidosFrame;
 		this.devolucionProveedoresFrame = devolucionProveedoresFrame;
+		
+		
 
 		addListeners();
+
+		iniciar();
 	}
 
 	public void iniciar() {
+		if (model == null) {
+			model = new Facada_Model();
+		}
 		loginView.setVisible(true);
+
 	}
 
 	private void addListeners() {
@@ -210,14 +219,27 @@ public class controllerprueba implements ActionListener {
 		if (nuevoClienteFrame != null) {
 			nuevoClienteFrame.getBtnRegresar().setActionCommand("regresarNuevoCliente");
 			nuevoClienteFrame.getBtnRegresar().addActionListener(this);
+			nuevoClienteFrame.getBtnRegistrar().setActionCommand("confirmarNuevoCliente");
+			nuevoClienteFrame.getBtnRegistrar().addActionListener(this);
+			nuevoClienteFrame.getBtnLimpiar().setActionCommand("LimpiarCliente");
+			nuevoClienteFrame.getBtnLimpiar().addActionListener(this);
 		}
 		if (editarClienteFrame != null) {
 			editarClienteFrame.getBtnRegresar().setActionCommand("regresarEditarCliente");
 			editarClienteFrame.getBtnRegresar().addActionListener(this);
+			editarClienteFrame.getBtnGuardar().setActionCommand("confirmarEditarCliente");
+			editarClienteFrame.getBtnGuardar().addActionListener(this);
+			editarClienteFrame.getBtnLimpiar().setActionCommand("LimpiarEditarCliente");
+			editarClienteFrame.getBtnLimpiar().addActionListener(this);
+
+
 		}
 		if (eliminarClienteFrame != null) {
 			eliminarClienteFrame.getBtnRegresar().setActionCommand("regresarEliminarCliente");
 			eliminarClienteFrame.getBtnRegresar().addActionListener(this);
+			eliminarClienteFrame.getBtnEliminar().setActionCommand("confirmacionEliminarcliente");
+			eliminarClienteFrame.getBtnEliminar().addActionListener(this);
+			
 		}
 		if (verClienteFrame != null) {
 			verClienteFrame.getBtnRegresar().setActionCommand("regresarVerCliente");
@@ -352,6 +374,36 @@ public class controllerprueba implements ActionListener {
 			userView.setVisible(false);
 			mreportesFrame.setVisible(true);
 			break;
+		
+		//subvista Nuevo Clientes
+		case "confirmarNuevoCliente":
+			model.getClientes().crear_cliente(
+			nuevoClienteFrame.getName(),
+			nuevoClienteFrame.getComboTipoCliente().getSelectedItem().toString(),
+			 nuevoClienteFrame.getTxtCorreo().getText().toString(),
+			 Long.parseLong(nuevoClienteFrame.getTxtCedula().getText().toString()),
+			Long.parseLong(nuevoClienteFrame.getTxtTelefono().getText().toString())
+			);
+			break;
+		case "LimpiarCliente":
+
+		//subvistas Editar Clientes
+		case "confirmarEditarCliente":
+		model.getClientes().actualizar_cliente( 
+		editarClienteFrame.getName().toString(),
+		editarClienteFrame.getComboTipoCliente().getSelectedItem().toString(), 
+		editarClienteFrame.getTxtCorreo().getText().toString(), 
+		Long.parseLong(editarClienteFrame.getTxtCedula().getText().toString()), 
+		Long.parseLong(editarClienteFrame.getTxtTelefono().getText().toString()));
+		break;
+
+		case "LimpiarEditarCliente": 
+			//añadir logica de limpiar
+
+		//eliminar cliente 
+		case "confirmacionEliminarcliente":
+		model.getClientes().eliminar_cliente(Long.parseLong(eliminarClienteFrame.getTxtCedula().getText().toString()));
+
 
 		// BOTONES "REGRESAR" DE MÓDULOS PRINCIPALES
 		case "regresarVentas":

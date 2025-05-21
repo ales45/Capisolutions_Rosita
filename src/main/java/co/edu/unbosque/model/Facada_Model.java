@@ -8,30 +8,52 @@
 	import java.sql.SQLException;
 	
 	public class Facada_Model {
-		Inventario inventario = new Inventario();
-		Productos productos = new Productos();
-		Promociones promociones = new Promociones();
-		Proveedores proveedores = new Proveedores();
-		TipoP tipoP = new TipoP();
-		Clientes clientes = new Clientes();
-	    Usuarios usuarios = new Usuarios();
-	    Facturas facturas = new Facturas();
-	    MoviProveIn moviProveIn = new MoviProveIn();
-	    VentasAnu ventasAnu = new VentasAnu();
-	    Dfactura dfactura = new Dfactura();
-	    Movi_Invento movi_Invento = new Movi_Invento();
-	    Fiado fiado = new Fiado();
-	    MovimientoDevo movimientoDevo = new MovimientoDevo();
-	    DevoProvedo devoProvedo = new DevoProvedo();
+		Inventario inventario ;
+		Productos productos ;
+		Promociones promociones ;
+		Proveedores proveedores ;
+		TipoP tipoP ;
+		Clientes clientes ;
+	    Usuarios usuarios ;
+	    Facturas facturas ;
+	    MoviProveIn moviProveIn ;
+	    VentasAnu ventasAnu ;
+	    Dfactura dfactura ;
+	    Movi_Invento movi_Invento ;
+	    Fiado fiado ;
+	    MovimientoDevo movimientoDevo;
+	    DevoProvedo devoProvedo ;
 	  
 	    
-	    public Facada_Model(){
-	        try {
-	            Connection conexion = DatabaseManager.getConnection();
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }      
-	    }
+		public Facada_Model() {
+			try {
+				// Primero establecer la conexión
+				Connection conexion = DatabaseManager.getConnection();
+				
+				// Luego inicializar todos los componentes
+				this.inventario = new Inventario();
+				this.productos = new Productos();
+				this.promociones = new Promociones();
+				this.proveedores = new Proveedores();
+				this.tipoP = new TipoP();
+				this.clientes = new Clientes();
+				this.usuarios = new Usuarios();
+				this.facturas = new Facturas();
+				this.moviProveIn = new MoviProveIn();
+				this.ventasAnu = new VentasAnu();
+				this.dfactura = new Dfactura();
+				this.movi_Invento = new Movi_Invento();
+				this.fiado = new Fiado();
+				this.movimientoDevo = new MovimientoDevo();
+				this.devoProvedo = new DevoProvedo();
+				
+			} catch (SQLException e) {
+				// Manejar el error apropiadamente
+				System.err.println("Error al conectar con la base de datos: " + e.getMessage());
+				e.printStackTrace();
+				// Aquí podrías lanzar una excepción personalizada o manejar el error de otra forma
+			}
+		}
 	
 	    //setters y getters
 	    

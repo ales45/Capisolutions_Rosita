@@ -142,4 +142,27 @@ public class ClientesDao { // Nombre de clase DAO en plural
             return affectedRows > 0;
         }
     }
+    public Optional<ClientesDto> obtenerClientePorCedula(long cedula) {
+        String sql = "SELECT * FROM clientes WHERE cedula = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, cedula);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    ClientesDto cliente = new ClientesDto();
+                    cliente.setIdCliente(rs.getInt("idCliente"));
+                    cliente.setNombre(rs.getString("nombre"));
+                    cliente.setRol(rs.getString("rol"));
+                    cliente.setCorreo(rs.getString("correo"));
+                    cliente.setCedula(rs.getLong("cedula"));
+                    cliente.setTelefono(rs.getLong("telefono"));
+                    return Optional.of(cliente);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
 }
